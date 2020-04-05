@@ -1,0 +1,5 @@
+bsep/.githooks
+bsep/.idea
+bsep/.env
+bsep/keys
+bsep/go.sum
