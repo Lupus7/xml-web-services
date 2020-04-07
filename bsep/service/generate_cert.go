@@ -4,6 +4,8 @@ import (
 	"bsep/handler/dto"
 	"bsep/model"
 	"bsep/repository"
+	"bytes"
+	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
@@ -13,10 +15,12 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/pavel-v-chernykh/keystore-go"
+	"golang.org/x/crypto/ocsp"
 	"io/ioutil"
 	"log"
 	"math/big"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -25,7 +29,6 @@ import (
 
 type CertificateService struct {
 	CertificateDB *repository.CertificateDB
-	KeyStore      *keystore.KeyStore
 }
 
 //Here should be passed request, then parse to certificate, and be written to file
@@ -107,7 +110,7 @@ func (cs *CertificateService) CreateCertificate(request *dto.CertificateRequest)
 	}
 	keyStore, _ := keystore.Decode(f, []byte("password"))
 
-	//If we already have file, just append new certificat
+	//If we already have file, just append new certificate
 	if keyStore != nil {
 		entry := keyStore["alias"]
 		privKeyEntry := entry.(*keystore.PrivateKeyEntry)
@@ -162,7 +165,8 @@ func (cs *CertificateService) CreateCertificate(request *dto.CertificateRequest)
 	pubkeyfile.Close()
 
 	// this will create plain text PEM file.
-	pemfile, _ := os.Create("keys/certpem.pem")
+	filestring := fmt.Sprintf("keys/certpem%s.pem", request.SerialNumber)
+	pemfile, _ := os.Create(filestring)
 	var pemkey = &pem.Block{
 		Type:  "RSA PRIVATE KEY",
 		Bytes: x509.MarshalPKCS1PrivateKey(privatekey)}
@@ -189,7 +193,7 @@ func (cs *CertificateService) saveCertificateInDatabase(c *x509.Certificate) err
 	return cs.CertificateDB.Create(certificat)
 }
 
-//All information of certificats, read from keystore file .. password needed
+//All information of certificates, read from keystore file .. password needed
 func (cs *CertificateService) ReadKeyStoreAllInfo() ([]*x509.Certificate, error) {
 	certificates := []*x509.Certificate{}
 	f, err := os.Open("./keystore.jks")
@@ -216,7 +220,7 @@ func (cs *CertificateService) ReadKeyStoreAllInfo() ([]*x509.Certificate, error)
 	return certificates, nil
 }
 
-//Return certifiicate with given serial number
+//Return certificate with given serial number
 func (cs *CertificateService) FindCertificatBySerialNumber(number int) *x509.Certificate {
 	wantedSerialKey := big.NewInt(int64(number))
 	certifications, err := cs.ReadKeyStoreAllInfo()
@@ -231,7 +235,7 @@ func (cs *CertificateService) FindCertificatBySerialNumber(number int) *x509.Cer
 	return nil
 }
 
-//Read all certificats, but return only those who are allowed to be CA and not expired yet
+//Read all certificates, but return only those who are allowed to be CA and not expired yet
 //TODO: also make sure to return only those who are not yet revoked
 func (cs *CertificateService) ValidToBeCA() []*x509.Certificate {
 	certifications, err := cs.ReadKeyStoreAllInfo()
@@ -247,8 +251,8 @@ func (cs *CertificateService) ValidToBeCA() []*x509.Certificate {
 	return toReturn
 }
 
-//Here we need to revoke certificats, but first need to have this on mind:
-//If another certificat from the chain, has revoken certifiat as issuer, that that certificat is also revoken
+//Here we need to revoke certificates, but first need to have this on mind:
+//If another certificate from the chain, has revoked certificate as issuer, that that certificate is also revoked
 func (cs *CertificateService) RevokeCertificate(s string) error {
 	number, err := strconv.Atoi(s)
 	if err != nil {
@@ -267,15 +271,27 @@ func (cs *CertificateService) RevokeCertificate(s string) error {
 	if err != nil {
 		return err
 	}
-
-	for _, c := range allCertificats {
-		if c.Issuer.SerialNumber == certificat.SerialNumber.String() {
-			toBeRevoked = append(toBeRevoked, c)
+	var position int
+	for i, c := range allCertificats {
+		if c.SerialNumber.String() == certificat.SerialNumber.String() {
+			position = i
 		}
 	}
+	for i := position + 1; i < len(allCertificats); i++ {
+		for _, cc := range toBeRevoked {
+			if allCertificats[i].Issuer.SerialNumber == cc.SerialNumber.String() {
+				toBeRevoked = append(toBeRevoked, allCertificats[i])
+			}
+		}
+	}
+	//for _, c := range allCertificats {
+	//	if c.Issuer.SerialNumber == certificat.SerialNumber.String() {
+	//		toBeRevoked = append(toBeRevoked, c)
+	//	}
+	//}
 
 	//convert big.Int to int , fastest way to convert to string, and then to int
-	//save all revoked certificats in database
+	//save all revoked certificates in database
 	for _, c := range toBeRevoked {
 		serial, err := strconv.Atoi(c.SerialNumber.String())
 		if err != nil {
@@ -302,6 +318,55 @@ func (cs *CertificateService) IsRevoked(c *x509.Certificate) bool {
 	return isRevoked
 }
 
+// See: https://groups.google.com/forum/#!topic/golang-nuts/QC5FOysyVxg
+func (cs *CertificateService) IsCertificateRevokedByOCSP(commonName string, clientCert, issuerCert *x509.Certificate, ocspServer string) bool {
+	opts := &ocsp.RequestOptions{Hash: crypto.SHA1}
+	buffer, err := ocsp.CreateRequest(clientCert, issuerCert, opts)
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
+	fmt.Println(buffer)
+	httpRequest, err := http.NewRequest(http.MethodPost, "http://ocsp.int-x3.letsencrypt.org", bytes.NewBuffer(buffer))
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
+	ocspUrl, err := url.Parse("http://ocsp.int-x3.letsencrypt.org")
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
+	httpRequest.Header.Add("Content-Type", "application/ocsp-request")
+	httpRequest.Header.Add("Accept", "application/ocsp-response")
+	httpRequest.Header.Add("host", ocspUrl.Host)
+	httpClient := &http.Client{}
+	httpResponse, err := httpClient.Do(httpRequest)
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
+
+	defer httpResponse.Body.Close()
+	output, err := ioutil.ReadAll(httpResponse.Body)
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
+	fmt.Println("OUTPUT: ", output)
+	ocspResponse, err := ocsp.ParseResponse(output, issuerCert)
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
+	if ocspResponse.Status == ocsp.Revoked {
+		fmt.Printf("Certificate %s has been revoked by OCSP server %s, refusng connection", commonName, ocspServer)
+		return true
+	}
+	return false
+}
+
+////////////////////
 func writeKeyStore(keyStore keystore.KeyStore, filename string, password []byte) error {
 	f, err := os.Create(filename)
 	if err != nil {

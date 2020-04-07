@@ -43,6 +43,11 @@
                         </form>
                     {{end}}
                 </td>
+                <td>
+                    <form action="/download/{{.SerialNumber}}" method="post" class="form-horizontal">
+                        <button type="submit" class="btn btn-primary">Download</button>
+                    </form>
+                </td>
             </tr>
         {{end}}
 

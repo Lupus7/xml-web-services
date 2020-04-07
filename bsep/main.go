@@ -42,6 +42,7 @@ func main() {
 	e.GET("/readAll", certificateHandler.ReadAllInfo)
 	e.GET("/home", certificateHandler.Home)
 	e.POST("/revoke/:number", certificateHandler.Revoke)
+	e.POST("/download/:number", certificateHandler.Download)
 	e.Server.Addr = ":8080"
 	e.Logger.Fatal(e.Start(":8080"))
 
