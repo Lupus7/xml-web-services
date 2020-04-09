@@ -28,7 +28,7 @@ func (lg *LoginHandler) Loging(c echo.Context) error {
 	}
 	err := lg.certificateService.CheckUser(username, password)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Something bad happened...")
+		return echo.NewHTTPError(http.StatusInternalServerError, "Something bad happened... Check your credentials")
 	}
-	return c.HTML(http.StatusOK, `<body><h3>Successfully logged in...</h3><br><a href="/createnew">Create certificate</a></body>`)
+	return c.HTML(http.StatusOK, `<body><h3>Successfully logged in...</h3><br><a href="/createnew">Create certificate</a><br><a href="/home">Go to home page</a></body>`)
 }

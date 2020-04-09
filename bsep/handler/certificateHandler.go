@@ -42,7 +42,6 @@ func (ch *CertificateHandler) CreateNew(c echo.Context) error {
 func (ch *CertificateHandler) Create(c echo.Context) error {
 	var request dto.CertificateRequest
 	err := c.Bind(&request)
-	fmt.Println("ddd", request.SerialNumber)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
@@ -57,15 +56,15 @@ func (ch *CertificateHandler) Create(c echo.Context) error {
 
 func (ch *CertificateHandler) Home(c echo.Context) error {
 	tpl := template.Must(template.ParseFiles("views/home.gohtml"))
-	certificats, err := ch.certificateService.ReadKeyStoreAllInfo()
+	certificates, err := ch.certificateService.ReadKeyStoreAllInfo()
 	if err != nil {
 		return err
 	}
-	if len(certificats) == 0 {
+	if len(certificates) == 0 {
 		return tpl.Execute(c.Response().Writer, []dto.CertificateResponse{})
 	}
 	responses := []dto.CertificateResponse{}
-	for _, c := range certificats {
+	for _, c := range certificates {
 		revoked := ch.certificateService.IsRevoked(c)
 		responses = append(responses, toCertificateResponse(c, revoked))
 	}
@@ -132,6 +131,8 @@ func (ch *CertificateHandler) Download(c echo.Context) error {
 }
 
 func toCertificateResponse(c *x509.Certificate, revoked bool) dto.CertificateResponse {
+	issuer := fmt.Sprintf("%s:%s:%s:%s",c.Issuer.Country[0],c.Issuer.Organization[0],c.Issuer.StreetAddress[0],c.Issuer.Province[0])
+	fmt.Println(issuer)
 	return dto.CertificateResponse{
 		Country:      c.Subject.Country[0],
 		Organization: c.Subject.Organization[0],
@@ -140,6 +141,7 @@ func toCertificateResponse(c *x509.Certificate, revoked bool) dto.CertificateRes
 		Email:        c.EmailAddresses[0],
 		SerialNumber: c.SerialNumber.String(),
 		PostalCode:   c.Subject.PostalCode[0],
-		Revoken:      revoked,
+		Issuer:       issuer,
+		Revoked:      revoked,
 	}
 }

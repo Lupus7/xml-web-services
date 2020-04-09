@@ -23,6 +23,7 @@
             <th scope="col">Address</th>
             <th scope="col">Email</th>
             <th scope="col">Postal Code</th>
+            <th scope="col">Issuer</th>
         </tr>
         </thead>
         <tbody>
@@ -34,8 +35,9 @@
                 <td>{{$element.Address}}</td>
                 <td>{{$element.Email}}</td>
                 <td>{{$element.PostalCode}}</td>
+                <td>{{$element.Issuer}}</td>
                 <td>
-                    {{if $element.Revoken}}
+                    {{if $element.Revoked}}
                         <label>Already revoked</label>
                     {{else}}
                         <form action="/revoke/{{.SerialNumber}}" method="POST" class="form-horizontal">

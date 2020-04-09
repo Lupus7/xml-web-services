@@ -2,7 +2,6 @@ package service
 
 import (
 	"bsep/handler/dto"
-	"bsep/model"
 	"bsep/repository"
 	"bytes"
 	"crypto"
@@ -45,7 +44,7 @@ func (cs *CertificateService) CreateCertificate(request *dto.CertificateRequest)
 	if request.CertificateAuthority == "on" {
 		isCA = true
 	}
-
+	//create certificate with given request values
 	template := &x509.Certificate{
 		IsCA:                  isCA,
 		BasicConstraintsValid: true,
@@ -70,7 +69,7 @@ func (cs *CertificateService) CreateCertificate(request *dto.CertificateRequest)
 	fmt.Println(template)
 
 	var parent = template
-	//Check field issuer from request, if issuer is root-self signed, certificat is self signed
+	//Check field issuer from request, if issuer is root-self signed, certificate is self signed
 	// otherwise, get parent certificate by serial number, which must be parsed from request object
 	//exm: FTN, Address, Srbija, Novi Sad, 243314,21000 - serial number is on 5.element, we must also trim spaces
 	if request.Issuer != "root - self signed" {
@@ -85,13 +84,7 @@ func (cs *CertificateService) CreateCertificate(request *dto.CertificateRequest)
 			parent = rootCert
 		}
 	}
-
-	//Save certificate model in dataabse
-	err = cs.saveCertificateInDatabase(template)
-	if err != nil {
-		return err
-	}
-
+	
 	// generate private key
 	privatekey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
@@ -177,20 +170,6 @@ func (cs *CertificateService) CreateCertificate(request *dto.CertificateRequest)
 
 func (cs *CertificateService) CheckUser(username, password string) error {
 	return cs.CertificateDB.ValidateUser(username, password)
-}
-
-func (cs *CertificateService) saveCertificateInDatabase(c *x509.Certificate) error {
-	certificat := &model.Certificate{
-		Country:      c.Subject.Country[0],
-		Organization: c.Subject.Organization[0],
-		ValidFrom:    c.NotBefore,
-		ValidTo:      c.NotAfter,
-		Valid:        true,
-	}
-	if c.NotAfter.Before(time.Now()) {
-		certificat.Valid = false
-	}
-	return cs.CertificateDB.Create(certificat)
 }
 
 //All information of certificates, read from keystore file .. password needed
@@ -284,11 +263,7 @@ func (cs *CertificateService) RevokeCertificate(s string) error {
 			}
 		}
 	}
-	//for _, c := range allCertificats {
-	//	if c.Issuer.SerialNumber == certificat.SerialNumber.String() {
-	//		toBeRevoked = append(toBeRevoked, c)
-	//	}
-	//}
+
 
 	//convert big.Int to int , fastest way to convert to string, and then to int
 	//save all revoked certificates in database

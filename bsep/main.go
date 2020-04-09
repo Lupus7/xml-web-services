@@ -7,15 +7,26 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
+	"github.com/joho/godotenv"
+	"os"
+	"strconv"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil{
+		panic(err)
+	}
+	port, err := strconv.Atoi(os.Getenv("DB_PORT"))
+	if err != nil{
+		panic(err)
+	}
 	config := repository.PostgresConfig{
-		Host:     "localhost",
-		Port:     5432,
-		User:     "bojan",
-		Password: "bojan",
-		Name:     "bsep",
+		Host:     os.Getenv("DB_HOST"),
+		Port:     port,
+		User:     os.Getenv("DB_USER"),
+		Password: os.Getenv("DB_PASSWORD"),
+		Name:     os.Getenv("DB_NAME"),
 	}
 
 	store, err := repository.Open(config)

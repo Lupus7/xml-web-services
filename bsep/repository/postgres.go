@@ -39,9 +39,6 @@ func Open(config PostgresConfig) (*CertificateDB, error) {
 }
 
 func (cdb *CertificateDB) AutoMigrate() error {
-	if err := cdb.db.AutoMigrate(&model.Certificate{}).Error; err != nil {
-		return err
-	}
 	if err := cdb.db.AutoMigrate(&model.User{}).Error; err != nil {
 		return err
 	}
@@ -66,10 +63,6 @@ func (cdb *CertificateDB) AutoMigrate() error {
 	return nil
 }
 
-func (cdb *CertificateDB) Create(cert *model.Certificate) error {
-	return cdb.db.Create(cert).Error
-}
-
 func (cdb *CertificateDB) Close() error {
 	return cdb.db.Close()
 }
@@ -87,11 +80,11 @@ func (cdb *CertificateDB) ValidateUser(username string, pass string) error {
 }
 
 func (cdb *CertificateDB) RevokeCertificat(i int) error {
-	revoken := &model.Revoked{
+	revoked := &model.Revoked{
 		CertificatID:   i,
 		RevocationTime: time.Now(),
 	}
-	return cdb.db.Create(revoken).Error
+	return cdb.db.Create(revoked).Error
 }
 
 func (cdb *CertificateDB) GetAllRevoked() ([]*model.Revoked, error) {
