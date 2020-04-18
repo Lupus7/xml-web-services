@@ -1,0 +1,23 @@
+model cars:
+    Advertiser -- onaj koji je izdao oglas //mogao bi biti username ili email, nema mi logike da to bude iD, ne znaci nam nista
+    Brand
+    Model
+    FuelType
+    Transimission
+    Class (Suv, old-tajmer, gradski)
+    Price
+    MileAge ( dozvoljena kilometraza) -Unlimited or exp 1000km. Ako nije unlimited, i ako se predje, cneovnikom je odredjeno koliko se onda dodatno mora platiti pri svakom kilometru
+    MileAgeInTotal (ukupna kilometraza vozila) -- nakon upotrebe nekog vozila, predjenu kilometrazu dodati na ukupnu
+    CollisionDamageWaiver, moglo bi biti true? Da li postoji opcija kupovine Collision Damage Waiver protekcije (kupovinom ove opcije se smanjuju troškovi u slučaju neke nezgode ili krađe automobila),
+    SeatsNumber
+    Available - kada se rentira stavi na false i popuni mu naredna 2 polja, rentedFrom,rentedTo
+    RentedFrom -- ovo treba da bude neki datum koji ce reci kada je vozilo slobodno, definise se prilikom kreiranja oglasa.
+    RentedTo -- da li poseduje android uredjaj (true/false)
+    Rating
+    Picture
+    Description -- detaljan opis vozila i pojedinosti
+
+
+    //izborom pojedinacnog vozila, prelazi se na detaljan prikaz gde je moguce videti sve fotografije kao i podatke o automobilu
+    //Kako cuvati slike?
+    Napraviti model Image, unutar koga cemo cuvati IDAutomobila, i putanju do slike
