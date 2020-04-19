@@ -11,6 +11,10 @@ import (
 	"xml-web-services/cars/handler"
 	"xml-web-services/cars/service"
 	"xml-web-services/cars/store/postgres"
+	"github.com/labstack/echo/middleware"
+	"net/http"
+
+
 )
 
 func main() {
@@ -48,6 +52,15 @@ func main() {
 	carHandler := handler.NewCarHandler(carService)
 
 	e := echo.New()
+	e.Use(middleware.CORS())
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
+	}))
+
+
 	//routes
 	e.GET("/api/cars", carHandler.FindAll)
 	e.POST("/api/cars/", carHandler.SearchCars)
