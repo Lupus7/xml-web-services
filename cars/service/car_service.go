@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 	"xml-web-services/cars/handler/dto"
 	"xml-web-services/cars/model"
@@ -13,26 +12,26 @@ type CarService struct {
 	Store *postgres.Store
 }
 
-func NewCarService(store *postgres.Store)*CarService{
+func NewCarService(store *postgres.Store) *CarService {
 	return &CarService{store}
 }
 
-func(cs *CarService)FindAll()([]*model.Car,error){
+func (cs *CarService) FindAll() ([]*model.Car, error) {
 	return cs.Store.FindAllCars()
 }
 
 func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Car, error) {
 	//first retrieve all available cars
-	fmt.Printf("%v",*request)
+	fmt.Printf("%v", *request)
 	availableCars, err := cs.Store.FindAvailableCars()
-	if err != nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
 
 	if request.Brand != "" {
 		//search by brand
-		for i, c := range availableCars {
-			if !strings.Contains(strings.ToLower(request.Brand), strings.ToLower(c.Brand)){
+		for i := len(availableCars) - 1; i >= 0; i-- {
+			if !strings.Contains(strings.ToLower(request.Brand), strings.ToLower(availableCars[i].Brand)) {
 				availableCars = append(availableCars[:i], availableCars[i+1:]...)
 			}
 		}
@@ -40,8 +39,8 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Car, error) {
 
 	if request.Model != "" {
 		//search by model
-		for i, c := range availableCars {
-			if !strings.Contains(strings.ToLower(request.Model), strings.ToLower(c.CarModel)){
+		for i := len(availableCars) - 1; i >= 0; i-- {
+			if !strings.Contains(strings.ToLower(request.Model), strings.ToLower(availableCars[i].CarModel)) {
 				availableCars = append(availableCars[:i], availableCars[i+1:]...)
 			}
 		}
@@ -49,8 +48,8 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Car, error) {
 
 	if request.Fuel != "" {
 		//search by fuel
-		for i, c := range availableCars {
-			if !strings.Contains(strings.ToLower(request.Fuel), strings.ToLower(c.FuelType)){
+		for i := len(availableCars) - 1; i >= 0; i-- {
+			if !strings.Contains(strings.ToLower(request.Fuel), strings.ToLower(availableCars[i].FuelType)) {
 				availableCars = append(availableCars[:i], availableCars[i+1:]...)
 			}
 		}
@@ -58,8 +57,8 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Car, error) {
 
 	if request.Transmission != "" {
 		//search by transmission type
-		for i, c := range availableCars {
-			if !strings.Contains(strings.ToLower(request.Transmission), strings.ToLower(c.Transmission)){
+		for i := len(availableCars) - 1; i >= 0; i-- {
+			if !strings.Contains(strings.ToLower(request.Transmission), strings.ToLower(availableCars[i].Transmission)) {
 				availableCars = append(availableCars[:i], availableCars[i+1:]...)
 			}
 		}
@@ -67,8 +66,8 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Car, error) {
 
 	if request.Class != "" {
 		//search by class
-		for i, c := range availableCars {
-			if !strings.Contains(strings.ToLower(request.Class), strings.ToLower(c.Class)){
+		for i := len(availableCars) - 1; i >= 0; i-- {
+			if !strings.Contains(strings.ToLower(request.Class), strings.ToLower(availableCars[i].Class)) {
 				availableCars = append(availableCars[:i], availableCars[i+1:]...)
 			}
 		}
@@ -76,8 +75,8 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Car, error) {
 
 	if request.PriceMin != 0 {
 		//search by minimum price
-		for i, c := range availableCars {
-			if request.PriceMin > c.Price{
+		for i := len(availableCars) - 1; i >= 0; i-- {
+			if request.PriceMin > availableCars[i].Price {
 				availableCars = append(availableCars[:i], availableCars[i+1:]...)
 			}
 		}
@@ -85,8 +84,8 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Car, error) {
 
 	if request.PriceMax != 0 {
 		//search by maximum price
-		for i, c := range availableCars {
-			if request.PriceMax < c.Price{
+		for i := len(availableCars) - 1; i >= 0; i-- {
+			if request.PriceMax < availableCars[i].Price {
 				availableCars = append(availableCars[:i], availableCars[i+1:]...)
 			}
 		}
@@ -94,46 +93,41 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Car, error) {
 
 	if request.TotalMileAge != 0 {
 		//search by total mileage
-		for i, c := range availableCars {
-			if request.TotalMileAge > c.MileAgeInTotal{
+		for i := len(availableCars) - 1; i >= 0; i-- {
+			if request.TotalMileAge < availableCars[i].MileAgeInTotal {
 				availableCars = append(availableCars[:i], availableCars[i+1:]...)
 			}
 		}
 	}
 
-	if request.CollisionDamage != nil {
-		//search by collision damage
-		for i, c := range availableCars {
-			if *request.CollisionDamage != c.CollisionDamageWaiver{
-				availableCars = append(availableCars[:i], availableCars[i+1:]...)
-			}
+	//filtratind by CollisinDamage
+	for i := len(availableCars) - 1; i >= 0; i-- {
+		if request.CollisionDamage != availableCars[i].CollisionDamageWaiver {
+			availableCars = append(availableCars[:i], availableCars[i+1:]...)
+
 		}
 	}
 
 	if request.SeatsNumber != 0 {
 		//search by seats number
-		for i, c := range availableCars {
-			if request.SeatsNumber != c.NumberOfSeats{
+		for i := len(availableCars) - 1; i >= 0; i-- {
+			if request.SeatsNumber != availableCars[i].NumberOfSeats {
 				availableCars = append(availableCars[:i], availableCars[i+1:]...)
 			}
 		}
 	}
 
-	if request.PlannedMileAge != "" {
-		for i, c := range availableCars {
-			if c.AllowedMileAge != "UNLIMITED" {
-				allowedInt, _ := strconv.Atoi(c.AllowedMileAge)
-				wantedInt, _ := strconv.Atoi(request.PlannedMileAge)
+	if request.PlannedMileAge != 0 {
+		for i := len(availableCars) - 1; i >= 0; i-- {
+			if availableCars[i].AllowedMileAge != 0 {
+				allowedInt := availableCars[i].AllowedMileAge
+				wantedInt := request.PlannedMileAge
 				if allowedInt < wantedInt {
-					fmt.Printf("Car is allowed : ", c.AllowedMileAge, "  and we want to : ", wantedInt)
 					availableCars = append(availableCars[:i], availableCars[i+1:]...)
 				}
 			}
 		}
 	}
 
-	return availableCars,nil
+	return availableCars, nil
 }
-
-
-

@@ -31,8 +31,8 @@ type Car struct {
 	Transmission          string
 	Class                 string
 	Price                 float32
-	AllowedMileAge        string //unlimited or number
-	MileAgeInTotal        float32
+	AllowedMileAge        int //if its 0 that means its unlimited
+	MileAgeInTotal        int
 	CollisionDamageWaiver bool
 	NumberOfSeats         int
 	Available             bool

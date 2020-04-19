@@ -155,23 +155,38 @@ export default {
         fuelF:"",
         transmissionF:"",
         classF:"",
-        price_minF:"",
-        price_maxF:"",
-        total_mileageF:"",
-        planned_mileageF:"",
-        collision_damageF:"",
-        seats_numberF:"",
+        price_minF:0,
+        price_maxF:0,
+        total_mileageF:0,
+        planned_mileageF:0,
+        collision_damageF:false,
+        seats_numberF:0,
     }
   },
   methods:{
     
     search(){
       // parsirati datume, checkbox true i false
+      console.log(this.collision_damageF)
+      let collision_damage_bool = this.collision_damageF == true
+      console.log("COL damage : " + collision_damage_bool)
+
+      let takeoverString = ''
+      if (this.take_overF != ''){
+           let takeover_date = new Date(this.take_overF) 
+           takeoverString = takeover_date.toLocaleString()
+      }
+     
+      let returnString = ''
+      if(this.returnF != ''){
+          let returnDate = new Date(this.returnF)
+          returnString = returnDate.toLocaleString()
+      }
       event.preventDefault();
       axios.post('/api/cars/', {
                        "place":this.placeF,
-                       "take_over":Date.parse(this.take_overF),
-                       "return":Date.parse(this.returnF),
+                       "take_over": takeoverString,
+                       "return":returnString,
                        "brand":this.brandF,
                        "model":this.modelF,
                        "fuel":this.fuelF,
@@ -181,7 +196,7 @@ export default {
                        "price_max":parseFloat(this.price_maxF),
                        "total_mileage":parseInt(this.total_mileageF),
                        "planned_mileage":parseInt(this.planned_mileageF),
-                       "collision_damage":this.collision_damageF,
+                       "collision_damage":collision_damage_bool,
                        "seats_number":parseInt(this.seats_numberF),
                       
                       

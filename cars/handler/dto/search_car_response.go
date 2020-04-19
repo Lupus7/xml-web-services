@@ -8,7 +8,7 @@ type SearchResponse struct {
 	Transmission    string
 	Class           string
 	Price           float32
-	TotalMileage    float32
+	TotalMileage    int
 	AllowedMileage  string
 	SeatsNumber     int
 	CollisionDamage string
