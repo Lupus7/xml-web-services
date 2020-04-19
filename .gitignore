@@ -3,3 +3,4 @@ cars/.env
 cars/go.sum
 cars/temp.txt
 cars/upload.gohtml
+.env
