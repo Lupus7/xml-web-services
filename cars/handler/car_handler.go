@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/labstack/echo"
 	"net/http"
+	"strconv"
 	"xml-web-services/cars/handler/dto"
 	"xml-web-services/cars/model"
 	"xml-web-services/cars/service"
@@ -29,12 +31,12 @@ func (ch *CarHandler) FindAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, carsDto)
 }
 
-func(ch *CarHandler)SearchCars(c echo.Context)error {
+func (ch *CarHandler) SearchCars(c echo.Context) error {
 	dtoRequest := &dto.SearchDTO{}
-	if err := c.Bind(dtoRequest); err != nil {
+	if err := c.Bind(&dtoRequest); err != nil {
+		fmt.Println(err.Error())
 		return err
 	}
-
 	filtrated, err := ch.CarService.Search(dtoRequest)
 	if err != nil {
 		return err
@@ -46,10 +48,14 @@ func(ch *CarHandler)SearchCars(c echo.Context)error {
 	return c.JSON(http.StatusOK, carsResponse)
 }
 
-func toResponse(car *model.Car)*dto.SearchResponse {
+func toResponse(car *model.Car) *dto.SearchResponse {
 	collisionDamage := "not allowed"
 	if car.CollisionDamageWaiver {
 		collisionDamage = "allowed"
+	}
+	allowedMileage := "UNLIMITED"
+	if car.AllowedMileAge == 0 {
+		allowedMileage = strconv.Itoa(car.AllowedMileAge)
 	}
 	return &dto.SearchResponse{
 		Advertiser:      car.Advertiser,
@@ -59,7 +65,7 @@ func toResponse(car *model.Car)*dto.SearchResponse {
 		Transmission:    car.Transmission,
 		Class:           car.Class,
 		Price:           car.Price,
-		AllowedMileage:  car.AllowedMileAge,
+		AllowedMileage:  allowedMileage,
 		TotalMileage:    car.MileAgeInTotal,
 		SeatsNumber:     car.NumberOfSeats,
 		CollisionDamage: collisionDamage,
