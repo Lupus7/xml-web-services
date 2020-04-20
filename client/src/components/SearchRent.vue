@@ -140,7 +140,7 @@ export default {
     return{
       // adds ce da se popuni posle search,onda podesi key u fields i items zameni sa adds
       fields: [
-          { key: 'image', label:'Image', sortable: false},{ key: 'Brand', label:'Car Brand', sortable: false},{ key: 'Model',label:"Car Model", sortable: false},
+          { key: 'Images', label:'Image', sortable: false},{ key: 'Brand', label:'Car Brand', sortable: false},{ key: 'Model',label:"Car Model", sortable: false},
           { key: 'Place', label:"Place", sortable:false},{ key: 'Fuel', label:'Fuel Type', sortable: false},{ key: 'Transmission', label: 'Transmission Type', sortable: false},
           { key: 'Class',label:"Car Class", sortable: false},{ key:"TotalMileage",label: 'Traveled Km', sortable: true},{key:"AllowedMileage", label: 'Predicted Km', sortable: true},
           { key:'Price',label: 'Price[$]', sortable: true},{ key:'SeatsNumber',label: 'Children Seats', sortable: false},{key:'Rating', label: 'Rate', sortable: true}, {key:'moredetails',label:"More Details"}         
@@ -194,8 +194,8 @@ export default {
                        "class":this.classF,
                        "price_min":parseFloat(this.price_minF),
                        "price_max":parseFloat(this.price_maxF),
-                       "total_mileage":parseInt(this.total_mileageF),
-                       "planned_mileage":parseInt(this.planned_mileageF),
+                       "total_mileage":parseFloat(this.total_mileageF),
+                       "planned_mileage":parseFloat(this.planned_mileageF),
                        "collision_damage":collision_damage_bool,
                        "seats_number":parseInt(this.seats_numberF),
                       

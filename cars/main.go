@@ -13,8 +13,6 @@ import (
 	"xml-web-services/cars/handler"
 	"xml-web-services/cars/service"
 	"xml-web-services/cars/store/postgres"
-	"github.com/labstack/echo/middleware"
-	"net/http"
 
 
 )
