@@ -3,7 +3,9 @@
     <nav class="navbar navbar-dark bg-dark">     
       <ul class="nav">
         <li class="nav-item">
-          <a class="nav-link active" type="button" href="#" data-toggle="modal" data-target="#search" >Search</a>
+          <b-link class="nav-link active" type="button" href="#" data-toggle="modal" data-target="#search" >   
+            <b-icon icon="search" aria-hidden="true"></b-icon> Search
+          </b-link>
         </li>
        
       </ul>      
@@ -107,9 +109,9 @@
           </b-form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-toggle="collapse" href="#advanced" role="button">Advanced Search</button>
-          <button type="button" class="btn btn-success" @click="search()" data-dismiss="modal" >Confirm</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button @click="changeSearch()" type="button" class="btn btn-primary" data-toggle="collapse" href="#advanced" role="button" v-text="searchName">  </button>
+          <button type="button" class="btn btn-success" @click="search()" data-dismiss="modal" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal"> <b-icon icon="x-circle"> </b-icon>  Close</button>
         </div>
       </div>
     </div>
@@ -161,9 +163,18 @@ export default {
         planned_mileageF:0,
         collision_damageF:false,
         seats_numberF:0,
+        searchName: "Advanced Search",
     }
   },
   methods:{
+
+    changeSearch(){
+      if(this.searchName === "Basic Search")
+          this.searchName = "Advanced Search"
+      else if(this.searchName === "Advanced Search" )
+          this.searchName = "Basic Search"
+
+    },
     
     search(){
       // parsirati datume, checkbox true i false
