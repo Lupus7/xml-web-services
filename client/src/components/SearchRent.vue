@@ -120,8 +120,8 @@
 
    <div>
     <b-table striped hover :fields="fields" :items="adds" v-if="this.adds.length > 0" >
-           <template v-slot:cell(image)= "{value}">
-            <img style="width:120px;height:120px" thumbnail fluid :src = value />
+           <template v-slot:cell(images)= "{value}">
+            <img style="width:120px;height:120px" thumbnail fluid :src = value[0] />
           </template>
           <template v-slot:cell(moredetails)>
             <b-button variant="success"> More Detailed </b-button>
