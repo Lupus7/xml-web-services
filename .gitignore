@@ -4,3 +4,6 @@ cars/go.sum
 cars/temp.txt
 cars/upload.gohtml
 .env
+cars/seed2
+cars/model/tests.go
+cars/setup.sql

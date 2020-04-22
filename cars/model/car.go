@@ -1,42 +1,24 @@
 package model
 
-import (
-	"github.com/jinzhu/gorm"
-)
-
-const (
-	FUELDIESEL    = "DIESEL"
-	FUELGASOLINE  = "GASOLINE"
-	FUELPETROLEUM = "PETROLEUM"
-	NATURALGAS    = "NATURALGAS"
-	BIODIESEL     = "BIO-DIESEL"
-	ETHANOL       = "ETHANOL"
-
-	MANUALTRANSMISION     = "MANUAL"
-	AUTOMATICTRANSMISSION = "AUTOMATIC"
-
-	ECONOMICVEHICLE = "ECONOMIC"
-	LUXUREVEHICLE   = "LUXURY"
-	SPORTS          = "SPORTS"
-	SUV             = "SUV"
-	OLD_TIMER       = "OLD TIMER"
-)
-
 type Car struct {
-	gorm.Model
-	Advertiser            string //probably to be username or email
-	Brand                 string
-	CarModel              string
-	FuelType              string
-	Transmission          string
-	Class                 string
+	ID                    int          `gorm:"primary_key"`
+	Advertiser            string
+	Brand                 Brand        `gorm:"foreignkey:BrandId"`
+	BrandId               int          `gorm:"not null"`
+	Model                 Model        `gorm:"foreignkey:ModelId"`
+	ModelId               int          `gorm:"not null"`
+	Fuel                  Fuel         `gorm:"foreignkey:FuelId"`
+	FuelId                int          `gorm:"not null"`
+	Transmission          Transmission `gorm:"foreignkey:TransmissionId"`
+	TransmissionId        int          `gorm:"not null"`
+	Class                 Class        `gorm:"foreignkey:ClassId"`
+	ClassId               int          `gorm:"not null"`
 	Price                 float32
-	AllowedMileAge        int //if its 0 that means its unlimited
-	MileAgeInTotal        int
+	AllowedMileAge        float32 //if its 0 that means its unlimited
+	MileAgeInTotal        float32
 	CollisionDamageWaiver bool
 	NumberOfSeats         int
-	Available             bool
 	Rating                float32
 	Description           string
-	Images                []Image `gorm:"-"`
+	Images                []Image      `gorm:"foreignkey:"CarId"`
 }
