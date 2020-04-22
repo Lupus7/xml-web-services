@@ -7,6 +7,7 @@ import (
 	"xml-web-services/cars/handler/dto"
 	"xml-web-services/cars/model"
 	"xml-web-services/cars/service"
+	"strings"
 )
 
 type CarHandler struct {
@@ -78,5 +79,8 @@ func toResponse(ad *model.Ad) *dto.SearchResponse {
 		Rating:          ad.Car.Rating,
 		Description:     ad.Car.Description,
 		Images:          images,
+		Place:           ad.Place,
+		StartDate:       strings.Split(ad.StartDate.String()," ")[0],
+		EndDate:         strings.Split(ad.EndDate.String()," ")[0],
 	}
 }

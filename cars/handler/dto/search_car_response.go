@@ -15,4 +15,7 @@ type SearchResponse struct {
 	Rating          float32
 	Description     string
 	Images          []string
+	Place           string
+	StartDate       string
+	EndDate         string
 }
