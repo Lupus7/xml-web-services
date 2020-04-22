@@ -123,6 +123,7 @@
            <template v-slot:cell(images)= "{value}">
             <img style="width:120px;height:120px" thumbnail fluid :src = value[0] />
           </template>
+          
           <template v-slot:cell(moredetails)>
             <b-button variant="success"> More Detailed </b-button>
           </template>
@@ -143,7 +144,7 @@ export default {
       // adds ce da se popuni posle search,onda podesi key u fields i items zameni sa adds
       fields: [
           { key: 'Images', label:'Image', sortable: false},{ key: 'Brand', label:'Car Brand', sortable: false},{ key: 'Model',label:"Car Model", sortable: false},
-          { key: 'Place', label:"Place", sortable:false},{ key: 'Fuel', label:'Fuel Type', sortable: false},{ key: 'Transmission', label: 'Transmission Type', sortable: false},
+          { key: 'Place', label:"Place", sortable:false}, { key: 'StartDate', label:"Start", sortable:false},{ key: 'EndDate', label:"End", sortable:false},{ key: 'Fuel', label:'Fuel Type', sortable: false},{ key: 'Transmission', label: 'Transmission Type', sortable: false},
           { key: 'Class',label:"Car Class", sortable: false},{ key:"TotalMileage",label: 'Traveled Km', sortable: true},{key:"AllowedMileage", label: 'Predicted Km', sortable: true},
           { key:'Price',label: 'Price[$]', sortable: true},{ key:'SeatsNumber',label: 'Children Seats', sortable: false},{key:'Rating', label: 'Rate', sortable: true}, {key:'moredetails',label:"More Details"}         
          
