@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"strings"
+	"time"
 	"xml-web-services/cars/handler/dto"
 	"xml-web-services/cars/model"
 	"xml-web-services/cars/store/postgres"
@@ -16,118 +17,141 @@ func NewCarService(store *postgres.Store) *CarService {
 	return &CarService{store}
 }
 
-func (cs *CarService) FindAll() ([]*model.Car, error) {
-	return cs.Store.FindAllCars()
+func (cs *CarService) FindAll() ([]*model.Ad, error) {
+	return cs.Store.FindAllAds()
 }
 
-func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Car, error) {
-	//first retrieve all available cars
+func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	fmt.Printf("%v", *request)
-	availableCars, err := cs.Store.FindAvailableCars()
-	if err != nil {
-		return nil, err
+	var ads []*model.Ad
+	ads, _ = cs.Store.FindAllAds()
+	if request.TakeOverDate != "" && request.ReturnDate != "" {
+		startDate, err := time.Parse(time.RFC3339, request.TakeOverDate)
+		if err != nil {
+			fmt.Println(err.Error())
+			return nil, err
+		}
+		endDate, err := time.Parse(time.RFC3339, request.ReturnDate)
+		if err != nil {
+			fmt.Println(err.Error())
+			return nil, err
+		}
+
+		ads, err = cs.Store.FindAllAdsBetweenDates(startDate, endDate)
+		if err != nil {
+			return nil, err
+		}
+		fmt.Println("Returned : ", len(ads), " ads")
+	}
+
+	if request.Place != "" {
+		for i := len(ads) - 1; i >= 0; i-- {
+			if !strings.Contains(strings.ToLower(ads[i].Place), strings.ToLower(request.Place)) {
+				ads = append(ads[:i], ads[i+1:]...)
+			}
+		}
 	}
 
 	if request.Brand != "" {
 		//search by brand
-		for i := len(availableCars) - 1; i >= 0; i-- {
-			if !strings.Contains(strings.ToLower(request.Brand), strings.ToLower(availableCars[i].Brand)) {
-				availableCars = append(availableCars[:i], availableCars[i+1:]...)
+		for i := len(ads) - 1; i >= 0; i-- {
+			if !strings.Contains(strings.ToLower(ads[i].Car.Brand.Name), strings.ToLower(request.Brand)) {
+				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
 	}
 
 	if request.Model != "" {
 		//search by model
-		for i := len(availableCars) - 1; i >= 0; i-- {
-			if !strings.Contains(strings.ToLower(request.Model), strings.ToLower(availableCars[i].CarModel)) {
-				availableCars = append(availableCars[:i], availableCars[i+1:]...)
+		for i := len(ads) - 1; i >= 0; i-- {
+			if !strings.Contains(strings.ToLower(ads[i].Car.Model.Name), strings.ToLower(request.Model)) {
+				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
 	}
 
 	if request.Fuel != "" {
 		//search by fuel
-		for i := len(availableCars) - 1; i >= 0; i-- {
-			if !strings.Contains(strings.ToLower(request.Fuel), strings.ToLower(availableCars[i].FuelType)) {
-				availableCars = append(availableCars[:i], availableCars[i+1:]...)
+		for i := len(ads) - 1; i >= 0; i-- {
+			if !strings.Contains(strings.ToLower(ads[i].Car.Fuel.Name), strings.ToLower(request.Fuel)) {
+				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
 	}
 
 	if request.Transmission != "" {
 		//search by transmission type
-		for i := len(availableCars) - 1; i >= 0; i-- {
-			if !strings.Contains(strings.ToLower(request.Transmission), strings.ToLower(availableCars[i].Transmission)) {
-				availableCars = append(availableCars[:i], availableCars[i+1:]...)
+		for i := len(ads) - 1; i >= 0; i-- {
+			if !strings.Contains(strings.ToLower(ads[i].Car.Transmission.Name), strings.ToLower(request.Transmission)) {
+				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
 	}
 
 	if request.Class != "" {
 		//search by class
-		for i := len(availableCars) - 1; i >= 0; i-- {
-			if !strings.Contains(strings.ToLower(request.Class), strings.ToLower(availableCars[i].Class)) {
-				availableCars = append(availableCars[:i], availableCars[i+1:]...)
+		for i := len(ads) - 1; i >= 0; i-- {
+			if !strings.Contains(strings.ToLower(ads[i].Car.Class.Name), strings.ToLower(request.Class)) {
+				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
 	}
 
 	if request.PriceMin != 0 {
 		//search by minimum price
-		for i := len(availableCars) - 1; i >= 0; i-- {
-			if request.PriceMin > availableCars[i].Price {
-				availableCars = append(availableCars[:i], availableCars[i+1:]...)
+		for i := len(ads) - 1; i >= 0; i-- {
+			if request.PriceMin > ads[i].Car.Price {
+				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
 	}
 
 	if request.PriceMax != 0 {
 		//search by maximum price
-		for i := len(availableCars) - 1; i >= 0; i-- {
-			if request.PriceMax < availableCars[i].Price {
-				availableCars = append(availableCars[:i], availableCars[i+1:]...)
+		for i := len(ads) - 1; i >= 0; i-- {
+			if request.PriceMax < ads[i].Car.Price {
+				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
 	}
 
 	if request.TotalMileAge != 0 {
 		//search by total mileage
-		for i := len(availableCars) - 1; i >= 0; i-- {
-			if request.TotalMileAge < availableCars[i].MileAgeInTotal {
-				availableCars = append(availableCars[:i], availableCars[i+1:]...)
+		for i := len(ads) - 1; i >= 0; i-- {
+			if request.TotalMileAge < ads[i].Car.MileAgeInTotal {
+				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
 	}
 
 	//filtratind by CollisinDamage
-	for i := len(availableCars) - 1; i >= 0; i-- {
-		if request.CollisionDamage != availableCars[i].CollisionDamageWaiver {
-			availableCars = append(availableCars[:i], availableCars[i+1:]...)
+	for i := len(ads) - 1; i >= 0; i-- {
+		if request.CollisionDamage != ads[i].Car.CollisionDamageWaiver {
+			ads = append(ads[:i], ads[i+1:]...)
 
 		}
 	}
 
 	if request.SeatsNumber != 0 {
 		//search by seats number
-		for i := len(availableCars) - 1; i >= 0; i-- {
-			if request.SeatsNumber != availableCars[i].NumberOfSeats {
-				availableCars = append(availableCars[:i], availableCars[i+1:]...)
+		for i := len(ads) - 1; i >= 0; i-- {
+			if request.SeatsNumber != ads[i].Car.NumberOfSeats {
+				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
 	}
 
 	if request.PlannedMileAge != 0 {
-		for i := len(availableCars) - 1; i >= 0; i-- {
-			if availableCars[i].AllowedMileAge != 0 {
-				allowedInt := availableCars[i].AllowedMileAge
+		for i := len(ads) - 1; i >= 0; i-- {
+			if ads[i].Car.AllowedMileAge != 0 {
+				allowedInt := ads[i].Car.AllowedMileAge
 				wantedInt := request.PlannedMileAge
 				if allowedInt < wantedInt {
-					availableCars = append(availableCars[:i], availableCars[i+1:]...)
+					ads = append(ads[:i], ads[i+1:]...)
 				}
 			}
 		}
 	}
 
-	return availableCars, nil
+	return ads, nil
 }

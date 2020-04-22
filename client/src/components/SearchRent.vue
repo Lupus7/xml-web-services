@@ -174,14 +174,25 @@ export default {
       let takeoverString = ''
       if (this.take_overF != ''){
            let takeover_date = new Date(this.take_overF) 
-           takeoverString = takeover_date.toLocaleString()
+           takeoverString = ISODateString(takeover_date)
       }
      
       let returnString = ''
       if(this.returnF != ''){
           let returnDate = new Date(this.returnF)
-          returnString = returnDate.toLocaleString()
+          returnString = ISODateString(returnDate)
       }
+
+      function ISODateString(d){
+        function pad(n){return n<10 ? '0'+n : n}
+        return d.getUTCFullYear()+'-'
+          + pad(d.getUTCMonth()+1)+'-'
+          + pad(d.getUTCDate())+'T'
+          + pad(d.getUTCHours())+':'
+          + pad(d.getUTCMinutes())+':'
+          + pad(d.getUTCSeconds())+'Z'
+          }
+
       event.preventDefault();
       axios.post('/api/cars/', {
                        "place":this.placeF,

@@ -8,10 +8,7 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
-	"strings"
-	"xml-web-services/cars/model"
 )
 
 type ImageService struct {
@@ -52,26 +49,26 @@ func (is *ImageService) imagePath(carID uint) (string, error) {
 	return carPath, nil
 }
 
-func (is *ImageService) Delete(i *model.Image) error {
-	return os.Remove(i.RelPath())
-}
-
-func (is *ImageService) ByCarID(carID uint) ([]model.Image, error) {
-	path := is.imgPath(carID)
-	stringss, err := filepath.Glob(path + "*")
-	if err != nil {
-		return nil, err
-	}
-	ret := make([]model.Image, len(stringss))
-	for i := range stringss {
-		stringss[i] = strings.Replace(stringss[i], path, "", 1)
-		ret[i] = model.Image{
-			Filename: stringss[i],
-			CarId:    carID,
-		}
-	}
-	return ret, nil
-}
+//func (is *ImageService) Delete(i *model.Image) error {
+//	return os.Remove(i.RelPath())
+//}
+//
+//func (is *ImageService) ByCarID(carID uint) ([]model.Image, error) {
+//	path := is.imgPath(carID)
+//	stringss, err := filepath.Glob(path + "*")
+//	if err != nil {
+//		return nil, err
+//	}
+//	ret := make([]model.Image, len(stringss))
+//	for i := range stringss {
+//		stringss[i] = strings.Replace(stringss[i], path, "", 1)
+//		ret[i] = model.Image{
+//			Filename: stringss[i],
+//			CarId:    carID,
+//		}
+//	}
+//	return ret, nil
+//}
 
 //We use three steps for uploading files as follows:
 //
