@@ -206,7 +206,7 @@ export default {
           }
 
       event.preventDefault();
-      axios.post('/api/cars/', {
+      axios.post('/api/ads/', {
                        "place":this.placeF,
                        "take_over": takeoverString,
                        "return":returnString,

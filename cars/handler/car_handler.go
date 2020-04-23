@@ -31,7 +31,7 @@ func (ch *CarHandler) FindAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, carsDto)
 }
 
-func (ch *CarHandler) SearchCars(c echo.Context) error {
+func (ch *CarHandler) SearchAds(c echo.Context) error {
 	dtoRequest := &dto.SearchDTO{}
 	if err := c.Bind(&dtoRequest); err != nil {
 		fmt.Println(err.Error())
@@ -46,6 +46,66 @@ func (ch *CarHandler) SearchCars(c echo.Context) error {
 		carsResponse = append(carsResponse, toResponse(ad))
 	}
 	return c.JSON(http.StatusOK, carsResponse)
+}
+
+func(ch *CarHandler)AllBrands(c echo.Context)error{
+	brands, err := ch.CarService.FindAllBrands()
+	if err != nil {
+		return err
+	}
+	brandNames := []string{}
+	for _, brand := range brands{
+		brandNames = append(brandNames, brand.Name)
+	}
+	return c.JSON(http.StatusOK, brandNames)
+}
+
+func(ch *CarHandler)AllModels(c echo.Context)error{
+	models, err := ch.CarService.FindAllModels()
+	if err != nil {
+		return err
+	}
+	modelNames := []string{}
+	for _, model := range models{
+		modelNames = append(modelNames, model.Name)
+	}
+	return c.JSON(http.StatusOK, modelNames)
+}
+
+func(ch *CarHandler)AllFuels(c echo.Context)error{
+	fuels, err := ch.CarService.FindAllFuels()
+	if err != nil {
+		return err
+	}
+	fuelNames := []string{}
+	for _, brand := range fuels{
+		fuelNames = append(fuelNames, brand.Name)
+	}
+	return c.JSON(http.StatusOK, fuelNames)
+}
+
+func(ch *CarHandler)AllTransmissions(c echo.Context)error{
+	trs, err := ch.CarService.FindAllTransmissions()
+	if err != nil {
+		return err
+	}
+	trNames := []string{}
+	for _, tr := range trs{
+		trNames = append(trNames, tr.Name)
+	}
+	return c.JSON(http.StatusOK, trNames)
+}
+
+func(ch *CarHandler)AllClasses(c echo.Context)error{
+	classes, err := ch.CarService.FindAllClasses()
+	if err != nil {
+		return err
+	}
+	classNames := []string{}
+	for _, class := range classes{
+		classNames = append(classNames, class.Name)
+	}
+	return c.JSON(http.StatusOK, classNames)
 }
 
 func toResponse(ad *model.Ad) *dto.SearchResponse {
