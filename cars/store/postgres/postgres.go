@@ -119,3 +119,43 @@ func (store *Store) FindAllAdsBetweenDates(start time.Time, end time.Time) ([]*m
 	}
 	return ads, nil
 }
+
+func(store *Store)FindAllBrands()([]*model.Brand, error){
+	brands := []*model.Brand{}
+	if err := store.db.Find(&brands).Error; err != nil {
+		return nil,err
+	}
+	return brands, nil
+}
+
+func(store *Store)FindAllFuels()([]*model.Fuel, error){
+	fuels := []*model.Fuel{}
+	if err := store.db.Find(&fuels).Error; err != nil {
+		return nil,err
+	}
+	return fuels, nil
+}
+
+func(store *Store)FindAllModels()([]*model.Model, error){
+	models := []*model.Model{}
+	if err := store.db.Find(&models).Error; err != nil {
+		return nil,err
+	}
+	return models, nil
+}
+
+func(store *Store)FindAllTransmissions()([]*model.Transmission, error){
+	trans := []*model.Transmission{}
+	if err := store.db.Find(&trans).Error; err != nil {
+		return nil,err
+	}
+	return trans, nil
+}
+
+func(store *Store)FindAllClasses()([]*model.Class, error){
+	classes := []*model.Class{}
+	if err := store.db.Find(&classes).Error; err != nil {
+		return nil,err
+	}
+	return classes, nil
+}

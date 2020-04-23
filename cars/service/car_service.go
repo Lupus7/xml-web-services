@@ -155,3 +155,24 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 
 	return ads, nil
 }
+
+
+func(cs *CarService)FindAllBrands()([]*model.Brand,error){
+	return cs.Store.FindAllBrands()
+}
+
+func(cs *CarService)FindAllModels()([]*model.Model,error){
+	return cs.Store.FindAllModels()
+}
+
+func(cs *CarService)FindAllFuels()([]*model.Fuel,error){
+	return cs.Store.FindAllFuels()
+}
+
+func(cs *CarService)FindAllTransmissions()([]*model.Transmission,error){
+	return cs.Store.FindAllTransmissions()
+}
+
+func(cs *CarService)FindAllClasses()([]*model.Class,error){
+	return cs.Store.FindAllClasses()
+}

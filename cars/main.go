@@ -13,8 +13,6 @@ import (
 	"xml-web-services/cars/handler"
 	"xml-web-services/cars/service"
 	"xml-web-services/cars/store/postgres"
-
-
 )
 
 func main() {
@@ -47,7 +45,6 @@ func main() {
 	defer store.Close()
 	//create service
 	carService := service.NewCarService(store)
-	imageService := service.NewImageService()
 	//handlers - controllers
 	carHandler := handler.NewCarHandler(carService)
 
@@ -60,12 +57,17 @@ func main() {
 		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
 	}))
 
-	//routes
-	e.GET("/api/cars", carHandler.FindAll)
-	e.POST("/api/cars/", carHandler.SearchCars)
-	e.GET("/upload", imageService.SaveImage)
-	e.POST("/upload", imageService.SaveImage)
-	e.GET("/download/:model/", imageService.ReturnImage)
+	//   ADS
+	e.GET("/api/ads", carHandler.FindAll)
+	e.POST("/api/ads/", carHandler.SearchAds)
+
+	//   SPECIFICATIONS
+	e.GET("/api/brands", carHandler.AllBrands)
+	e.GET("/api/models",carHandler.AllModels)
+	e.GET("/api/fuels",carHandler.AllFuels)
+	e.GET("/api/transmissions", carHandler.AllTransmissions)
+	e.GET("/api/classes", carHandler.AllClasses)
+
 	e.Server.Addr = ":" + port
 	graceful.DefaultLogger().Println("Application has successfully started at port: ", 8080)
 	graceful.ListenAndServe(e.Server, 5*time.Second)
