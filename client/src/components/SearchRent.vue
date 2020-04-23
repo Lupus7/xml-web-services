@@ -235,26 +235,43 @@ export default {
       axios.get('/api/brands').then(response => { 
          // stavi brandove u brands, a mozda samo stringove ubaci     
         this.brandsResponse = response.data;
-        for(let b of this.brandsResponse){
+        this.brands = []
+        this.brands.push("");
+
+        for(let b of this.brandsResponse)
           this.brands.push(b.Name);
-        }
+        
       });
 
       axios.get('/api/classes').then(response => { 
-        this.carClasses = response.data;
+        this.carClasses = []
+        this.carClasses.push("")
+        for(let cl of response.data)
+          this.carClasses.push(cl)
       });
 
       axios.get('/api/fuels').then(response => { 
-        this.fuels = response.data;
+        this.fuels = []
+        this.fuels.push("");
+        for(let fl of response.data)
+          this.fuels.push(fl);
       });
 
       axios.get('/api/transmissions').then(response => { 
-        this.transmissions = response.data;
+        this.transmissions = []
+        this.transmissions.push("");
+        for(let tr of response.data)
+          this.transmissions.push(tr);
       });
 
     },
 
     fillModels(){
+      if(this.brandF === ""){
+        this.modelBool = true;
+        this.modelF = "";
+        return;
+      }
      
       let brandChosen = null;
       for(let brand of this.brandsResponse){
@@ -263,8 +280,10 @@ export default {
           break;
         }
       }
-
-      this.models = brandChosen.Models;
+      this.models = []
+      this.models.push("");
+      for(let m of brandChosen.Models)
+        this.models.push(m);
       this.modelBool = false;
 
     }
