@@ -57,11 +57,9 @@ func(ch *CarHandler)AllBrands(c echo.Context)error{
 	if err != nil {
 		return err
 	}
-
-	models := []string{}
 	responses := []Response{}
-
 	for _, brand := range brands{
+		models := []string{}
 		for _, model := range brand.Models{
 			models = append(models, model.Name)
 		}

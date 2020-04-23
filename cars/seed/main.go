@@ -10,10 +10,10 @@ import (
 
 
 //MODELS
-var astra = model.Model{ID: 1, Name: "Astra"}
-var X3 = model.Model{ID: 2, Name: "X3"}
-var B6 = model.Model{ID: 3, Name: "B6"}
-var stilo = model.Model{ID: 4, Name: "Stilo"}
+var astra = model.Model{ID: 1, Name: "Astra", BrandId: 1}
+var X3 = model.Model{ID: 2, Name: "X3", BrandId:2}
+var B6 = model.Model{ID: 3, Name: "B6",BrandId:3}
+var stilo = model.Model{ID: 4, Name: "Stilo",BrandId:4}
 
 var modelsOpel = []model.Model{astra}
 var modelsBMW = []model.Model{X3}
@@ -22,10 +22,18 @@ var modelsFiat = []model.Model{stilo}
 
 
 //brands
-var opel = model.Brand{ID: 1, Name: "Opel", Models: modelsOpel}
-var bmw = model.Brand{ID: 2, Name: "BMW", Models: modelsBMW}
-var passat = model.Brand{ID: 3, Name: "Pasat", Models: modelsPassat }
-var fiat = model.Brand{ID: 4, Name: "Fiat", Models: modelsFiat }
+var opel = model.Brand{ID: 1, Name: "Opel",
+	Models: modelsOpel,
+	}
+var bmw = model.Brand{ID: 2, Name: "BMW",
+	Models: modelsBMW,
+	}
+var passat = model.Brand{ID: 3, Name: "Pasat",
+	Models: modelsPassat,
+	}
+var fiat = model.Brand{ID: 4, Name: "Fiat",
+	Models: modelsFiat,
+	}
 
 //FUEL
 var diesel = model.Fuel{ID: 1, Name: "Diesel"}
@@ -163,7 +171,7 @@ func main() {
 	defer store.Close()
 
 	//Crete all tables if not exists
-	err = store.DB().Set("gorm:table_options", "CASCADE").DropTableIfExists(&model.Image{},&model.Ad{}, &model.Car{}, &model.Transmission{}, &model.Fuel{}, &model.Class{}, &model.Model{}, &model.Brand{}).Error
+	err = store.DB().Set("gorm:table_options", "CASCADE").DropTableIfExists(&model.Image{},&model.Ad{}, &model.Car{}, &model.Transmission{}, &model.Fuel{}, &model.Class{},&model.Brand{}, &model.Model{}).Error
 	if err != nil {
 		panic(err)
 	}
@@ -178,7 +186,7 @@ func main() {
 	store.DB().Model(&model.Car{}).AddForeignKey("transmission_id", "transmissions(id)", "CASCADE", "CASCADE")
 	store.DB().Model(&model.Car{}).AddForeignKey("class_id", "classes(id)", "CASCADE", "CASCADE")
 	store.DB().Model(&model.Ad{}).AddForeignKey("car_id", "cars(id)", "CASCADE", "CASCADE")
-
+	//store.DB().Model(&model.Brand{}).AddForeignKey("model_id","models(id)","CASCADE","CASCADE")
 	empty := areTablesEmpty(store.DB())
 	if empty {
 		err = populateDatabase(store)
@@ -206,23 +214,24 @@ func main() {
 }
 
 func populateDatabase(store *postgres.Store) error {
+	//models := []model.Model{}
+	//models = append(models, astra, B6, X3, stilo)
+	//for _, model := range models {
+	//	err := store.DB().Create(&model).Error
+	//	if err != nil {
+	//		return err
+	//	}
+	//}
 	brands := []model.Brand{}
-	brands = append(brands, opel, passat, bmw, fiat)
+	brands = append(brands, opel, passat,bmw, fiat)
 	for _, brand := range brands {
-		err := store.CreateBrand(&brand)
+		err := store.DB().Create(&brand).Error
 		if err != nil {
 			return err
 		}
 	}
 
-	/*models := []model.Model{}
-	models = append(models, astra, B6, X3, stilo)
-	for _, model := range models {
-		err := store.DB().Create(&model).Error
-		if err != nil {
-			return err
-		}
-	}*/
+
 
 	fuels := []model.Fuel{}
 	fuels = append(fuels, diesel, gasoline, petro, natural, biodiesel, ethanol)

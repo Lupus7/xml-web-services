@@ -38,7 +38,7 @@ func Open(config Config) (*Store, error) {
 }
 
 func (store *Store) AutoMigrate() error {
-	return store.db.AutoMigrate(&model.Image{},&model.Ad{}, &model.Car{}, &model.Brand{}, &model.Class{}, &model.Transmission{}, &model.Fuel{}, &model.Model{}).Error
+	return store.db.AutoMigrate(&model.Image{},&model.Ad{}, &model.Car{} ,&model.Brand{},&model.Model{}, &model.Class{}, &model.Transmission{}, &model.Fuel{}, ).Error
 }
 
 func (store *Store) CheckStoreConnection() error {
