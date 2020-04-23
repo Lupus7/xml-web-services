@@ -42,29 +42,29 @@
              <div class="form-row">
               <div class="form-group col-md-6">
                 <label>Car Brand</label>
-                <b-input v-model="brandF" type="text" class="form-control"/>
+                 <b-form-select v-model="brandF" :options="brands" @change="fillModels()" class="form-control"/>
               </div>
               <div class="form-group col-md-6">
                 <label>Car Model</label>
-                <b-input v-model="modelF" type="text" class="form-control"/>
+                 <b-form-select v-model="modelF" :options="models" :disabled="modelBool" class="form-control"/>
               </div>
             </div>
 
              <div class="form-row">
               <div class="form-group col-md-6">
                 <label>Fuel Type</label>
-                <b-input v-model="fuelF" type="text" class="form-control"/>
+                 <b-form-select v-model="fuelF" :options="fuels" class="form-control"/>
               </div>
               <div class="form-group col-md-6">
-                <label>Gear Box Type</label>
-                <b-input v-model="transmissionF" type="text" class="form-control"/>
+                <label>Transmission Type</label>
+                 <b-form-select v-model="transmissionF" :options="transmissions" class="form-control"/>
               </div>
             </div>
 
              <div class="form-row">
               <div class="form-group col-md-6">
                 <label>Car Class</label>
-                <b-input  v-model="classF" type="text" class="form-control"/>
+                 <b-form-select  v-model="classF" :options="carClasses" class="form-control"/>
               </div>
               <div class="form-group col-md-6">
                 <label>Traveled Km</label>
@@ -165,6 +165,7 @@ export default {
         collision_damageF:false,
         seats_numberF:0,
         searchName: "Advanced Search",
+        brands:[], carClasses:[],transmissions:[],fuels:[],models:[],modelBool:true,brandsResponse:[]
     }
   },
   methods:{
@@ -228,10 +229,48 @@ export default {
                        this.adds = response.data;
                    
                     });
+    },
+    getCarSpec(){
+
+      axios.get('/api/brands').then(response => { 
+         // stavi brandove u brands, a mozda samo stringove ubaci     
+        this.brandsResponse = response.data;
+        for(let b of this.brandsResponse){
+          this.brands.push(b.Name);
+        }
+      });
+
+      axios.get('/api/classes').then(response => { 
+        this.carClasses = response.data;
+      });
+
+      axios.get('/api/fuels').then(response => { 
+        this.fuels = response.data;
+      });
+
+      axios.get('/api/transmissions').then(response => { 
+        this.transmissions = response.data;
+      });
+
+    },
+
+    fillModels(){
+     
+      let brandChosen = null;
+      for(let brand of this.brandsResponse){
+        if(this.brandF === brand.Name){
+          brandChosen = brand;
+          break;
+        }
+      }
+
+      this.models = brandChosen.Models;
+      this.modelBool = false;
+
     }
   },
   created(){
-
+    this.getCarSpec();
   }
   
 }

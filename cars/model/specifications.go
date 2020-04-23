@@ -1,13 +1,16 @@
 package model
 
+
 type Brand struct {
 	ID   int `gorm:"primary_key"`
 	Name string
+	Models []Model `gorm:"foreignkey:"BrandId"`
 }
 
 type Model struct {
 	ID   int `gorm:"primary_key"`
 	Name string
+	BrandId int
 }
 
 type Fuel struct {

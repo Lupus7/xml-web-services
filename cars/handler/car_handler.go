@@ -49,15 +49,30 @@ func (ch *CarHandler) SearchAds(c echo.Context) error {
 }
 
 func(ch *CarHandler)AllBrands(c echo.Context)error{
+	type Response struct {
+		Name string
+		Models []string
+	}
 	brands, err := ch.CarService.FindAllBrands()
 	if err != nil {
 		return err
 	}
-	brandNames := []string{}
+
+	models := []string{}
+	responses := []Response{}
+
 	for _, brand := range brands{
-		brandNames = append(brandNames, brand.Name)
+		for _, model := range brand.Models{
+			models = append(models, model.Name)
+		}
+
+		response := Response{
+			Name: brand.Name,
+			Models: models,
+		}
+		responses = append(responses, response)
 	}
-	return c.JSON(http.StatusOK, brandNames)
+	return c.JSON(http.StatusOK, responses)
 }
 
 func(ch *CarHandler)AllModels(c echo.Context)error{

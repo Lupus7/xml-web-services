@@ -122,7 +122,7 @@ func (store *Store) FindAllAdsBetweenDates(start time.Time, end time.Time) ([]*m
 
 func(store *Store)FindAllBrands()([]*model.Brand, error){
 	brands := []*model.Brand{}
-	if err := store.db.Find(&brands).Error; err != nil {
+	if err := store.db.Set("gorm:auto_preload", true).Find(&brands).Error; err != nil {
 		return nil,err
 	}
 	return brands, nil
