@@ -8,17 +8,24 @@ import (
 	"xml-web-services/cars/store/postgres"
 )
 
-//brands
-var opel = model.Brand{ID: 1, Name: "Opel"}
-var bmw = model.Brand{ID: 2, Name: "BMW"}
-var passat = model.Brand{ID: 3, Name: "Pasat"}
-var fiat = model.Brand{ID: 4, Name: "Fiat"}
 
 //MODELS
 var astra = model.Model{ID: 1, Name: "Astra"}
 var X3 = model.Model{ID: 2, Name: "X3"}
 var B6 = model.Model{ID: 3, Name: "B6"}
 var stilo = model.Model{ID: 4, Name: "Stilo"}
+
+var modelsOpel = []model.Model{astra}
+var modelsBMW = []model.Model{X3}
+var modelsPassat = []model.Model{B6}
+var modelsFiat = []model.Model{stilo}
+
+
+//brands
+var opel = model.Brand{ID: 1, Name: "Opel", Models: modelsOpel}
+var bmw = model.Brand{ID: 2, Name: "BMW", Models: modelsBMW}
+var passat = model.Brand{ID: 3, Name: "Pasat", Models: modelsPassat }
+var fiat = model.Brand{ID: 4, Name: "Fiat", Models: modelsFiat }
 
 //FUEL
 var diesel = model.Fuel{ID: 1, Name: "Diesel"}
@@ -208,14 +215,14 @@ func populateDatabase(store *postgres.Store) error {
 		}
 	}
 
-	models := []model.Model{}
+	/*models := []model.Model{}
 	models = append(models, astra, B6, X3, stilo)
 	for _, model := range models {
 		err := store.DB().Create(&model).Error
 		if err != nil {
 			return err
 		}
-	}
+	}*/
 
 	fuels := []model.Fuel{}
 	fuels = append(fuels, diesel, gasoline, petro, natural, biodiesel, ethanol)
