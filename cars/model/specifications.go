@@ -10,7 +10,7 @@ type Brand struct {
 type Model struct {
 	ID   int `gorm:"primary_key"`
 	Name string
-	BrandId int
+	BrandId uint
 }
 
 type Fuel struct {
