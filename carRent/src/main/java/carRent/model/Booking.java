@@ -22,7 +22,7 @@ public class Booking {
     private LocalDateTime endDate;
 
     @Column(name = "state", nullable = false)
-    private int state;
+    private RequestState state;
 
     @Column(name = "place", nullable = false)
     private String place;
@@ -43,13 +43,13 @@ public class Booking {
 
     }
 
-    public Booking(LocalDateTime startDate, LocalDateTime endDate, int state, String place, LocalDateTime created, List<Car> cars, User user) {
+    public Booking(LocalDateTime startDate, LocalDateTime endDate, RequestState requestState, String place, LocalDateTime created, Car car, User user) {
         this.startDate = startDate;
         this.endDate = endDate;
-        this.state = state;
+        this.state = requestState;
         this.place = place;
         this.created = created;
-        this.cars = cars;
+        this.cars.add(car);
         this.loaner = user;
     }
 
@@ -93,12 +93,12 @@ public class Booking {
         this.endDate = endDate;
     }
 
-    public int getState() {
+    public RequestState getState() {
         return state;
     }
 
-    public void setState(int state) {
-        this.state = state;
+    public void setState(RequestState requestState) {
+        this.state = requestState;
     }
 
     public String getPlace() {
