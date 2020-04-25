@@ -1,14 +1,30 @@
 <template>
-    <SearchRent/>
+    <div id="app">
+          <NavBar/>
+          <router-view></router-view>
+    </div>
 </template>
 
 <script>
-import SearchRent from './components/SearchRent.vue'
-
+import auth from './auth'
+import NavBar from './components/NavBar'
 export default {
-  name: 'App',
+  name: 'app',
+  data(){
+    return{
+
+    }
+  },
+  methods: {
+    logout(){
+      auth.logout(this)
+    },
+    isAuthenticated(){
+      return auth.isAuthenticated()
+    }
+  },
   components: {
-    SearchRent,
+    NavBar
   }
 }
 </script>
