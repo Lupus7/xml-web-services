@@ -10,12 +10,12 @@ const router = new Router({
       },
       {
         path:'/search',
-        name: 'search',
+        name: 'SearchRent',
         component: ()=> import ('./components/SearchRent')
       },
       {
-        path: '/admin',
-        name: 'admin',
+        path: '/adminPage',
+        name: 'AdminPage',
         component: ()=> import ('./components/AdminPage')
       },
     ]

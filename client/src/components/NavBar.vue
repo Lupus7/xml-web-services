@@ -1,16 +1,54 @@
 <template>
-    <div class="navbar navbar-dark bg-dark">
-        
-        <a  class="navbar-brand" v-on:click="homepage" href="#">Home</a>
-        <a  class="navbar-brand" v-on:click="profile" href="#" >Search</a>
-        <a class="navbar-brand" v-on:click="login" href="#"  >Log in</a>
-        <a class="navbar-brand" v-on:click="register" href="#"  >Register</a>
-        <a class="navbar-brand" v-on:click="logout" href="#"  >Log out</a>
-    </div>    
+    <div>
+    <b-navbar toggleable="lg" class="navbar navbar-dark bg-dark" >
+
+            <b-collapse id="nav-collapse" is-nav>
+            <b-navbar-nav>
+                <b-link class="nav-link active" type="button" v-on:click="homepage()" href="#">  <b-icon icon="house-door-fill" aria-hidden="true"></b-icon> Homepage </b-link>
+                <b-link class="nav-link active" type="button" v-on:click="searchPage()" href="#">  <b-icon icon="newspaper" aria-hidden="true"></b-icon> Adds</b-link>
+            </b-navbar-nav>
+
+            <b-navbar-nav class="ml-auto">
+
+                <b-link right class="nav-link active" type="button" v-on:click="login()" href="#"> <b-icon icon="person-check-fill" aria-hidden="true"></b-icon> Log in</b-link>
+                <b-link class="nav-link active" type="button" v-on:click="register()" href="#"> <b-icon icon="person-plus-fill" aria-hidden="true"></b-icon> Register</b-link>
+                <b-link class="nav-link active" type="button" v-on:click="logout()" href="#"><b-icon icon="person-dash-fill" aria-hidden="true"></b-icon> Log out</b-link>
+
+            </b-navbar-nav>
+            </b-collapse>
+        </b-navbar>
+    </div>   
 </template>
 
 <script>
+
 export default {
+
+    data(){
+        return{
+
+        }
+    },
+    methods:{
+        searchPage(){
+            this.$router.push("/search");
+        },
+        homepage(){
+
+        },
+        login(){
+
+        },
+        register(){
+
+        },
+        logout(){
+
+        }
+    },
+    created(){
+
+    }
     
 }
 </script>
