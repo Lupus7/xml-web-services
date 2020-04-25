@@ -24,4 +24,14 @@ public class BookingController {
         else
             return ResponseEntity.status(400).body("Could not accept");
     }
+
+    // Prihvatanje bookinga kod usera
+    @PutMapping(value = "/api/booking/{id}", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<String> acceptBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
+
+        if (bookingService.acceptBookingRequest(id, user.getName()))
+            return ResponseEntity.ok("Booking request reserved!");
+        else
+            return ResponseEntity.status(400).body("Could not accept");
+    }
 }
