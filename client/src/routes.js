@@ -14,7 +14,7 @@ const router = new Router({
         component: ()=> import ('./components/SearchRent')
       },
       {
-        path: '/adminPage',
+        path: '/admin',
         name: 'AdminPage',
         component: ()=> import ('./components/AdminPage')
       },
