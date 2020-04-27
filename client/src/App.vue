@@ -1,25 +1,26 @@
 <template>
-    <SearchRent/>
+    <div id="app">
+          <NavBar/>
+          <router-view></router-view>
+    </div>
 </template>
 
 <script>
-import SearchRent from './components/SearchRent.vue'
-
+import NavBar from './components/NavBar'
 export default {
-  name: 'App',
+  name: 'app',
+  data(){
+    return{
+
+    }
+  },
+
   components: {
-    SearchRent,
+    NavBar
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>

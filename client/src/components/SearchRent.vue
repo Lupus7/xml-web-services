@@ -1,6 +1,6 @@
 <template>
-  <div >
-    <nav class="navbar navbar-dark bg-dark">     
+  <div>
+    <nav class="navbar navbar-dark bg-light">     
       <ul class="nav">
         <li class="nav-item">
           <b-link class="nav-link active" type="button" href="#" data-toggle="modal" data-target="#search" >   
@@ -9,7 +9,7 @@
         </li>
        
       </ul>      
-    </nav>
+    </nav> 
 
   <div class="modal fade" id="search" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
