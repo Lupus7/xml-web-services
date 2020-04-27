@@ -1,23 +1,24 @@
 <template>
     <div>
-      <br>
-      <b-button-group>
-        <b-button v-on:click="showusers = true" style="margin:5px;">Users</b-button>
-        <b-dropdown right text="cars" style="margin:5px;">
-          <b-dropdown-item v-on:click="showbrands=true">Brands</b-dropdown-item>
-          <b-dropdown-item v-on:click="showmodels=true">Models</b-dropdown-item>
-          <b-dropdown-divider></b-dropdown-divider>
-          <b-dropdown-item v-on:click="showfuels=true"> Fuels</b-dropdown-item>
-          <b-dropdown-item v-on:click="showtransmissions=true">Transmissions</b-dropdown-item>
-          <b-dropdown-item v-on:click="showclasses=true">Classes</b-dropdown-item>
-        </b-dropdown>
-        <b-dropdown right text="Register" data-toggle="modal" data-target="#register" style="margin:5px;">
-          <b-dropdown-item v-on:click="registeruser=true">User</b-dropdown-item>
-          <b-dropdown-item v-on:click="registerfirm=true">Firm</b-dropdown-item>
-        </b-dropdown>
-        
-        <b-button style="margin:5px;" v-on:click="showcomments = true">Comments</b-button>
-      </b-button-group>
+      <b-navbar type="light" variant="light">
+          <b-navbar-nav>
+            <b-nav-item v-on:click="showusers = true" href="#" ><b-icon icon="people-fill" variant="dark" aria-hidden="true"/> Users</b-nav-item>
+            <b-nav-item-dropdown  text="Cars">
+              <b-dropdown-item v-on:click="showbrands=true">Brands</b-dropdown-item>
+              <b-dropdown-item v-on:click="showmodels=true">Models</b-dropdown-item>
+              <b-dropdown-divider></b-dropdown-divider>
+              <b-dropdown-item v-on:click="showfuels=true"> Fuels</b-dropdown-item>
+              <b-dropdown-item v-on:click="showtransmissions=true">Transmissions</b-dropdown-item>
+              <b-dropdown-item v-on:click="showclasses=true">Classes</b-dropdown-item>
+            </b-nav-item-dropdown>
+            <b-nav-item-dropdown text="Register" data-toggle="modal" data-target="#register" >
+              <b-dropdown-item v-on:click="registeruser=true"> <b-icon icon="person-fill" aria-hidden="true"/> User</b-dropdown-item>
+              <b-dropdown-item v-on:click="registerfirm=true">  <b-icon icon="building" aria-hidden="true"/> Firm</b-dropdown-item>
+            </b-nav-item-dropdown>
+            
+            <b-nav-item v-on:click="showcomments = true"> <b-icon icon="chat-dots-fill" aria-hidden="true" variant="dark" /> Comments</b-nav-item>
+          </b-navbar-nav>
+      </b-navbar >
       <br>
        <br>
        <table class="table table-bordered table-dark" id="user-table" v-if="showusers" @mouseleave="showusers=false">

@@ -1,15 +1,12 @@
 <template>
   <div>
-    <nav class="navbar navbar-dark bg-light">     
-      <ul class="nav">
-        <li class="nav-item">
-          <b-link class="nav-link active" type="button" href="#" data-toggle="modal" data-target="#search" >   
-            <b-icon icon="search" aria-hidden="true"></b-icon> Search
-          </b-link>
-        </li>
-       
-      </ul>      
-    </nav> 
+    <b-navbar type="light" variant="light">     
+      <b-navbar-nav>
+          <b-nav-item href="#" data-toggle="modal" data-target="#search" >   
+            <b-icon icon="search" aria-hidden="true" variant="dark" ></b-icon> Search
+          </b-nav-item>    
+      </b-navbar-nav>     
+    </b-navbar> 
 
   <div class="modal fade" id="search" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
