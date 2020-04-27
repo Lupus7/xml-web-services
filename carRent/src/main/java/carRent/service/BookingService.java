@@ -104,4 +104,22 @@ public class BookingService {
 
         return true;
     }
+
+    public boolean cancelBookingRequest(Long id, String name) {
+
+        // provera da li user sa name postoji
+        User user = userRepo.findByEmail(name);
+        if (user == null)
+            return false;
+
+        Optional<Booking> booking = bookingRepo.findById(id);
+        if(!booking.isPresent() || booking.get().getState() != RequestState.RESERVED)
+            return false;
+
+        booking.get().setState(RequestState.CANCELED);
+        bookingRepo.save(booking.get());
+
+
+        return true;
+    }
 }
