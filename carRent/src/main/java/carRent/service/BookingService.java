@@ -4,6 +4,7 @@ import carRent.model.Ad;
 import carRent.model.Booking;
 import carRent.model.RequestState;
 import carRent.model.User;
+import carRent.model.dto.BookingDTO;
 import carRent.repository.AdRepository;
 import carRent.repository.BookingRepository;
 import carRent.repository.UserRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -67,7 +69,7 @@ public class BookingService {
                         }
                     }
                 },
-                24* 60 * 60 * 1000
+                24 * 60 * 60 * 1000
         );
 
         return true;
@@ -113,7 +115,7 @@ public class BookingService {
             return false;
 
         Optional<Booking> booking = bookingRepo.findById(id);
-        if(!booking.isPresent() || booking.get().getState() != RequestState.RESERVED)
+        if (!booking.isPresent() || booking.get().getState() != RequestState.RESERVED)
             return false;
 
         booking.get().setState(RequestState.CANCELED);
@@ -121,5 +123,22 @@ public class BookingService {
 
 
         return true;
+    }
+
+    public ArrayList<BookingDTO> getAllBookingRequests(String name) {
+        // provera da li user sa name postoji
+        ArrayList<BookingDTO> bookingDTOS = new ArrayList<>();
+        User user = userRepo.findByEmail(name);
+        if (user == null)
+            return bookingDTOS;
+
+        ArrayList<Booking> bookings = bookingRepo.findAllByLoaner(user.getId());
+        for (Booking booking : bookings) {
+            BookingDTO dto = new BookingDTO(booking);
+            bookingDTOS.add(dto);
+        }
+
+        return bookingDTOS;
+
     }
 }

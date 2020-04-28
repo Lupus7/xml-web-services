@@ -1,13 +1,14 @@
 package carRent.controller;
 
+import carRent.model.dto.BookingDTO;
 import carRent.service.BookingService;
-import carRent.service.CartService;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 
 @RestController
 public class BookingController {
@@ -43,5 +44,13 @@ public class BookingController {
             return ResponseEntity.ok("Booking request canceled!");
         else
             return ResponseEntity.status(400).body("Could not accept");
+    }
+
+    // Get all user bookings
+    @GetMapping(value = "/api/booking", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<ArrayList<BookingDTO>> getAllBookingRequests(Principal user) throws JSONException {
+
+        return ResponseEntity.ok((ArrayList<BookingDTO>)bookingService.getAllBookingRequests(user.getName()));
+
     }
 }
