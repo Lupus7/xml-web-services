@@ -13,11 +13,6 @@ const router = new Router({
         name: 'SearchRent',
         component: ()=> import ('./components/SearchRent')
       },
-      {
-        path: '/admin',
-        name: 'AdminPage',
-        component: ()=> import ('./components/AdminPage')
-      },
     ]
   })
 

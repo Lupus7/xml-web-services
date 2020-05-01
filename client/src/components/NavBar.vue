@@ -6,7 +6,6 @@
             <b-navbar-nav>
                 <b-link class="nav-link active" type="button" v-on:click="homepage()" href="#">  <b-icon icon="house-door-fill" aria-hidden="true"></b-icon> Homepage </b-link>
                 <b-link class="nav-link active" type="button" v-on:click="searchPage()" href="#">  <b-icon icon="newspaper" aria-hidden="true"></b-icon> Adds</b-link>
-                <b-link class="nav-link active" type="button" v-on:click="adminPage()" href="#">  <b-icon icon="briefcase-fill" aria-hidden="true"></b-icon> Admin</b-link>
             </b-navbar-nav>
 
             <b-navbar-nav class="ml-auto">
@@ -46,9 +45,7 @@ export default {
         logout(){
 
         },
-        adminPage(){
-            this.$router.push("/admin")
-        }
+       
     },
     created(){
 
