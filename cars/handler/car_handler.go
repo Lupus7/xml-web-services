@@ -2,12 +2,14 @@ package handler
 
 import (
 	"fmt"
-	"github.com/labstack/echo"
 	"net/http"
+	"strconv"
+	"strings"
 	"xml-web-services/cars/handler/dto"
 	"xml-web-services/cars/model"
 	"xml-web-services/cars/service"
-	"strings"
+
+	"github.com/labstack/echo"
 )
 
 type CarHandler struct {
@@ -48,9 +50,23 @@ func (ch *CarHandler) SearchAds(c echo.Context) error {
 	return c.JSON(http.StatusOK, carsResponse)
 }
 
-func(ch *CarHandler)AllBrands(c echo.Context)error{
+func (ch *CarHandler) GetAdById(c echo.Context) error {
+	path := strings.Split(c.Request().URL.Path, "/")
+	id, err := strconv.Atoi(path[3])
+	if err != nil {
+		return err
+	}
+	ad, err := ch.CarService.FindAdById(id)
+	if err != nil {
+		return err
+	}
+	adResponse := toResponse(ad)
+	return c.JSON(http.StatusOK, adResponse)
+}
+
+func (ch *CarHandler) AllBrands(c echo.Context) error {
 	type Response struct {
-		Name string
+		Name   string
 		Models []string
 	}
 	brands, err := ch.CarService.FindAllBrands()
@@ -58,14 +74,14 @@ func(ch *CarHandler)AllBrands(c echo.Context)error{
 		return err
 	}
 	responses := []Response{}
-	for _, brand := range brands{
+	for _, brand := range brands {
 		models := []string{}
-		for _, model := range brand.Models{
+		for _, model := range brand.Models {
 			models = append(models, model.Name)
 		}
 
 		response := Response{
-			Name: brand.Name,
+			Name:   brand.Name,
 			Models: models,
 		}
 		responses = append(responses, response)
@@ -73,49 +89,49 @@ func(ch *CarHandler)AllBrands(c echo.Context)error{
 	return c.JSON(http.StatusOK, responses)
 }
 
-func(ch *CarHandler)AllModels(c echo.Context)error{
+func (ch *CarHandler) AllModels(c echo.Context) error {
 	models, err := ch.CarService.FindAllModels()
 	if err != nil {
 		return err
 	}
 	modelNames := []string{}
-	for _, model := range models{
+	for _, model := range models {
 		modelNames = append(modelNames, model.Name)
 	}
 	return c.JSON(http.StatusOK, modelNames)
 }
 
-func(ch *CarHandler)AllFuels(c echo.Context)error{
+func (ch *CarHandler) AllFuels(c echo.Context) error {
 	fuels, err := ch.CarService.FindAllFuels()
 	if err != nil {
 		return err
 	}
 	fuelNames := []string{}
-	for _, brand := range fuels{
+	for _, brand := range fuels {
 		fuelNames = append(fuelNames, brand.Name)
 	}
 	return c.JSON(http.StatusOK, fuelNames)
 }
 
-func(ch *CarHandler)AllTransmissions(c echo.Context)error{
+func (ch *CarHandler) AllTransmissions(c echo.Context) error {
 	trs, err := ch.CarService.FindAllTransmissions()
 	if err != nil {
 		return err
 	}
 	trNames := []string{}
-	for _, tr := range trs{
+	for _, tr := range trs {
 		trNames = append(trNames, tr.Name)
 	}
 	return c.JSON(http.StatusOK, trNames)
 }
 
-func(ch *CarHandler)AllClasses(c echo.Context)error{
+func (ch *CarHandler) AllClasses(c echo.Context) error {
 	classes, err := ch.CarService.FindAllClasses()
 	if err != nil {
 		return err
 	}
 	classNames := []string{}
-	for _, class := range classes{
+	for _, class := range classes {
 		classNames = append(classNames, class.Name)
 	}
 	return c.JSON(http.StatusOK, classNames)
@@ -133,11 +149,12 @@ func toResponse(ad *model.Ad) *dto.SearchResponse {
 	images := []string{}
 	if len(ad.Car.Images) != 0 {
 		for _, image := range ad.Car.Images {
-			images = append(images,image.Encoded64Image)
+			images = append(images, image.Encoded64Image)
 		}
 	}
 
 	return &dto.SearchResponse{
+		Id:              ad.Id,
 		Advertiser:      ad.Car.Advertiser,
 		Brand:           ad.Car.Brand.Name,
 		Model:           ad.Car.Model.Name,
@@ -153,7 +170,7 @@ func toResponse(ad *model.Ad) *dto.SearchResponse {
 		Description:     ad.Car.Description,
 		Images:          images,
 		Place:           ad.Place,
-		StartDate:       strings.Split(ad.StartDate.String()," ")[0],
-		EndDate:         strings.Split(ad.EndDate.String()," ")[0],
+		StartDate:       strings.Split(ad.StartDate.String(), " ")[0],
+		EndDate:         strings.Split(ad.EndDate.String(), " ")[0],
 	}
 }

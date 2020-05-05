@@ -21,6 +21,10 @@ func (cs *CarService) FindAll() ([]*model.Ad, error) {
 	return cs.Store.FindAllAds()
 }
 
+func (cs *CarService) FindAdById(id int) (*model.Ad, error) {
+	return cs.Store.FindAdById(id)
+}
+
 func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	fmt.Printf("%v", *request)
 	var ads []*model.Ad
@@ -156,23 +160,22 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	return ads, nil
 }
 
-
-func(cs *CarService)FindAllBrands()([]*model.Brand,error){
+func (cs *CarService) FindAllBrands() ([]*model.Brand, error) {
 	return cs.Store.FindAllBrands()
 }
 
-func(cs *CarService)FindAllModels()([]*model.Model,error){
+func (cs *CarService) FindAllModels() ([]*model.Model, error) {
 	return cs.Store.FindAllModels()
 }
 
-func(cs *CarService)FindAllFuels()([]*model.Fuel,error){
+func (cs *CarService) FindAllFuels() ([]*model.Fuel, error) {
 	return cs.Store.FindAllFuels()
 }
 
-func(cs *CarService)FindAllTransmissions()([]*model.Transmission,error){
+func (cs *CarService) FindAllTransmissions() ([]*model.Transmission, error) {
 	return cs.Store.FindAllTransmissions()
 }
 
-func(cs *CarService)FindAllClasses()([]*model.Class,error){
+func (cs *CarService) FindAllClasses() ([]*model.Class, error) {
 	return cs.Store.FindAllClasses()
 }

@@ -1,6 +1,7 @@
 package dto
 
 type SearchResponse struct {
+	Id              int
 	Advertiser      string
 	Brand           string
 	Model           string

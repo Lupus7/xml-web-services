@@ -2,39 +2,71 @@ package main
 
 import (
 	"fmt"
-	"github.com/joho/godotenv"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
-	"gopkg.in/tylerb/graceful.v1"
+	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 	"xml-web-services/cars/handler"
 	"xml-web-services/cars/service"
 	"xml-web-services/cars/store/postgres"
+
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
+	"gopkg.in/tylerb/graceful.v1"
+
+	consulapi "github.com/hashicorp/consul/api"
 )
 
+func registerServiceWithConsul() {
+	config := consulapi.DefaultConfig()
+	config.Address = "172.20.0.2:8500"
+	consul, err := consulapi.NewClient(config)
+	if err != nil {
+		log.Fatalln("XXX: => ", err)
+	}
+
+	registration := new(consulapi.AgentServiceRegistration)
+
+	registration.ID = "cars"
+	registration.Name = "cars"
+	address := "localhost"
+	registration.Address = address
+	port := 8080
+	registration.Port = port
+	registration.Check = new(consulapi.AgentServiceCheck)
+	registration.Check.HTTP = fmt.Sprintf("http://%s:%v/health", address, port)
+	registration.Check.Interval = "10s"
+	registration.Check.Timeout = "2s"
+	log.Println(*registration.Check)
+	err = consul.Agent().ServiceRegister(registration)
+	if err != nil {
+		log.Fatalln("XXX: => ", err)
+	}
+}
+
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		panic(err)
-	}
-	port := os.Getenv("PORT")
-	dbport, err := strconv.Atoi(os.Getenv("DB_PORT"))
-	if err != nil {
-		panic(err)
-	}
-	config := postgres.Config{
-		Host:     os.Getenv("DB_HOST"),
-		Port:     dbport,
-		User:     os.Getenv("DB_USER"),
-		Password: os.Getenv("DB_PASSWORD"),
-		Name:     os.Getenv("DB_NAME"),
-	}
+	registerServiceWithConsul()
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// port := os.Getenv("PORT")
+	// dbport, err := strconv.Atoi(os.Getenv("DB_PORT"))
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Printf(os.Getenv("DB_HOST")+" "+os.Getenv("DB_PORT")+" %d", dbport)
+	// config := postgres.Config{
+	// 	Host:     os.Getenv("DB_HOST"),
+	// 	Port:     dbport,
+	// 	User:     os.Getenv("DB_USER"),
+	// 	Password: os.Getenv("DB_PASSWORD"),
+	// 	Name:     "", //os.Getenv("DB_NAME"),
+	// }
 	fmt.Println("Connected ... ")
 	//Create database
-	store, err := postgres.Open(config)
+	// fmt.Println(config)
+	store, err := postgres.Open(os.Getenv("DB_PATH"))
 	if err != nil {
 		panic(err)
 	}
@@ -60,15 +92,23 @@ func main() {
 	//   ADS
 	e.GET("/api/ads", carHandler.FindAll)
 	e.POST("/api/ads/", carHandler.SearchAds)
+	e.GET("/api/ads/:id", carHandler.GetAdById)
 
 	//   SPECIFICATIONS
 	e.GET("/api/brands", carHandler.AllBrands)
-	e.GET("/api/models",carHandler.AllModels)
-	e.GET("/api/fuels",carHandler.AllFuels)
+	e.GET("/api/models", carHandler.AllModels)
+	e.GET("/api/fuels", carHandler.AllFuels)
 	e.GET("/api/transmissions", carHandler.AllTransmissions)
 	e.GET("/api/classes", carHandler.AllClasses)
 
-	e.Server.Addr = ":" + port
+	// HEALTH CHECK
+	e.GET("/health", health)
+
+	e.Server.Addr = ":8080"
 	graceful.DefaultLogger().Println("Application has successfully started at port: ", 8080)
 	graceful.ListenAndServe(e.Server, 5*time.Second)
+}
+
+func health(c echo.Context) error {
+	return c.String(http.StatusOK, "OK")
 }
