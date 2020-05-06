@@ -21,7 +21,7 @@ public class Comment {
     @JoinColumn(name="car_id",referencedColumnName = "id")
     private Car car;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "user_id",referencedColumnName = "id")
     private User user;
 
