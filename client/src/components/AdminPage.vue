@@ -16,7 +16,7 @@
           <b-dropdown-item v-on:click="registerfirm=true">Firm</b-dropdown-item>
         </b-dropdown>
         
-        <b-button style="margin:5px;" v-on:click="showcomments = true">Comments</b-button>
+        <b-button style="margin:5px;" v-on:click="showcomments = !showcomments">Comments</b-button>
       </b-button-group>
       <br>
        <br>
@@ -199,14 +199,16 @@
         </div>
 
         <br>
-        <div class="row">
-          <div v-for="comment in this.comments" :key="comment.id"  class="column">
-            <div class="card" style="width: 18rem;">
-              <img class="card-img-top" src="../assets/comment.jpg" alt="Card image cap">
-              <div class="card-body">
-                <h5 class="card-title">{{comment.recezent}} for {{comment.Oglas}}</h5>
-                <p class="card-text">{{comment.Komentar}}</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+        <div v-if="showcomments">
+          <div class="row">
+            <div v-for="comment in this.comments" :key="comment.id"  class="column">
+              <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src="../assets/comment.jpg" alt="Card image cap">
+                <div class="card-body">
+                  <h5 class="card-title">{{comment.recezent}} for {{comment.Oglas}}</h5>
+                  <p class="card-text">{{comment.Komentar}}</p>
+                  <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
               </div>
             </div>
           </div>

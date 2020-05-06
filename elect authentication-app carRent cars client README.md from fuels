@@ -1,0 +1,45 @@
+              List of relations
+ Schema |      Name       | Type  |  Owner   
+--------+-----------------+-------+----------
+ public | ad              | table | postgres
+ public | ads             | table | postgres
+ public | bicikls         | table | postgres
+ public | booking         | table | postgres
+ public | booking_car     | table | postgres
+ public | brand           | table | postgres
+ public | brand_models    | table | postgres
+ public | brands          | table | postgres
+ public | car             | table | postgres
+ public | car_ads         | table | postgres
+ public | car_class       | table | postgres
+ public | car_images      | table | postgres
+ public | cars            | table | postgres
+ public | cart            | table | postgres
+ public | cart_ad         | table | postgres
+ public | classes         | table | postgres
+ public | discount        | table | postgres
+ public | discount_prices | table | postgres
+ public | fuel            | table | postgres
+ public | fuels           | table | postgres
+ public | image           | table | postgres
+ public | images          | table | postgres
+ public | message         | table | postgres
+ public | model           | table | postgres
+ public | models          | table | postgres
+ public | price           | table | postgres
+ public | privilege       | table | postgres
+ public | prodavnicas     | table | postgres
+ public | rate            | table | postgres
+ public | report          | table | postgres
+ public | role            | table | postgres
+ public | role_privilege  | table | postgres
+ public | sedistes        | table | postgres
+ public | slikes          | table | postgres
+ public | transmission    | table | postgres
+ public | transmissions   | table | postgres
+ public | user_role       | table | postgres
+ public | users           | table | postgres
+ public | users_bookings  | table | postgres
+ public | users_cars      | table | postgres
+(40 rows)
+
