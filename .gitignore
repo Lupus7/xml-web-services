@@ -7,3 +7,4 @@ cars/upload.gohtml
 cars/seed2
 cars/model/tests.go
 cars/setup.sql
+api-gateway

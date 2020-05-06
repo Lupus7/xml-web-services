@@ -1,0 +1,52 @@
+version: '3'
+services:
+
+  eureka-serviceregistry:
+    build: ./Eureka
+    ports:
+     - "8761:8761"
+    tty: true
+
+  auth-service:
+    build: ./authentication-app
+    ports:
+    - "8080:8080"
+    environment:
+      - REGISTRY_HOST=eureka-serviceregistry
+      - DB_PATH=jdbc:postgresql://db:5432/
+    tty: true
+    depends_on:
+      - eureka-serviceregistry
+      - db
+
+  zuul:
+    build: ./Zuul
+    ports:
+    - "8083:8083"
+    environment:
+      - REGISTRY_HOST=eureka-serviceregistry
+    tty: true
+    depends_on:
+      - eureka-serviceregistry
+      - auth-service
+
+  db:
+    image: postgres
+    environment:
+        POSTGRES_USER: ${POSTGRES_USER:-postgres}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+        - postgres:/var/lib/postgresql/data
+    ports:
+        - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+    postgres:
+    
+    
+
+
+  
+
+  
