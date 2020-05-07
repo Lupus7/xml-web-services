@@ -5,10 +5,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"xml-web-services/cars/store/postgres"
+
+	//"os"
 	"time"
 	"xml-web-services/cars/handler"
 	"xml-web-services/cars/service"
-	"xml-web-services/cars/store/postgres"
+	//"xml-web-services/cars/store/postgres"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -19,14 +22,14 @@ import (
 
 func registerServiceWithConsul() {
 	config := consulapi.DefaultConfig()
-	config.Address = "172.20.0.2:8500"
+	config.Address = "localhost:8500"
 	consul, err := consulapi.NewClient(config)
 	if err != nil {
 		log.Fatalln("XXX: => ", err)
 	}
 
-	registration := new(consulapi.AgentServiceRegistration)
 
+	registration := new(consulapi.AgentServiceRegistration)
 	registration.ID = "cars"
 	registration.Name = "cars"
 	address := "localhost"
@@ -35,6 +38,7 @@ func registerServiceWithConsul() {
 	registration.Port = port
 	registration.Check = new(consulapi.AgentServiceCheck)
 	registration.Check.HTTP = fmt.Sprintf("http://%s:%v/health", address, port)
+	registration.Check.Method = "GET"
 	registration.Check.Interval = "10s"
 	registration.Check.Timeout = "2s"
 	log.Println(*registration.Check)
@@ -42,14 +46,15 @@ func registerServiceWithConsul() {
 	if err != nil {
 		log.Fatalln("XXX: => ", err)
 	}
+	fmt.Println(*registration.Check)
 }
 
 func main() {
-	registerServiceWithConsul()
-	// err := godotenv.Load()
-	// if err != nil {
-	// 	panic(err)
-	// }
+
+	//err := godotenv.Load()
+	//if err != nil {
+	//	panic(err)
+	//}
 	// port := os.Getenv("PORT")
 	// dbport, err := strconv.Atoi(os.Getenv("DB_PORT"))
 	// if err != nil {
@@ -63,7 +68,9 @@ func main() {
 	// 	Password: os.Getenv("DB_PASSWORD"),
 	// 	Name:     "", //os.Getenv("DB_NAME"),
 	// }
+
 	fmt.Println("Connected ... ")
+	registerServiceWithConsul()
 	//Create database
 	// fmt.Println(config)
 	store, err := postgres.Open(os.Getenv("DB_PATH"))
@@ -107,6 +114,7 @@ func main() {
 	e.Server.Addr = ":8080"
 	graceful.DefaultLogger().Println("Application has successfully started at port: ", 8080)
 	graceful.ListenAndServe(e.Server, 5*time.Second)
+
 }
 
 func health(c echo.Context) error {
