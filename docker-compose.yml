@@ -1,0 +1,99 @@
+version: "3"
+services:
+    consul-server:
+        image: consul-server
+        build:
+            context: ./consul-server
+            dockerfile: Dockerfile
+        tty: true
+        ports:
+            - "8500:8500"
+        restart: unless-stopped
+        networks: 
+            static-network:
+                ipv4_address: 172.20.0.2
+
+    db:
+        image: postgres
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+        # volumes:
+        #     - postgres:/var/lib/postgresql/data
+        ports:
+            - "1389:5432"
+        restart: unless-stopped
+        networks:
+            - static-network
+        depends_on:
+            - consul-server
+
+    authentication-service:
+        image: authentication-service
+        build:
+            context: ./authentication-app
+            dockerfile: Dockerfile
+        tty: true
+        depends_on:
+            - consul-server
+            - db
+        restart: unless-stopped
+        environment:
+            DB_PATH: jdbc:postgresql://db:5432/
+        networks:
+            - static-network
+
+    rent-service:
+        image: rent-service
+        build:
+            context: ./carRent
+            dockerfile: Dockerfile
+        tty: true
+        depends_on:
+            - consul-server
+            - db 
+        restart: unless-stopped
+        environment:
+            DB_PATH: jdbc:postgresql://db:5432/
+        networks:
+            - static-network
+
+    cars-service:
+        image: cars-service
+        build:
+            context: ./cars
+            dockerfile: Dockerfile
+        tty: true
+        depends_on:
+            - consul-server
+            - db
+        restart: unless-stopped
+        environment:
+            DB_PATH: postgres://postgres:postgres@db:5432/
+            CONSUL_ADDR: consul-server:8500
+            MY_ADDR: cars-service
+        networks:
+            - static-network
+
+    gateway:
+        image: gateway
+        build:
+            context: ./api-gateway
+            dockerfile: Dockerfile
+        tty: true
+        ports:
+            - "8080:8080"
+        depends_on:
+            - consul-server
+        restart: unless-stopped
+        networks:
+            - static-network
+
+networks:
+    static-network:
+        ipam:
+            config:
+                - subnet: 172.20.0.0/16
+
+# volumes:
+#     postgres:

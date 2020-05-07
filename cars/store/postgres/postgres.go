@@ -1,11 +1,11 @@
 package postgres
 
 import (
-	"fmt"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"time"
 	"xml-web-services/cars/model"
+
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 type Config struct {
@@ -24,11 +24,11 @@ func NewStore(db *gorm.DB) *Store {
 	return &Store{db: db}
 }
 
-func Open(config Config) (*Store, error) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		config.Host, config.Port, config.User, config.Password, config.Name)
+func Open(config string) (*Store, error) {
+	// psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+	// 	config.Host, config.Port, config.User, config.Password, config.Name)
 
-	db, err := gorm.Open("postgres", psqlInfo)
+	db, err := gorm.Open("postgres", config+"?sslmode=disable")
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func Open(config Config) (*Store, error) {
 }
 
 func (store *Store) AutoMigrate() error {
-	return store.db.AutoMigrate(&model.Image{},&model.Ad{}, &model.Car{} ,&model.Brand{},&model.Model{}, &model.Class{}, &model.Transmission{}, &model.Fuel{}, ).Error
+	return store.db.AutoMigrate(&model.Image{}, &model.Ad{}, &model.Car{}, &model.Brand{}, &model.Model{}, &model.Class{}, &model.Transmission{}, &model.Fuel{}).Error
 }
 
 func (store *Store) CheckStoreConnection() error {
@@ -120,42 +120,50 @@ func (store *Store) FindAllAdsBetweenDates(start time.Time, end time.Time) ([]*m
 	return ads, nil
 }
 
-func(store *Store)FindAllBrands()([]*model.Brand, error){
+func (store *Store) FindAllBrands() ([]*model.Brand, error) {
 	brands := []*model.Brand{}
 	if err := store.db.Set("gorm:auto_preload", true).Find(&brands).Error; err != nil {
-		return nil,err
+		return nil, err
 	}
 	return brands, nil
 }
 
-func(store *Store)FindAllFuels()([]*model.Fuel, error){
+func (store *Store) FindAllFuels() ([]*model.Fuel, error) {
 	fuels := []*model.Fuel{}
 	if err := store.db.Find(&fuels).Error; err != nil {
-		return nil,err
+		return nil, err
 	}
 	return fuels, nil
 }
 
-func(store *Store)FindAllModels()([]*model.Model, error){
+func (store *Store) FindAllModels() ([]*model.Model, error) {
 	models := []*model.Model{}
 	if err := store.db.Find(&models).Error; err != nil {
-		return nil,err
+		return nil, err
 	}
 	return models, nil
 }
 
-func(store *Store)FindAllTransmissions()([]*model.Transmission, error){
+func (store *Store) FindAllTransmissions() ([]*model.Transmission, error) {
 	trans := []*model.Transmission{}
 	if err := store.db.Find(&trans).Error; err != nil {
-		return nil,err
+		return nil, err
 	}
 	return trans, nil
 }
 
-func(store *Store)FindAllClasses()([]*model.Class, error){
+func (store *Store) FindAllClasses() ([]*model.Class, error) {
 	classes := []*model.Class{}
 	if err := store.db.Find(&classes).Error; err != nil {
-		return nil,err
+		return nil, err
 	}
 	return classes, nil
+}
+
+func (store *Store) FindAdById(id int) (*model.Ad, error) {
+	ad := &model.Ad{}
+	if err := store.db.Set("gorm:auto_preload", true).Find(&ad, id).Error; err != nil {
+		return nil, err
+	}
+	return ad, nil
 }
