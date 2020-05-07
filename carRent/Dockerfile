@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk-alpine
 COPY entrypoint.sh /entrypoint.sh
-COPY target/authentication-app-0.0.1-SNAPSHOT.jar authentication-app-0.0.1-SNAPSHOT.jar
+COPY target/carRent-0.0.1-SNAPSHOT.jar carRent-0.0.1-SNAPSHOT.jar
 COPY consul-client.json /consul-config/consul-client.json
 RUN apk --no-cache add \
     curl \

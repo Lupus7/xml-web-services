@@ -3,4 +3,4 @@ COPY entrypoint.sh /entrypoint.sh
 COPY / /consul/config/
 RUN chmod +x /entrypoint.sh
 EXPOSE 8500
-CMD ["/entrypoint.sh"]
+CMD ["sh","/entrypoint.sh"]

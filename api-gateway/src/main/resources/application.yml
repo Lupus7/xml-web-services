@@ -10,21 +10,21 @@ spring:
                 locator:
                     enabled: true
             routes:
-#                - id: authentication
-#                  uri: lb://authentication
-#                  predicates:
-#                    - Path=/authentication/**
-#                  filters:
-#                    - RewritePath=/authentication/(?<path>.*), /$\{path}
+                - id: authentication
+                  uri: lb://authentication
+                  predicates:
+                    - Path=/authentication/**
+                  filters:
+                    - RewritePath=/authentication/(?<path>.*), /$\{path}
                 - id: cars
                   uri: lb://cars
                   predicates:
                     - Path=/cars/**
                   filters:
                     - RewritePath=/cars/(?<path>.*), /$\{path}
-                # - id: rent
-                #   uri: lb://rent
-                #   predicates:
-                #       - Path=/rent/**
-                #   filters:
-                #       - RewritePath=/rent/(?<path>.*), /$\{path}
+                - id: rent
+                  uri: lb://rent
+                  predicates:
+                    - Path=/rent/**
+                  filters:
+                    - RewritePath=/rent/(?<path>.*), /$\{path}

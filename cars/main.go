@@ -11,6 +11,7 @@ import (
 	"time"
 	"xml-web-services/cars/handler"
 	"xml-web-services/cars/service"
+
 	//"xml-web-services/cars/store/postgres"
 
 	"github.com/labstack/echo"
@@ -22,17 +23,16 @@ import (
 
 func registerServiceWithConsul() {
 	config := consulapi.DefaultConfig()
-	config.Address = "localhost:8500"
+	config.Address = os.Getenv("CONSUL_ADDR")
 	consul, err := consulapi.NewClient(config)
 	if err != nil {
-		log.Fatalln("XXX: => ", err)
+		log.Fatalln("XXY: => ", err)
 	}
-
 
 	registration := new(consulapi.AgentServiceRegistration)
 	registration.ID = "cars"
 	registration.Name = "cars"
-	address := "localhost"
+	address := os.Getenv("MY_ADDR")
 	registration.Address = address
 	port := 8080
 	registration.Port = port

@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.13.RELEASE</version>
+		<version>2.2.6.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>carRent</groupId>
 	<artifactId>carRent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>carRent</name>
 	<description>Service for renting cars</description>
 
@@ -33,16 +33,22 @@
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 
+		<!-- CONSUL -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-consul-discovery</artifactId>
+			<version>2.2.2.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+			<version>2.2.2.RELEASE</version>
+		</dependency>
+
 		<!-- POSTGRES -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>

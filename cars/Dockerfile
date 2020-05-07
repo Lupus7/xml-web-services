@@ -19,7 +19,7 @@ RUN go build -o main .
 WORKDIR /dist
 # Copy binary from build to main folder
 RUN cp /build/main .
-COPY consul-client.json /consul-config/consul-client.json
+# COPY consul-client.json /consul-config/consul-client.json
 RUN apk --no-cache add \
     curl \
     unzip \
@@ -32,4 +32,4 @@ RUN apk --no-cache add \
     && mkdir consul-data \
     curl \
     unzip
-CMD ["/entrypoint.sh"]
+CMD ["sh","/entrypoint.sh"]

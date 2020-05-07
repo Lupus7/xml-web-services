@@ -16,58 +16,47 @@ services:
     db:
         image: postgres
         environment:
-            POSTGRES_USER: ${POSTGRES_USER:-postgres}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-        volumes:
-            - postgres:/var/lib/postgresql/data
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+        # volumes:
+        #     - postgres:/var/lib/postgresql/data
         ports:
-            - "5432:5432"
+            - "1389:5432"
         restart: unless-stopped
         networks:
             - static-network
         depends_on:
             - consul-server
 
-    # pgadmin:
-    #     image: dpage/pgadmin4
-    #     environment:
-    #         PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-    #         PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-    #     volumes:
-    #         - pgadmin:/root/.pgadmin
-    #     ports:
-    #         - "${PGADMIN_PORT:-5050}:80"
-    #     restart: unless-stopped
+    authentication-service:
+        image: authentication-service
+        build:
+            context: ./authentication-app
+            dockerfile: Dockerfile
+        tty: true
+        depends_on:
+            - consul-server
+            - db
+        restart: unless-stopped
+        environment:
+            DB_PATH: jdbc:postgresql://db:5432/
+        networks:
+            - static-network
 
-    # authentication-service:
-    #     image: authentication-service
-    #     build:
-    #         context: ./authentication-app
-    #         dockerfile: Dockerfile
-    #     tty: true
-    #     depends_on:
-    #         - consul-server
-    #         - db
-    #     restart: unless-stopped
-    #     environment:
-    #         DB_PATH: jdbc:postgresql://db:5432/
-    #     networks:
-    #         - static-network
-
-    # rent-service:
-    #     image: rent-service
-    #     build:
-    #         context: ./carRent
-    #         dockerfile: Dockerfile
-    #     tty: true
-    #     depends_on:
-    #         - consul-server
-    #         - db 
-    #     restart: unless-stopped
-    #     environment:
-    #         DB_PATH: jdbc:postgresql://db:5432/
-    #     networks:
-    #         - static-network
+    rent-service:
+        image: rent-service
+        build:
+            context: ./carRent
+            dockerfile: Dockerfile
+        tty: true
+        depends_on:
+            - consul-server
+            - db 
+        restart: unless-stopped
+        environment:
+            DB_PATH: jdbc:postgresql://db:5432/
+        networks:
+            - static-network
 
     cars-service:
         image: cars-service
@@ -81,6 +70,8 @@ services:
         restart: unless-stopped
         environment:
             DB_PATH: postgres://postgres:postgres@db:5432/
+            CONSUL_ADDR: consul-server:8500
+            MY_ADDR: cars-service
         networks:
             - static-network
 
@@ -104,6 +95,5 @@ networks:
             config:
                 - subnet: 172.20.0.0/16
 
-volumes:
-    postgres:
-    # pgadmin:
+# volumes:
+#     postgres:
