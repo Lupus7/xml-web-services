@@ -119,7 +119,7 @@
   <!-- Oglasi --> 
     <br>
    <div class="container">
-    <b-table striped hover :fields="fields" :items="adds" v-if="this.adds.length > 0" >
+    <b-table hover :fields="fields" :items="adds" v-if="this.adds.length > 0" >
            <template v-slot:cell(images)= "{value}">
             <img style="width:250px;height:330px" thumbnail fluid :src = value[0] />
           </template>
@@ -127,7 +127,7 @@
           <template v-slot:cell(card)= "{value}">
                 <b-card-group deck class="row" >
               
-                    <b-card style="width:300px;height:330px">
+                    <b-card style="width:300px;height:330px;border:none;">
 
                         <b-card-title class="mb-1"> {{value.Brand}} </b-card-title>
                         
