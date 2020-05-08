@@ -1,11 +1,13 @@
 <template>
   <div>
     <b-navbar type="light" variant="light">     
-      <b-navbar-nav>
-          <b-nav-item href="#" data-toggle="modal" data-target="#search" >   
-            <b-icon icon="search" aria-hidden="true" variant="dark" ></b-icon> Search
-          </b-nav-item>    
-      </b-navbar-nav>     
+      <div class="container">
+        <b-navbar-nav style="margin-left:0.9rem" >
+            <b-nav-item href="#" data-toggle="modal" data-target="#search" >   
+              <b-icon icon="search" aria-hidden="true" variant="dark" ></b-icon> Search
+            </b-nav-item>    
+        </b-navbar-nav>  
+      </div>   
     </b-navbar> 
 
   <div class="modal fade" id="search" tabindex="-1" role="dialog" aria-hidden="true">
@@ -105,6 +107,7 @@
            
           </b-form>
         </div>
+      
         <div class="modal-footer">
           <button @click="changeSearch()" type="button" class="btn btn-primary" data-toggle="collapse" href="#advanced" role="button" v-text="searchName">  </button>
           <button type="button" class="btn btn-success" @click="search()" data-dismiss="modal" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
@@ -114,16 +117,50 @@
     </div>
   </div>
   <!-- Oglasi --> 
-
-   <div>
+    <br>
+   <div class="container">
     <b-table striped hover :fields="fields" :items="adds" v-if="this.adds.length > 0" >
            <template v-slot:cell(images)= "{value}">
-            <img style="width:120px;height:120px" thumbnail fluid :src = value[0] />
+            <img style="width:250px;height:330px" thumbnail fluid :src = value[0] />
+          </template>
+
+          <template v-slot:cell(card)= "{value}">
+                <b-card-group deck class="row" >
+              
+                    <b-card style="width:300px;height:330px">
+
+                        <b-card-title class="mb-1"> {{value.Brand}} </b-card-title>
+                        
+                        <hr>
+                        <b-card-sub-title class="mb-3"> <b-icon icon="building" aria-hidden="true" variant="dark" ></b-icon> {{value.Advertiser}} </b-card-sub-title>
+                        <b-card-sub-title class="mb-3"> <b-icon icon="geo-alt" aria-hidden="true" variant="dark" ></b-icon> {{value.Place}} </b-card-sub-title>
+                        <hr>
+
+                        <b-card-sub-title class="mb-2">Model: {{value.Model}}</b-card-sub-title>
+                        <b-card-sub-title class="mb-2">Class: {{value.Class}}</b-card-sub-title>
+                        <b-card-sub-title class="mb-2">Transmission: {{value.Transmission}}</b-card-sub-title>
+                        <b-card-sub-title class="mb-2">Fuel Type: {{value.Fuel}}</b-card-sub-title>
+                        <b-card-sub-title class="mb-2">Children Seats: {{value.SeatsNumber}}</b-card-sub-title>
+
+                        <hr>
+
+                        <b-card-sub-title class="mb-2"><b-icon icon="calendar" aria-hidden="true" variant="dark" /> Start Date: {{value.StartDate}}</b-card-sub-title>
+                        <b-card-sub-title class="mb-2"><b-icon icon="calendar-fill" aria-hidden="true" variant="dark" /> End Date: {{value.EndDate}}</b-card-sub-title>
+
+
+
+
+
+          
+                    </b-card>
+
+            </b-card-group>
           </template>
           
           <template v-slot:cell(moredetails)>
-            <b-button variant="success"> More Detailed </b-button>
+            <b-button style="background:#006400; width:150px"> Book Car </b-button>
           </template>
+          <br>
     </b-table>
   </div>
 
@@ -140,10 +177,8 @@ export default {
     return{
       // adds ce da se popuni posle search,onda podesi key u fields i items zameni sa adds
       fields: [
-          { key: 'Images', label:'Image', sortable: false},{ key: 'Brand', label:'Car Brand', sortable: false},{ key: 'Model',label:"Car Model", sortable: false},
-          { key: 'Place', label:"Place", sortable:false}, { key: 'StartDate', label:"Start", sortable:false},{ key: 'EndDate', label:"End", sortable:false},{ key: 'Fuel', label:'Fuel Type', sortable: false},{ key: 'Transmission', label: 'Transmission Type', sortable: false},
-          { key: 'Class',label:"Car Class", sortable: false},{ key:"TotalMileage",label: 'Traveled Km', sortable: true},{key:"AllowedMileage", label: 'Predicted Km', sortable: true},
-          { key:'Price',label: 'Price[$]', sortable: true},{ key:'SeatsNumber',label: 'Children Seats', sortable: false},{key:'Rating', label: 'Rate', sortable: true}, {key:'moredetails',label:"More Details"}         
+          { key: 'Images', label:'Image', sortable: false},{ key: 'Card', label:'Car Info', sortable: false}, { key:"TotalMileage",label: 'Traveled Km', sortable: true},{key:"AllowedMileage", label: 'Predicted Km', sortable: true},
+          { key:'Price',label: 'Price[$]', sortable: true},{key:'Rating', label: 'Rate', sortable: true}, {key:'moredetails',label:""}         
          
         ],
         adds: [],
@@ -204,7 +239,7 @@ export default {
           }
 
       event.preventDefault();
-      axios.post('/api/ads/', {
+      axios.post('/cars/api/ads/', {
                        "place":this.placeF,
                        "take_over": takeoverString,
                        "return":returnString,
@@ -223,13 +258,41 @@ export default {
                       
                     }).then(response=>{
                        //preuzmes rezultate u listu xD
-                       this.adds = response.data;
+                       this.adds = []
+                       for(let res of response.data){
+                         let card = {
+                            Place : res.Place,         
+                            StartDate : res.StartDate,       
+                            EndDate : res.EndDate,
+                            Brand : res.Brand,
+                            Model : res.Model,
+                            Fuel : res.Fuel,
+                            Transmission : res.Transmission,
+                            Class : res.Class,
+                            Advertiser: res.Advertiser,
+                            Description: res.Description,
+                            SeatsNumber : res.SeatsNumber,
+
+                         }
+                         let add = {
+                            Images: res.Images,
+                            Card: card,
+                            TotalMileage : res.TotalMileage,
+                            AllowedMileage : res.AllowedMileage,
+                            Price : res.Price,
+                            Rating : res.Rating,
+                         };
+                         
+                         this.adds.push(add);
+
+                       }
+                     
                    
                     });
     },
     getCarSpec(){
 
-      axios.get('/api/brands').then(response => { 
+      axios.get('/cars/api/brands').then(response => { 
          // stavi brandove u brands, a mozda samo stringove ubaci     
         this.brandsResponse = response.data;
         this.brands = []
@@ -240,21 +303,21 @@ export default {
         
       });
 
-      axios.get('/api/classes').then(response => { 
+      axios.get('/cars/api/classes').then(response => { 
         this.carClasses = []
         this.carClasses.push("")
         for(let cl of response.data)
           this.carClasses.push(cl)
       });
 
-      axios.get('/api/fuels').then(response => { 
+      axios.get('/cars/api/fuels').then(response => { 
         this.fuels = []
         this.fuels.push("");
         for(let fl of response.data)
           this.fuels.push(fl);
       });
 
-      axios.get('/api/transmissions').then(response => { 
+      axios.get('/cars/api/transmissions').then(response => { 
         this.transmissions = []
         this.transmissions.push("");
         for(let tr of response.data)
