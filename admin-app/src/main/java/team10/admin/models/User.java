@@ -1,4 +1,4 @@
-package carRent.model;
+package team10.admin.models;
 
 import javax.persistence.*;
 import java.util.Arrays;
@@ -101,7 +101,6 @@ public class User {
         this.address = address;
     }
 
-
     public String getPassword() {
         return password;
     }
@@ -125,7 +124,6 @@ public class User {
     public void setApproved(Boolean approved) {
         this.approved = approved;
     }
-
 
     public Cart getCart() {
         return cart;
