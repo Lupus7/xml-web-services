@@ -1,4 +1,4 @@
-package carRent.model;
+package team10.admin.models;
 
 import javax.persistence.*;
 import java.util.Collection;
