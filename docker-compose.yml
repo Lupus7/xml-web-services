@@ -124,6 +124,7 @@ services:
             - "8082:8081"
         restart: unless-stopped
 
+
 networks:
     static-network:
         ipam:
