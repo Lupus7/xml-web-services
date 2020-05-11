@@ -1,5 +1,6 @@
 package team10.admin.controllers;
 
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +53,7 @@ public class CodebookController {
     }
 
     @PostMapping("/model")
-    public ResponseEntity<String> addModel(@RequestBody CodebookItemDTO codebookItemDTO) {
+    public ResponseEntity<String> addModel(@RequestBody String codebookItemDTO) throws JSONException {
         if (codebookService.addModel(codebookItemDTO))
             return ResponseEntity.ok("Operation successful!");
         return ResponseEntity.badRequest().body(null);

@@ -10,7 +10,7 @@
 
           <tbody >
             <tr v-for="transmission in this.transmissions" :key="transmission.id" >
-              <td  scope="row">{{transmission}}</td>
+              <td  scope="row">{{transmission.name}}</td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-warning" v-on:click="editTransmission(transmission)" data-toggle="modal" data-target="#edittrans" > <b-icon icon="wrench" aria-hidden="true"/> Edit Transmission </b-button> </center> </td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-danger" v-on:click="removeTransmission(transmission)" > <b-icon icon="x-circle" aria-hidden="true"/> Remove transmission </b-button> </center> </td>
             </tr>           
@@ -99,21 +99,88 @@ export default {
             transmissions:[],
             transF:"",
             transEdit:"",
+            transId:""
         }
     },
     methods:{
 
-        removeTransmission(){
+        removeTransmission(transm){
+
+               axios.delete("/admin/codebook/transmission", { data: { id: transm.id }}).then(response => {
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                            title: "Removing Transmission",
+                            variant: "info",
+                            solid: true
+                    })
+
+                }else{
+
+                    this.$bvToast.toast(response.data, {
+                        title: "Removing Transmission",
+                        variant: "warning",
+                        solid: true
+                    })
+                }
+           });
 
         },
 
         addNewTransmission(){
 
+              axios.put("/admin/codebook/transmission",{ 
+                "name":this.transF, 
+            }).then(response => { 
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                        title: "New Transmission",
+                        variant: "info",
+                        solid: true
+                    })
+
+                }else{
+
+                    
+                    this.$bvToast.toast(response.data, {
+                        title: "New Transmission",
+                        variant: "warning",
+                        solid: true
+                    })
+
+                }
+            });
+
         },
         editTransmission(transm){
-            this.transEdit = transm;
+            this.transEdit = transm.name;
+            this.transId = transm.id;
         },
         editTransmissionFinal(){
+
+            axios.put("/admin/codebook/transmission", 
+                this.transId, 
+            ).then(response => { 
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                        title: "Transmission Edit",
+                        variant: "info",
+                        solid: true
+                    })
+
+                }else{
+
+                    
+                    this.$bvToast.toast(response.data, {
+                        title: "Transmission Edit",
+                        variant: "warning",
+                        solid: true
+                    })
+
+                }
+            });
 
         },
         reset(){
@@ -122,11 +189,9 @@ export default {
 
     },
     created(){
-        axios.get('/api/transmissions').then(response => { 
-        this.transmissions = response.data;
-       
-             
-      });
+        axios.get('/admin/codebook/transmissions').then(response => { 
+            this.transmissions = response.data;           
+        });
     }
     
 }
@@ -135,6 +200,13 @@ export default {
 <style scoped>
 .modal-footer{
   border-top: 1px solid #5f5f5f;
+  width: 100%;
+  font-size: 20px;
+  font-size: 3vh
+}
+
+.modal-header{
+  border-bottom: 1px solid #5f5f5f;
   width: 100%;
   font-size: 20px;
   font-size: 3vh

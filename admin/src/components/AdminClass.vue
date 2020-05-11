@@ -10,7 +10,7 @@
 
           <tbody >
             <tr v-for="cclass in this.classes" :key="cclass.id" >
-              <td  scope="row">{{cclass}}</td>
+              <td  scope="row">{{cclass.name}}</td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-warning" v-on:click="editClass(cclass)" data-toggle="modal" data-target="#editclass"  > <b-icon icon="wrench" aria-hidden="true"/> Edit Class </b-button> </center> </td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-danger" v-on:click="removeClass(cclass)" > <b-icon icon="x-circle" aria-hidden="true"/> Remove Class </b-button> </center> </td>
             </tr>           
@@ -99,22 +99,90 @@ export default {
             classes:[],
             classF:"",
             classEdit:"",
+            classId:"",
         }
     },
     methods:{
 
-        removeClass(){
+        removeClass(cclass){
+
+              axios.delete("/admin/codebook/class", { data: { id: cclass.id }}).then(response => {
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                            title: "Removing Class",
+                            variant: "info",
+                            solid: true
+                    })
+
+                }else{
+
+                    this.$bvToast.toast(response.data, {
+                        title: "Removing Class",
+                        variant: "warning",
+                        solid: true
+                    })
+                }
+           });
 
         },
 
         addNewClass(){
 
+            axios.put("/admin/codebook/class",{ 
+                "name":this.classF, 
+            }).then(response => { 
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                        title: "New Class",
+                        variant: "info",
+                        solid: true
+                    })
+
+                }else{
+
+                    
+                    this.$bvToast.toast(response.data, {
+                        title: "New Class",
+                        variant: "warning",
+                        solid: true
+                    })
+
+                }
+            });
+
         },
         editClass(cclass){
-            this.classEdit = cclass;
+            this.classEdit = cclass.name;
+            this.classId = cclass.id;
 
         },
         editClassFinal(){
+
+            axios.put("/admin/codebook/class", 
+                this.classId, 
+            ).then(response => { 
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                        title: "Class Edit",
+                        variant: "info",
+                        solid: true
+                    })
+
+                }else{
+
+                    
+                    this.$bvToast.toast(response.data, {
+                        title: "Class Edit",
+                        variant: "warning",
+                        solid: true
+                    })
+
+                }
+            });
+
 
         },
         reset(){
@@ -123,11 +191,9 @@ export default {
 
     },
     created(){
-        axios.get('/api/classes').then(response => { 
-        this.classes = response.data;
-       
-             
-      });
+        axios.get('/admin/coodebook/class').then(response => { 
+            this.classes = response.data;           
+        });
     }
     
 }
@@ -136,6 +202,13 @@ export default {
 <style scoped>
 .modal-footer{
   border-top: 1px solid #5f5f5f;
+  width: 100%;
+  font-size: 20px;
+  font-size: 3vh
+}
+
+.modal-header{
+  border-bottom: 1px solid #5f5f5f;
   width: 100%;
   font-size: 20px;
   font-size: 3vh

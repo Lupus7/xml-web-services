@@ -10,7 +10,7 @@
 
           <tbody >
             <tr v-for="Model in this.models" :key="Model.id" >
-              <td  scope="row">{{Model}}</td>
+              <td  scope="row">{{Model.name}}</td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-warning" v-on:click="editModel(Model)" data-toggle="modal" data-target="#editmodel" > <b-icon icon="wrench" aria-hidden="true"/> Edit Model </b-button> </center> </td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-danger" v-on:click="removeModel(Model)" > <b-icon icon="x-circle" aria-hidden="true"/> Remove Model </b-button> </center> </td>
             </tr>           
@@ -36,8 +36,13 @@
                 <div class="modal-body">
                     <b-form>
                         <div class="form-group">
-                        <label>Name of Model</label>
-                        <b-input placeholder="Enter Model Name" v-model="modelF" type="text" class="form-control"/>
+                            <label>Name of Model</label>
+                            <b-input placeholder="Enter Model Name" v-model="modelF" type="text" class="form-control"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Select Brand</label>
+                            <b-form-select v-model="brandF" :options="brands" class="form-control"/>
                         </div>
                     
                     </b-form>
@@ -98,35 +103,111 @@ export default {
             ],
             models:[],
             modelF:"",
-            modelEdit:""
+            modelEdit:"",
+            modelId:"",
+            brands:[],
+            brandF:""
         }
     },
     methods:{
 
-        removeModel(){
+        removeModel(model){
+
+              axios.delete("/admin/codebook/model", { data: { id: model.id }}).then(response => {
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                            title: "Removing Model",
+                            variant: "info",
+                            solid: true
+                    })
+
+                }else{
+
+                    this.$bvToast.toast(response.data, {
+                        title: "Removing Model",
+                        variant: "warning",
+                        solid: true
+                    })
+                }
+           });
 
         },
 
         addNewModel(){
 
+            axios.put("/admin/codebook/model",{ 
+                "name":this.modelF, 
+                "brand":this.brandF,
+            }).then(response => { 
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                        title: "New Model",
+                        variant: "info",
+                        solid: true
+                    })
+
+                }else{
+
+                    
+                    this.$bvToast.toast(response.data, {
+                        title: "New Model",
+                        variant: "warning",
+                        solid: true
+                    })
+
+                }
+            });
+
         },
         editModel(model){
-            this.modelEdit = model;
+            this.modelEdit = model.name;
+            this.modelId = model.id;
         },
         editModelFinal(){
+
+             axios.put("/admin/codebook/model", 
+                this.modelId, 
+            ).then(response => { 
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                        title: "Model Edit",
+                        variant: "info",
+                        solid: true
+                    })
+
+                }else{
+
+                    
+                    this.$bvToast.toast(response.data, {
+                        title: "Model Edit",
+                        variant: "warning",
+                        solid: true
+                    })
+
+                }
+            });
 
         },
         reset(){
             this.modelF = "";
+            this.brandF = "";
         }
 
     },
     created(){
-        axios.get('/api/models').then(response => { 
-        this.models = response.data;
-       
-             
-      });
+        axios.get('/admin/codebook/model').then(response => { 
+            this.models = response.data;       
+        });
+
+        axios.get('/admin/codebook/brand').then(response => { 
+            this.brands = []
+            for(let b of response.data){
+                this.brands.push(b.name);
+            }
+        });
     }
     
 }
@@ -135,6 +216,13 @@ export default {
 <style scoped>
 .modal-footer{
   border-top: 1px solid #5f5f5f;
+  width: 100%;
+  font-size: 20px;
+  font-size: 3vh
+}
+
+.modal-header{
+  border-bottom: 1px solid #5f5f5f;
   width: 100%;
   font-size: 20px;
   font-size: 3vh

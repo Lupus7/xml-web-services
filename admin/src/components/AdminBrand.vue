@@ -10,7 +10,7 @@
 
           <tbody >
             <tr v-for="brand in this.brands" :key="brand.id" >
-              <td  scope="row">{{brand}}</td>
+              <td  scope="row">{{brand.name}}</td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-warning" v-on:click="editBrand(brand)"  data-toggle="modal" data-target="#editbrand"  > <b-icon icon="wrench" aria-hidden="true"/> Edit Brand </b-button> </center> </td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-danger" v-on:click="removeBrand(brand)" > <b-icon icon="x-circle" aria-hidden="true"/> Remove Brand </b-button> </center> </td>
 
@@ -100,21 +100,88 @@ export default {
             brands:[],
             brandF:"",
             brandEdit:"",
+            brandId:"",
         }
     },
     methods:{
 
-        removeBrand(){
+        removeBrand(brand){
+
+            axios.delete("/admin/codebook/brand", { data: { id: brand.id }}).then(response => {
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                            title: "Removing Brand",
+                            variant: "info",
+                            solid: true
+                    })
+
+                }else{
+
+                    this.$bvToast.toast(response.data, {
+                        title: "Removing Brand",
+                        variant: "warning",
+                        solid: true
+                    })
+                }
+           });
 
         },
 
         addNewBrand(){
 
+            axios.put("/admin/codebook/brand",{ 
+                "name":this.brandF, 
+            }).then(response => { 
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                        title: "New Brand",
+                        variant: "info",
+                        solid: true
+                    })
+
+                }else{
+
+                    
+                    this.$bvToast.toast(response.data, {
+                        title: "New Brand",
+                        variant: "warning",
+                        solid: true
+                    })
+
+                }
+            });
+
         },
         editBrand(brand){
-            this.brandEdit = brand;
+            this.brandEdit = brand.name;
+            this.brandId = brand.id;
         },
         editBrandFinal(){
+
+            axios.put("/admin/codebook/brand", 
+                this.brandId, 
+            ).then(response => { 
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                        title: "Brand Edit",
+                        variant: "info",
+                        solid: true
+                    })
+
+                }else{
+
+                    
+                    this.$bvToast.toast(response.data, {
+                        title: "Brand Edit",
+                        variant: "warning",
+                        solid: true
+                    })
+
+                }
+            });
 
         },
         reset(){
@@ -123,11 +190,8 @@ export default {
 
     },
     created(){
-        axios.get('/api/brands').then(response => { 
-        this.brands = []
-        for(let b of response.data)
-          this.brands.push(b.Name);
-             
+        axios.get('/admin/coodebook/brand').then(response => { 
+            this.brands = response.data;           
       });
     }
     
@@ -137,6 +201,13 @@ export default {
 <style scoped>
 .modal-footer{
   border-top: 1px solid #5f5f5f;
+  width: 100%;
+  font-size: 20px;
+  font-size: 3vh
+}
+
+.modal-header{
+  border-bottom: 1px solid #5f5f5f;
   width: 100%;
   font-size: 20px;
   font-size: 3vh

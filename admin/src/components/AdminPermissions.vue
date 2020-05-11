@@ -55,4 +55,11 @@ export default {
   font-size: 3vh
 }
 
+.modal-header{
+  border-bottom: 1px solid #5f5f5f;
+  width: 100%;
+  font-size: 20px;
+  font-size: 3vh
+}
+
 </style>

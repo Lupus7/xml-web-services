@@ -1,5 +1,7 @@
 package team10.admin.services;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team10.admin.models.*;
@@ -71,10 +73,24 @@ public class CodebookService {
                 .collect(Collectors.toList());
     }
 
-    public boolean addModel(CodebookItemDTO codebookItemDTO) {
+    public boolean addModel(String codebookItemDTO) throws JSONException {
+        JSONObject obj = new JSONObject(codebookItemDTO);
+
+        if (obj == null || obj.get("name") == null || obj.get("brand") == null )
+            return false;
+
+        if (obj.get("brand").equals("") || obj.get("name").equals(""))
+            return false;
+
+        Brand brand = brandRepository.findByName((String)obj.get("brand"));
+        if(brand == null)
+            return false;
+
         Model item = new Model();
-        item.setName(codebookItemDTO.getName());
-        if(modelRepository.save(item) != null)
+        item.setName((String) obj.get("name"));
+        brand.getModels().add(item);
+
+        if(brandRepository.save(brand) != null && modelRepository.save(item) != null)
             return true;
         return false;
     }

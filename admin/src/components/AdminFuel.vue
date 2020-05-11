@@ -10,7 +10,7 @@
 
           <tbody >
             <tr v-for="fuel in this.fuels" :key="fuel.id" >
-              <td  scope="row">{{fuel}}</td>
+              <td  scope="row">{{fuel.name}}</td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-warning" @click="editFuel(fuel)" data-toggle="modal" data-target="#editfuel"  > <b-icon icon="wrench" aria-hidden="true"/> Edit Fuel </b-button> </center> </td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-danger" @click="removeFuel(fuel)" > <b-icon icon="x-circle" aria-hidden="true"/> Remove Fuel </b-button> </center> </td>
             </tr>           
@@ -98,22 +98,89 @@ export default {
             ],
             fuels:[],
             fuelF:"",
-            fuelEdit:""
+            fuelEdit:"",
+            fuelId:""
         }
     },
     methods:{
 
-        removeFuel(){
+        removeFuel(fuel){
+
+              axios.delete("/admin/codebook/fuel", { data: { id: fuel.id }}).then(response => {
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                            title: "Removing Fuel",
+                            variant: "info",
+                            solid: true
+                    })
+
+                }else{
+
+                    this.$bvToast.toast(response.data, {
+                        title: "Removing Fuel",
+                        variant: "warning",
+                        solid: true
+                    })
+                }
+           });
 
         },
 
         addNewFuel(){
 
+              axios.put("/admin/codebook/fuel",{ 
+                "name":this.fuelF, 
+            }).then(response => { 
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                        title: "New Fuel",
+                        variant: "info",
+                        solid: true
+                    })
+
+                }else{
+
+                    
+                    this.$bvToast.toast(response.data, {
+                        title: "New Fuel",
+                        variant: "warning",
+                        solid: true
+                    })
+
+                }
+            });
+
         },
         editFuel(fuel){
-            this.fuelEdit = fuel;
+            this.fuelEdit = fuel.name;
+            this.fuelId = fuel.id;
         },
         editFuelFinal(){
+
+             axios.put("/admin/codebook/fuel", 
+                this.fuelId, 
+            ).then(response => { 
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                        title: "Fuel Edit",
+                        variant: "info",
+                        solid: true
+                    })
+
+                }else{
+
+                    
+                    this.$bvToast.toast(response.data, {
+                        title: "Fuel Edit",
+                        variant: "warning",
+                        solid: true
+                    })
+
+                }
+            });
 
         },
         reset(){
@@ -122,10 +189,8 @@ export default {
 
     },
     created(){
-        axios.get('/api/fuels').then(response => { 
-        this.fuels = response.data;
-       
-             
+        axios.get('/admin/codebook/fuel').then(response => { 
+            this.fuels = response.data;       
       });
     }
     
@@ -135,6 +200,13 @@ export default {
 <style scoped>
 .modal-footer{
   border-top: 1px solid #5f5f5f;
+  width: 100%;
+  font-size: 20px;
+  font-size: 3vh
+}
+
+.modal-header{
+  border-bottom: 1px solid #5f5f5f;
   width: 100%;
   font-size: 20px;
   font-size: 3vh

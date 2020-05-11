@@ -225,5 +225,16 @@ export default {
 </script>
 
 <style scoped>
-
+.modal-header{
+  border-bottom: 1px solid #5f5f5f;
+  width: 100%;
+  font-size: 20px;
+  font-size: 3vh
+}
+.modal-footer{
+  border-top: 1px solid #5f5f5f;
+  width: 100%;
+  font-size: 20px;
+  font-size: 3vh
+}
 </style>
