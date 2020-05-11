@@ -106,7 +106,7 @@ export default {
 
         removeClass(cclass){
 
-              axios.delete("/admin/codebook/class", { data: { id: cclass.id }}).then(response => {
+              axios.delete("/admin/codebook/class/", { data: { id: cclass.id }}).then(response => {
                 if(response.status === 200){
 
                     this.$bvToast.toast(response.data, {
@@ -129,7 +129,7 @@ export default {
 
         addNewClass(){
 
-            axios.put("/admin/codebook/class",{ 
+            axios.post("/admin/codebook/class",{ 
                 "name":this.classF, 
             }).then(response => { 
                 if(response.status === 200){
@@ -160,7 +160,7 @@ export default {
         },
         editClassFinal(){
 
-            axios.put("/admin/codebook/class", 
+            axios.put("/admin/codebook/class/", 
                 this.classId, 
             ).then(response => { 
                 if(response.status === 200){
@@ -191,7 +191,7 @@ export default {
 
     },
     created(){
-        axios.get('/admin/coodebook/class').then(response => { 
+        axios.get('/admin/codebook/class').then(response => { 
             this.classes = response.data;           
         });
     }

@@ -113,7 +113,7 @@ export default {
 
         removeModel(model){
 
-              axios.delete("/admin/codebook/model", { data: { id: model.id }}).then(response => {
+              axios.delete("/admin/codebook/model/", { data: { id: model.id }}).then(response => {
                 if(response.status === 200){
 
                     this.$bvToast.toast(response.data, {
@@ -136,7 +136,7 @@ export default {
 
         addNewModel(){
 
-            axios.put("/admin/codebook/model",{ 
+            axios.post("/admin/codebook/model/",{ 
                 "name":this.modelF, 
                 "brand":this.brandF,
             }).then(response => { 

@@ -114,15 +114,15 @@ services:
     #         - "8081:8081"
     #     restart: unless-stopped
 
-    # admin-front:
-    #     image: admin-front
-    #     build:
-    #         context: ./admin
-    #         dockerfile: Dockerfile
-    #     tty: true
-    #     ports:
-    #         - "8082:8081"
-    #     restart: unless-stopped
+    admin-front:
+        image: admin-front
+        build:
+            context: ./admin
+            dockerfile: Dockerfile
+        tty: true
+        ports:
+            - "8082:8081"
+        restart: unless-stopped
 
 networks:
     static-network:

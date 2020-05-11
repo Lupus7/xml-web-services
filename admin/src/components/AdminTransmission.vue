@@ -106,7 +106,7 @@ export default {
 
         removeTransmission(transm){
 
-               axios.delete("/admin/codebook/transmission", { data: { id: transm.id }}).then(response => {
+               axios.delete("/admin/codebook/transmission/", { data: { id: transm.id }}).then(response => {
                 if(response.status === 200){
 
                     this.$bvToast.toast(response.data, {
@@ -129,7 +129,7 @@ export default {
 
         addNewTransmission(){
 
-              axios.put("/admin/codebook/transmission",{ 
+              axios.post("/admin/codebook/transmission",{ 
                 "name":this.transF, 
             }).then(response => { 
                 if(response.status === 200){
@@ -159,7 +159,7 @@ export default {
         },
         editTransmissionFinal(){
 
-            axios.put("/admin/codebook/transmission", 
+            axios.put("/admin/codebook/transmission/", 
                 this.transId, 
             ).then(response => { 
                 if(response.status === 200){
@@ -189,7 +189,7 @@ export default {
 
     },
     created(){
-        axios.get('/admin/codebook/transmissions').then(response => { 
+        axios.get('/admin/codebook/transmission').then(response => { 
             this.transmissions = response.data;           
         });
     }

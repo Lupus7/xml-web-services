@@ -75,7 +75,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" @click="editBrandFinaly()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
+                    <button type="button" class="btn btn-success" @click="editBrandFinal()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @click="reset()" > <b-icon icon="x-circle"> </b-icon>  Close</button>
                 </div>
 
@@ -107,7 +107,7 @@ export default {
 
         removeBrand(brand){
 
-            axios.delete("/admin/codebook/brand", { data: { id: brand.id }}).then(response => {
+            axios.delete("/admin/codebook/brand/", { data: { id: brand.id }}).then(response => {
                 if(response.status === 200){
 
                     this.$bvToast.toast(response.data, {
@@ -130,7 +130,7 @@ export default {
 
         addNewBrand(){
 
-            axios.put("/admin/codebook/brand",{ 
+            axios.post("/admin/codebook/brand",{ 
                 "name":this.brandF, 
             }).then(response => { 
                 if(response.status === 200){
@@ -160,7 +160,7 @@ export default {
         },
         editBrandFinal(){
 
-            axios.put("/admin/codebook/brand", 
+            axios.put("/admin/codebook/brand/", 
                 this.brandId, 
             ).then(response => { 
                 if(response.status === 200){
@@ -190,7 +190,7 @@ export default {
 
     },
     created(){
-        axios.get('/admin/coodebook/brand').then(response => { 
+        axios.get('/admin/codebook/brand').then(response => { 
             this.brands = response.data;           
       });
     }

@@ -106,7 +106,7 @@ export default {
 
         removeFuel(fuel){
 
-              axios.delete("/admin/codebook/fuel", { data: { id: fuel.id }}).then(response => {
+              axios.delete("/admin/codebook/fuel/", { data: { id: fuel.id }}).then(response => {
                 if(response.status === 200){
 
                     this.$bvToast.toast(response.data, {
@@ -129,7 +129,7 @@ export default {
 
         addNewFuel(){
 
-              axios.put("/admin/codebook/fuel",{ 
+              axios.post("/admin/codebook/fuel",{ 
                 "name":this.fuelF, 
             }).then(response => { 
                 if(response.status === 200){
@@ -159,7 +159,7 @@ export default {
         },
         editFuelFinal(){
 
-             axios.put("/admin/codebook/fuel", 
+             axios.put("/admin/codebook/fuel/", 
                 this.fuelId, 
             ).then(response => { 
                 if(response.status === 200){
