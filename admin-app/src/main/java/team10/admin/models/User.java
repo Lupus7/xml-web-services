@@ -2,7 +2,6 @@ package team10.admin.models;
 
 import javax.persistence.*;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,9 +25,12 @@ public class User {
     @Column(name = "company_name", unique = false, nullable = false)
     private String companyName;
 
+	@Column(name = "business_number", unique = true, nullable = true)
+    private String businessNumber;
+
     @Column(name = "address", unique = false, nullable = false)
     private String address;
-
+	
     @Column(name = "password", unique = false, nullable = false)
     private String password;
 
@@ -91,6 +93,14 @@ public class User {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+
+    public String getBusinessNumber() {
+        return businessNumber;
+    }
+
+    public void setBusinessNumber(String businessNumber) {
+        this.businessNumber = businessNumber;
     }
 
     public String getAddress() {
