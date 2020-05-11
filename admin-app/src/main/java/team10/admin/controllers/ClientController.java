@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team10.admin.models.dto.ClientDTO;
+import team10.admin.models.dto.NewAgentDTO;
+import team10.admin.models.dto.NewCompanyDTO;
 import team10.admin.services.ClientService;
 
 import java.util.List;
@@ -41,5 +43,19 @@ public class ClientController {
         if (clientService.delete(email))
             return ResponseEntity.ok("Operation successful!");
         return ResponseEntity.badRequest().body("Invalid request");
+    }
+
+    @PostMapping("/company")
+    public ResponseEntity<String> registerCompany(@RequestBody NewCompanyDTO newCompanyDTO) {
+        if (clientService.registerCompany(newCompanyDTO))
+            return ResponseEntity.ok("Operation successful!");
+        return ResponseEntity.badRequest().body(null);
+    }
+
+    @PostMapping("/agent")
+    public ResponseEntity<String> registerAgent(@RequestBody NewAgentDTO newAgentDTO) {
+        if (clientService.registerAgent(newAgentDTO))
+            return ResponseEntity.ok("Operation successful!");
+        return ResponseEntity.badRequest().body(null);
     }
 }

@@ -40,7 +40,7 @@ public class CodebookService {
     public boolean addBrand(CodebookItemDTO codebookItemDTO) {
         Brand item = new Brand();
         item.setName(codebookItemDTO.getName());
-        if(brandRepository.save(item) != null)
+        if (brandRepository.save(item) != null)
             return true;
         return false;
     }
@@ -50,7 +50,7 @@ public class CodebookService {
         if (item == null)
             return false;
         item.setName(codebookItemDTO.getName());
-        if(brandRepository.save(item) != null)
+        if (brandRepository.save(item) != null)
             return true;
         return false;
     }
@@ -74,7 +74,7 @@ public class CodebookService {
     public boolean addModel(CodebookItemDTO codebookItemDTO) {
         Model item = new Model();
         item.setName(codebookItemDTO.getName());
-        if(modelRepository.save(item) != null)
+        if (modelRepository.save(item) != null)
             return true;
         return false;
     }
@@ -84,7 +84,7 @@ public class CodebookService {
         if (item == null)
             return false;
         item.setName(codebookItemDTO.getName());
-        if(modelRepository.save(item) != null)
+        if (modelRepository.save(item) != null)
             return true;
         return false;
     }
@@ -94,7 +94,18 @@ public class CodebookService {
         if (item == null || carRepository.findOneByModelId(id) != null)
             return false;
 
+        List<Brand> brands = brandRepository.findAll()
+                .stream()
+                .filter(brand -> brand.getModels().contains(item))
+                .collect(Collectors.toList());
+
+        brands.forEach(brand -> {
+            brand.getModels().remove(item);
+            brandRepository.save(brand);
+        });
+
         modelRepository.delete(item);
+
         return true;
     }
 
@@ -108,7 +119,7 @@ public class CodebookService {
     public boolean addCarClass(CodebookItemDTO codebookItemDTO) {
         CarClass item = new CarClass();
         item.setName(codebookItemDTO.getName());
-        if(carClassRepository.save(item) != null)
+        if (carClassRepository.save(item) != null)
             return true;
         return false;
     }
@@ -118,7 +129,7 @@ public class CodebookService {
         if (item == null)
             return false;
         item.setName(codebookItemDTO.getName());
-        if(carClassRepository.save(item) != null)
+        if (carClassRepository.save(item) != null)
             return true;
         return false;
     }
@@ -142,7 +153,7 @@ public class CodebookService {
     public boolean addFuel(CodebookItemDTO codebookItemDTO) {
         Fuel item = new Fuel();
         item.setType(codebookItemDTO.getName());
-        if(fuelRepository.save(item) != null)
+        if (fuelRepository.save(item) != null)
             return true;
         return false;
     }
@@ -152,7 +163,7 @@ public class CodebookService {
         if (item == null)
             return false;
         item.setType(codebookItemDTO.getName());
-        if(fuelRepository.save(item) != null)
+        if (fuelRepository.save(item) != null)
             return true;
         return false;
     }
@@ -176,7 +187,7 @@ public class CodebookService {
     public boolean addTransmission(CodebookItemDTO codebookItemDTO) {
         Transmission item = new Transmission();
         item.setType(codebookItemDTO.getName());
-        if(transmissionRepository.save(item) != null)
+        if (transmissionRepository.save(item) != null)
             return true;
         return false;
     }
@@ -186,7 +197,7 @@ public class CodebookService {
         if (item == null)
             return false;
         item.setType(codebookItemDTO.getName());
-        if(transmissionRepository.save(item) != null)
+        if (transmissionRepository.save(item) != null)
             return true;
         return false;
     }
