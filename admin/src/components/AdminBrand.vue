@@ -10,7 +10,7 @@
 
           <tbody >
             <tr v-for="brand in this.brands" :key="brand.id" >
-              <td  scope="row">{{brand}}</td>
+              <td  scope="row">{{brand.name}}</td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-warning" v-on:click="editBrand(brand)"  data-toggle="modal" data-target="#editbrand"  > <b-icon icon="wrench" aria-hidden="true"/> Edit Brand </b-button> </center> </td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-danger" v-on:click="removeBrand(brand)" > <b-icon icon="x-circle" aria-hidden="true"/> Remove Brand </b-button> </center> </td>
 
@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" @click="addNewBrand()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @click="addNewBrand()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @click="reset()" > <b-icon icon="x-circle"> </b-icon>  Close</button>
                 </div>
 
@@ -75,7 +75,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" @click="editBrandFinaly()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @click="editBrandFinal()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @click="reset()" > <b-icon icon="x-circle"> </b-icon>  Close</button>
                 </div>
 
@@ -100,35 +100,106 @@ export default {
             brands:[],
             brandF:"",
             brandEdit:"",
+            brandId:"",
         }
     },
     methods:{
 
-        removeBrand(){
+        removeBrand(brand){
+            let url = "/admin/codebook/brand/"+brand.id;
+            axios.delete(url).then(response => {
+                if(response.status === 200){
+                    this.$bvToast.toast(response.data, {
+                            title: "Removing Brand",
+                            variant: "success",
+                            solid: true
+                    })
+                    this.fill();
+
+                }else{
+
+                    this.$bvToast.toast(response.data, {
+                        title: "Removing Brand",
+                        variant: "warning",
+                        solid: true
+                    })
+                }
+           });
 
         },
 
         addNewBrand(){
 
+            axios.post("/admin/codebook/brand",{ 
+                "name":this.brandF, 
+            }).then(response => { 
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                        title: "New Brand",
+                        variant: "success",
+                        solid: true
+                    })
+                    this.fill();
+                    
+
+                }else{
+
+                    
+                    this.$bvToast.toast(response.data, {
+                        title: "New Brand",
+                        variant: "warning",
+                        solid: true
+                    })
+
+                }
+            });
+
         },
         editBrand(brand){
-            this.brandEdit = brand;
+            this.brandEdit = brand.name;
+            this.brandId = brand.id;
         },
         editBrandFinal(){
+            let url = "/admin/codebook/brand/"+this.brandId;
+            axios.put(url,{ 
+                "name":this.brandEdit,
+                "id":this.brandId,
+            }).then(response => { 
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                        title: "Brand Edit",
+                        variant: "success",
+                        solid: true
+                    })
+                    this.fill();
+
+                }else{
+
+                    
+                    this.$bvToast.toast(response.data, {
+                        title: "Brand Edit",
+                        variant: "warning",
+                        solid: true
+                    })
+
+                }
+            });
 
         },
         reset(){
             this.brandF = "";
+        },
+        fill(){
+            axios.get('/admin/codebook/brand').then(response => { 
+                this.brands = response.data;           
+            });
         }
 
     },
     created(){
-        axios.get('/api/brands').then(response => { 
-        this.brands = []
-        for(let b of response.data)
-          this.brands.push(b.Name);
-             
-      });
+       this.fill();
     }
     
 }
@@ -137,6 +208,13 @@ export default {
 <style scoped>
 .modal-footer{
   border-top: 1px solid #5f5f5f;
+  width: 100%;
+  font-size: 20px;
+  font-size: 3vh
+}
+
+.modal-header{
+  border-bottom: 1px solid #5f5f5f;
   width: 100%;
   font-size: 20px;
   font-size: 3vh

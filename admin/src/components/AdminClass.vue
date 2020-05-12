@@ -10,7 +10,7 @@
 
           <tbody >
             <tr v-for="cclass in this.classes" :key="cclass.id" >
-              <td  scope="row">{{cclass}}</td>
+              <td  scope="row">{{cclass.name}}</td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-warning" v-on:click="editClass(cclass)" data-toggle="modal" data-target="#editclass"  > <b-icon icon="wrench" aria-hidden="true"/> Edit Class </b-button> </center> </td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-danger" v-on:click="removeClass(cclass)" > <b-icon icon="x-circle" aria-hidden="true"/> Remove Class </b-button> </center> </td>
             </tr>           
@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" @click="addNewClass()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @click="addNewClass()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @click="reset()"> <b-icon icon="x-circle"> </b-icon>  Close</button>
                 </div>
 
@@ -74,7 +74,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" @click="editClassFinal()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @click="editClassFinal()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @click="reset()"> <b-icon icon="x-circle"> </b-icon>  Close</button>
                 </div>
 
@@ -99,35 +99,108 @@ export default {
             classes:[],
             classF:"",
             classEdit:"",
+            classId:"",
         }
     },
     methods:{
 
-        removeClass(){
+        removeClass(cclass){
+              let url = "/admin/codebook/class/"+cclass.id;
+              axios.delete(url).then(response => {
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                            title: "Removing Class",
+                            variant: "success",
+                            solid: true
+                    })
+                    this.fill();
+
+                }else{
+
+                    this.$bvToast.toast(response.data, {
+                        title: "Removing Class",
+                        variant: "warning",
+                        solid: true
+                    })
+                }
+           });
 
         },
 
         addNewClass(){
 
+            axios.post("/admin/codebook/class",{ 
+                "name":this.classF, 
+            }).then(response => { 
+                if(response.status === 200){
+                    this.classF = "";
+                    this.$bvToast.toast(response.data, {
+                        title: "New Class",
+                        variant: "success",
+                        solid: true
+                    })
+                    this.fill();
+
+                }else{
+
+                    
+                    this.$bvToast.toast(response.data, {
+                        title: "New Class",
+                        variant: "warning",
+                        solid: true
+                    })
+
+                }
+            });
+
         },
         editClass(cclass){
-            this.classEdit = cclass;
+            this.classEdit = cclass.name;
+            this.classId = cclass.id;
 
         },
         editClassFinal(){
+            let url = "/admin/codebook/class/"+this.classId;
+            axios.put(url,{ 
+                "id":this.classId,
+                "name":this.classEdit 
+            }).then(response => { 
+                if(response.status === 200){
+
+                    this.$bvToast.toast(response.data, {
+                        title: "Class Edit",
+                        variant: "success",
+                        solid: true
+                    })
+                    this.fill();
+
+                }else{
+
+                    
+                    this.$bvToast.toast(response.data, {
+                        title: "Class Edit",
+                        variant: "warning",
+                        solid: true
+                    })
+
+                }
+            });
+
 
         },
         reset(){
             this.classF = "";
+        },
+        fill(){
+            axios.get('/admin/codebook/class').then(response => { 
+                this.classes = response.data;           
+            });
         }
 
     },
     created(){
-        axios.get('/api/classes').then(response => { 
-        this.classes = response.data;
-       
-             
-      });
+        this.fill();
     }
     
 }
@@ -136,6 +209,13 @@ export default {
 <style scoped>
 .modal-footer{
   border-top: 1px solid #5f5f5f;
+  width: 100%;
+  font-size: 20px;
+  font-size: 3vh
+}
+
+.modal-header{
+  border-bottom: 1px solid #5f5f5f;
   width: 100%;
   font-size: 20px;
   font-size: 3vh

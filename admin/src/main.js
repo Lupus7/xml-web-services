@@ -12,7 +12,6 @@ Vue.use(VueResource)
 
 
 //Components routes
-
 Vue.use(VueRouter)
 
 axios.defaults.baseURL = "http://localhost:8080/";

@@ -6,4 +6,5 @@ import team10.admin.models.Brand;
 
 @Repository
 public interface BrandRepository extends JpaRepository<Brand, Long> {
+    Brand findByName(String brand);
 }
