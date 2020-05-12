@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" @click="addNewClass()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @click="addNewClass()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @click="reset()"> <b-icon icon="x-circle"> </b-icon>  Close</button>
                 </div>
 
@@ -74,7 +74,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" @click="editClassFinal()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @click="editClassFinal()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @click="reset()"> <b-icon icon="x-circle"> </b-icon>  Close</button>
                 </div>
 
@@ -105,15 +105,16 @@ export default {
     methods:{
 
         removeClass(cclass){
-
-              axios.delete("/admin/codebook/class/", { data: { id: cclass.id }}).then(response => {
+              let url = "/admin/codebook/class/"+cclass.id;
+              axios.delete(url).then(response => {
                 if(response.status === 200){
 
                     this.$bvToast.toast(response.data, {
                             title: "Removing Class",
-                            variant: "info",
+                            variant: "success",
                             solid: true
                     })
+                    this.fill();
 
                 }else{
 
@@ -133,12 +134,13 @@ export default {
                 "name":this.classF, 
             }).then(response => { 
                 if(response.status === 200){
-
+                    this.classF = "";
                     this.$bvToast.toast(response.data, {
                         title: "New Class",
-                        variant: "info",
+                        variant: "success",
                         solid: true
                     })
+                    this.fill();
 
                 }else{
 
@@ -159,17 +161,19 @@ export default {
 
         },
         editClassFinal(){
-
-            axios.put("/admin/codebook/class/", 
-                this.classId, 
-            ).then(response => { 
+            let url = "/admin/codebook/class/"+this.classId;
+            axios.put(url,{ 
+                "id":this.classId,
+                "name":this.classEdit 
+            }).then(response => { 
                 if(response.status === 200){
 
                     this.$bvToast.toast(response.data, {
                         title: "Class Edit",
-                        variant: "info",
+                        variant: "success",
                         solid: true
                     })
+                    this.fill();
 
                 }else{
 
@@ -187,13 +191,16 @@ export default {
         },
         reset(){
             this.classF = "";
+        },
+        fill(){
+            axios.get('/admin/codebook/class').then(response => { 
+                this.classes = response.data;           
+            });
         }
 
     },
     created(){
-        axios.get('/admin/codebook/class').then(response => { 
-            this.classes = response.data;           
-        });
+        this.fill();
     }
     
 }

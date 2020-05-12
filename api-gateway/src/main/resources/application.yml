@@ -6,6 +6,15 @@ spring:
         name: api-gateway
     cloud:
         gateway:
+            globalcors:
+              addToSimpleUrlHandlerMapping: true
+              corsConfigurations:
+                '[/**]':
+                  allowedOrigins: "*"
+                  allowedHeaders: "*"
+                  allowedMethods: "*"
+                  exposeHeaders: "*"
+
             discovery:
                 locator:
                     enabled: true

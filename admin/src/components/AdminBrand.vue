@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" @click="addNewBrand()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @click="addNewBrand()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @click="reset()" > <b-icon icon="x-circle"> </b-icon>  Close</button>
                 </div>
 
@@ -75,7 +75,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" @click="editBrandFinal()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" @click="editBrandFinal()" > <b-icon icon="check-circle" aria-hidden="true"> </b-icon> Confirm</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal" @click="reset()" > <b-icon icon="x-circle"> </b-icon>  Close</button>
                 </div>
 
@@ -106,15 +106,15 @@ export default {
     methods:{
 
         removeBrand(brand){
-
-            axios.delete("/admin/codebook/brand/", { data: { id: brand.id }}).then(response => {
+            let url = "/admin/codebook/brand/"+brand.id;
+            axios.delete(url).then(response => {
                 if(response.status === 200){
-
                     this.$bvToast.toast(response.data, {
                             title: "Removing Brand",
-                            variant: "info",
+                            variant: "success",
                             solid: true
                     })
+                    this.fill();
 
                 }else{
 
@@ -137,9 +137,11 @@ export default {
 
                     this.$bvToast.toast(response.data, {
                         title: "New Brand",
-                        variant: "info",
+                        variant: "success",
                         solid: true
                     })
+                    this.fill();
+                    
 
                 }else{
 
@@ -159,17 +161,19 @@ export default {
             this.brandId = brand.id;
         },
         editBrandFinal(){
-
-            axios.put("/admin/codebook/brand/", 
-                this.brandId, 
-            ).then(response => { 
+            let url = "/admin/codebook/brand/"+this.brandId;
+            axios.put(url,{ 
+                "name":this.brandEdit,
+                "id":this.brandId,
+            }).then(response => { 
                 if(response.status === 200){
 
                     this.$bvToast.toast(response.data, {
                         title: "Brand Edit",
-                        variant: "info",
+                        variant: "success",
                         solid: true
                     })
+                    this.fill();
 
                 }else{
 
@@ -186,13 +190,16 @@ export default {
         },
         reset(){
             this.brandF = "";
+        },
+        fill(){
+            axios.get('/admin/codebook/brand').then(response => { 
+                this.brands = response.data;           
+            });
         }
 
     },
     created(){
-        axios.get('/admin/codebook/brand').then(response => { 
-            this.brands = response.data;           
-      });
+       this.fill();
     }
     
 }

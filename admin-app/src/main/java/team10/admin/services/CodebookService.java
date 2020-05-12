@@ -90,9 +90,8 @@ public class CodebookService {
         item.setName((String) obj.get("name"));
         brand.getModels().add(item);
 
-        if(brandRepository.save(brand) != null && modelRepository.save(item) != null)
-            return true;
-        return false;
+        brandRepository.save(brand);
+        return true;
     }
 
     public boolean updateModel(CodebookItemDTO codebookItemDTO, Long id) {

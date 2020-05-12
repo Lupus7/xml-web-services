@@ -32,7 +32,7 @@ public class ClientService {
     public List<ClientDTO> getAll() {
         return userRepository.findAll()
                 .stream()
-                .filter(user -> user.getRoles().contains("ROLE_USER") && user.getRoles().size() == 1)
+                .filter(user -> user.getRoles().contains("ROLE_CLIENT") && user.getRoles().size() == 1)
                 .map(ClientMapper::toDTO)
                 .collect(Collectors.toList());
     }
