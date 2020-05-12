@@ -8,9 +8,7 @@ import team10.admin.models.User;
 import team10.admin.models.dto.ClientDTO;
 import team10.admin.models.dto.NewAgentDTO;
 import team10.admin.models.dto.NewCompanyDTO;
-import team10.admin.repositories.CartRepository;
-import team10.admin.repositories.RoleRepository;
-import team10.admin.repositories.UserRepository;
+import team10.admin.repositories.*;
 import team10.admin.util.ClientMapper;
 import team10.admin.util.UserMapper;
 
@@ -29,6 +27,9 @@ public class ClientService {
     @Autowired
     CartRepository cartRepository;
 
+    @Autowired
+    CommentRepository commentRepository;
+
     public List<ClientDTO> getAll() {
         return userRepository.findAll()
                 .stream()
@@ -42,8 +43,8 @@ public class ClientService {
         if (user == null)
             return false;
         user.setBlocked(true);
-        if(userRepository.save(user) == null)
-            return false;
+        System.out.println("blocked " + user.getBlocked());
+        userRepository.save(user);
         return true;
     }
 
@@ -52,8 +53,8 @@ public class ClientService {
         if (user == null)
             return false;
         user.setBlocked(false);
-        if(userRepository.save(user) == null)
-            return false;
+        System.out.println("unblocked " + user.getBlocked());
+        userRepository.save(user);
         return true;
     }
 
@@ -61,6 +62,7 @@ public class ClientService {
         User user = userRepository.findByEmail(email);
         if(user == null)
             return false;
+        commentRepository.findAllByUserId(user.getId()).forEach(comment -> commentRepository.delete(comment));
         userRepository.delete(user);
         return true;
     }

@@ -13,7 +13,7 @@
                                     v-if="user.blocked"
                                     type="button"
                                     class="btn btn-dark"
-                                    @click="blockUser(user)"
+                                    @click="unblockUser(user)"
                                     style="width:120%"
                                 >
                                     <b-icon icon="unlock" aria-hidden="true"></b-icon>Unblock
@@ -22,7 +22,7 @@
                                     v-if="!user.blocked"
                                     type="button"
                                     class="btn btn-dark"
-                                    @click="unblockUser(user)"
+                                    @click="blockUser(user)"
                                     style="width:120%"
                                 >
                                     <b-icon icon="lock" aria-hidden="true"></b-icon>Block

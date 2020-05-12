@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import team10.admin.models.Car;
 
+import java.util.List;
+
 @Repository
 public interface CarRepository extends JpaRepository<Car, Long> {
     Car findOneByBrandId(Long id);
@@ -11,4 +13,5 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     Car findOneByCarClassId(Long id);
     Car findOneByFuelId(Long id);
     Car findOneByTransmissionId(Long id);
+    List<Car> findAllByOwnerId(Long id);
 }

@@ -42,9 +42,8 @@ public class CodebookService {
     public boolean addBrand(CodebookItemDTO codebookItemDTO) {
         Brand item = new Brand();
         item.setName(codebookItemDTO.getName());
-        if (brandRepository.save(item) != null)
-            return true;
-        return false;
+        brandRepository.save(item);
+        return true;
     }
 
     public boolean updateBrand(CodebookItemDTO codebookItemDTO, Long id) {
@@ -52,9 +51,8 @@ public class CodebookService {
         if (item == null)
             return false;
         item.setName(codebookItemDTO.getName());
-        if (brandRepository.save(item) != null)
-            return true;
-        return false;
+        brandRepository.save(item);
+        return true;
     }
 
     public boolean deleteBrand(Long id) {
@@ -99,9 +97,8 @@ public class CodebookService {
         if (item == null)
             return false;
         item.setName(codebookItemDTO.getName());
-        if (modelRepository.save(item) != null)
-            return true;
-        return false;
+        modelRepository.save(item);
+        return true;
     }
 
     public boolean deleteModel(Long id) {
@@ -134,9 +131,8 @@ public class CodebookService {
     public boolean addCarClass(CodebookItemDTO codebookItemDTO) {
         CarClass item = new CarClass();
         item.setName(codebookItemDTO.getName());
-        if (carClassRepository.save(item) != null)
-            return true;
-        return false;
+        carClassRepository.save(item);
+        return true;
     }
 
     public boolean updateCarClass(CodebookItemDTO codebookItemDTO, Long id) {
@@ -144,9 +140,8 @@ public class CodebookService {
         if (item == null)
             return false;
         item.setName(codebookItemDTO.getName());
-        if (carClassRepository.save(item) != null)
-            return true;
-        return false;
+        carClassRepository.save(item);
+        return true;
     }
 
     public boolean deleteCarClass(Long id) {
@@ -168,9 +163,8 @@ public class CodebookService {
     public boolean addFuel(CodebookItemDTO codebookItemDTO) {
         Fuel item = new Fuel();
         item.setType(codebookItemDTO.getName());
-        if (fuelRepository.save(item) != null)
-            return true;
-        return false;
+        fuelRepository.save(item);
+        return true;
     }
 
     public boolean updateFuel(CodebookItemDTO codebookItemDTO, Long id) {
@@ -178,9 +172,8 @@ public class CodebookService {
         if (item == null)
             return false;
         item.setType(codebookItemDTO.getName());
-        if (fuelRepository.save(item) != null)
-            return true;
-        return false;
+        fuelRepository.save(item);
+        return true;
     }
 
     public boolean deleteFuel(Long id) {
@@ -202,9 +195,8 @@ public class CodebookService {
     public boolean addTransmission(CodebookItemDTO codebookItemDTO) {
         Transmission item = new Transmission();
         item.setType(codebookItemDTO.getName());
-        if (transmissionRepository.save(item) != null)
-            return true;
-        return false;
+        transmissionRepository.save(item);
+        return true;
     }
 
     public boolean updateTransmission(CodebookItemDTO codebookItemDTO, Long id) {
@@ -212,9 +204,8 @@ public class CodebookService {
         if (item == null)
             return false;
         item.setType(codebookItemDTO.getName());
-        if (transmissionRepository.save(item) != null)
-            return true;
-        return false;
+        transmissionRepository.save(item);
+        return true;
     }
 
     public boolean deleteTransmission(Long id) {
