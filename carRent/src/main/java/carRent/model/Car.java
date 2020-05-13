@@ -34,19 +34,24 @@ public class Car {
     @JoinColumn(name = "owner")
     private User owner;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="brand_id",referencedColumnName = "id")
     private Brand brand;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="model_id",referencedColumnName = "id")
     private Model model;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="fuel_id",referencedColumnName = "id")
     private Fuel fuel;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="transmission_id",referencedColumnName = "id")
     private Transmission transmission;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="car_class_id",referencedColumnName = "id")
     private CarClass carClass;
 
     @LazyCollection(LazyCollectionOption.FALSE)
