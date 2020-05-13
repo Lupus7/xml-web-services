@@ -16,6 +16,7 @@ const router = new Router({
       {
         path: '/permission',
         name: 'PermissionPage',
+        props: true,
         component: ()=> import ('./views/PermissionPage')
       },
     ]
