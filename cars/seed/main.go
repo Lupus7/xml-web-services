@@ -1,8 +1,12 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/jinzhu/gorm"
+	"github.com/joho/godotenv"
+	"os"
+	"strconv"
 	"time"
 	"xml-web-services/cars/model"
 	"xml-web-services/cars/store/postgres"
@@ -156,60 +160,94 @@ var ads = []model.Ad{
 }
 
 func main() {
-	config := postgres.Config{
-		Host:     "localhost",
-		Port:     5432,
-		User:     "postgres",
-		Password: "root",
-		Name:     "xws",
-	}
-	fmt.Println("Connected ... ")
-	store, err := postgres.Open(config)
-	if err != nil {
-		panic(err)
-	}
-	defer store.Close()
+	var develop = flag.Bool("dev",false, "Is this develop version?")
+	flag.Parse()
 
-	//Crete all tables if not exists
-	err = store.DB().Set("gorm:table_options", "CASCADE").DropTableIfExists(&model.Image{},&model.Ad{}, &model.Car{}, &model.Transmission{}, &model.Fuel{}, &model.Class{},&model.Brand{}, &model.Model{}).Error
-	if err != nil {
-		panic(err)
-	}
-	err = store.AutoMigrate()
-	if err != nil {
-		panic(err)
-	}
-	//set foreign key reference
-	store.DB().Model(&model.Car{}).AddForeignKey("brand_id", "brands(id)", "CASCADE", "CASCADE")
-	store.DB().Model(&model.Car{}).AddForeignKey("model_id", "models(id)", "CASCADE", "CASCADE")
-	store.DB().Model(&model.Car{}).AddForeignKey("fuel_id", "fuels(id)", "CASCADE", "CASCADE")
-	store.DB().Model(&model.Car{}).AddForeignKey("transmission_id", "transmissions(id)", "CASCADE", "CASCADE")
-	store.DB().Model(&model.Car{}).AddForeignKey("class_id", "classes(id)", "CASCADE", "CASCADE")
-	store.DB().Model(&model.Ad{}).AddForeignKey("car_id", "cars(id)", "CASCADE", "CASCADE")
-	//store.DB().Model(&model.Brand{}).AddForeignKey("model_id","models(id)","CASCADE","CASCADE")
-	empty := areTablesEmpty(store.DB())
-	if empty {
-		err = populateDatabase(store)
+	var store *postgres.Store
+	var err error
+
+	if *develop{
+		err := godotenv.Load()
+		if err != nil {
+			panic(err)
+		}
+		dbport, err := strconv.Atoi(os.Getenv("DB_PORT"))
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf(os.Getenv("DB_HOST")+" "+os.Getenv("DB_PORT")+" %d", dbport)
+		config := postgres.Config{
+			Host:     os.Getenv("DB_HOST"),
+			Port:     dbport,
+			User:     os.Getenv("DB_USER"),
+			Password: os.Getenv("DB_PASSWORD"),
+			Name:     os.Getenv("DB_NAME"),
+		}
+		store, err = postgres.OpenWithUrl(config)
 		if err != nil {
 			panic(err)
 		}
 	}
 
+	if *develop==false{
+		store, err = postgres.Open(os.Getenv("DB_PATH"))
+		if err != nil {
+			panic(err)
+		}
+
+	}
+	defer store.Close()
+
+	err = store.AutoMigrate()
+	if err != nil {
+		panic(err)
+	}
+
+	empty := areTablesEmpty(store.DB())
+	if empty {
+		store.DB().Model(&model.Car{}).AddForeignKey("brand_id", "brands(id)", "CASCADE", "CASCADE")
+		store.DB().Model(&model.Car{}).AddForeignKey("model_id", "models(id)", "CASCADE", "CASCADE")
+		store.DB().Model(&model.Car{}).AddForeignKey("fuel_id", "fuels(id)", "CASCADE", "CASCADE")
+		store.DB().Model(&model.Car{}).AddForeignKey("transmission_id", "transmissions(id)", "CASCADE", "CASCADE")
+		store.DB().Model(&model.Car{}).AddForeignKey("class_id", "classes(id)", "CASCADE", "CASCADE")
+		store.DB().Model(&model.Ad{}).AddForeignKey("car_id", "cars(id)", "CASCADE", "CASCADE")
+		err = populateDatabase(store)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("DATABASE POPULATED")
+	}
+	if !empty{
+		fmt.Println("TABLES ARE NOT EMPTY, SKIPPING IT")
+	}
+
+	//Crete all tables if not exists
+	//err = store.DB().Set("gorm:table_options", "CASCADE").DropTableIfExists(&model.Image{},&model.Ad{}, &model.Car{}, &model.Transmission{}, &model.Fuel{}, &model.Class{},&model.Brand{}, &model.Model{}).Error
+	//if err != nil {
+	//	panic(err)
+	//}
+
+
+	//set foreign key reference
+
+	//store.DB().Model(&model.Brand{}).AddForeignKey("model_id","models(id)","CASCADE","CASCADE")
+
+
 	//Check if successfully created
-	firstCar := &model.Car{}
-	err = store.DB().Set("gorm:auto_preload", true).First(&firstCar).Error
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(firstCar.Brand.Name, firstCar.Model.Name, "             ", firstCar)
-	//fmt.Println("Picutre of car : ", firstCar.Images[0])
-	//Checking Ad
-	firstAd := &model.Ad{}
-	err = store.DB().Set("gorm:auto_preload", true).First(&firstAd).Error
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(firstAd.Car.Model.Name, " ", firstAd.Car.Fuel.Name, " ", firstAd.Car.Brand.Name, " ", firstAd.EndDate, " ", firstAd.EndDate)
+	//firstCar := &model.Car{}
+	//err = store.DB().Set("gorm:auto_preload", true).First(&firstCar).Error
+	//if err != nil {
+	//	panic(err)
+	//}
+	//fmt.Println(firstCar.Brand.Name, firstCar.Model.Name, "             ", firstCar)
+	////fmt.Println("Picutre of car : ", firstCar.Images[0])
+	////Checking Ad
+	//firstAd := &model.Ad{}
+	//err = store.DB().Set("gorm:auto_preload", true).First(&firstAd).Error
+	//if err != nil {
+	//	panic(err)
+	//}
+	//fmt.Println(firstAd.Car.Model.Name, " ", firstAd.Car.Fuel.Name, " ", firstAd.Car.Brand.Name, " ", firstAd.EndDate, " ", firstAd.EndDate)
 
 }
 
@@ -277,7 +315,7 @@ func populateDatabase(store *postgres.Store) error {
 }
 
 func areTablesEmpty(db *gorm.DB) bool {
-	tables := []string{"cars", "ads"}
+	tables := []string{"cars", "ads","brands","fuels","classes","transmissions","images"}
 	for _, table := range tables {
 		var count int
 

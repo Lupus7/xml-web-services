@@ -1,10 +1,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"xml-web-services/cars/store/postgres"
 
 	//"os"
@@ -21,62 +24,49 @@ import (
 	consulapi "github.com/hashicorp/consul/api"
 )
 
-func registerServiceWithConsul() {
-	config := consulapi.DefaultConfig()
-	config.Address = os.Getenv("CONSUL_ADDR")
-	consul, err := consulapi.NewClient(config)
-	if err != nil {
-		log.Fatalln("XXY: => ", err)
-	}
-
-	registration := new(consulapi.AgentServiceRegistration)
-	registration.ID = "cars"
-	registration.Name = "cars"
-	address := os.Getenv("MY_ADDR")
-	registration.Address = address
-	port := 8080
-	registration.Port = port
-	registration.Check = new(consulapi.AgentServiceCheck)
-	registration.Check.HTTP = fmt.Sprintf("http://%s:%v/health", address, port)
-	registration.Check.Method = "GET"
-	registration.Check.Interval = "10s"
-	registration.Check.Timeout = "2s"
-	log.Println(*registration.Check)
-	err = consul.Agent().ServiceRegister(registration)
-	if err != nil {
-		log.Fatalln("XXX: => ", err)
-	}
-	fmt.Println(*registration.Check)
-}
-
 func main() {
+	var develop = flag.Bool("dev",false, "Is this develop version?")
+	flag.Parse()
 
-	//err := godotenv.Load()
-	//if err != nil {
-	//	panic(err)
-	//}
-	// port := os.Getenv("PORT")
-	// dbport, err := strconv.Atoi(os.Getenv("DB_PORT"))
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// fmt.Printf(os.Getenv("DB_HOST")+" "+os.Getenv("DB_PORT")+" %d", dbport)
-	// config := postgres.Config{
-	// 	Host:     os.Getenv("DB_HOST"),
-	// 	Port:     dbport,
-	// 	User:     os.Getenv("DB_USER"),
-	// 	Password: os.Getenv("DB_PASSWORD"),
-	// 	Name:     "", //os.Getenv("DB_NAME"),
-	// }
+	var store *postgres.Store
+	var err error
+	var port string
 
-	fmt.Println("Connected ... ")
-	registerServiceWithConsul()
-	//Create database
-	// fmt.Println(config)
-	store, err := postgres.Open(os.Getenv("DB_PATH"))
-	if err != nil {
-		panic(err)
+	if *develop{
+		err := godotenv.Load()
+		if err != nil {
+			panic(err)
+		}
+		port = os.Getenv("PORT")
+		dbport, err := strconv.Atoi(os.Getenv("DB_PORT"))
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf(os.Getenv("DB_HOST")+" "+os.Getenv("DB_PORT")+" %d", dbport)
+		config := postgres.Config{
+			Host:     os.Getenv("DB_HOST"),
+			Port:     dbport,
+			User:     os.Getenv("DB_USER"),
+			Password: os.Getenv("DB_PASSWORD"),
+			Name:     os.Getenv("DB_NAME"),
+		}
+		store, err = postgres.OpenWithUrl(config)
+		if err != nil {
+			panic(err)
+		}
 	}
+
+	if *develop==false{
+		registerServiceWithConsul()
+		port = os.Getenv("PORT")
+		store, err = postgres.Open(os.Getenv("DB_PATH"))
+		if err != nil {
+			panic(err)
+		}
+
+	}
+	fmt.Println("Connected ... ")
+
 	err = store.AutoMigrate()
 	if err != nil {
 		panic(err)
@@ -111,12 +101,44 @@ func main() {
 	// HEALTH CHECK
 	e.GET("/health", health)
 
-	e.Server.Addr = ":8080"
-	graceful.DefaultLogger().Println("Application has successfully started at port: ", 8080)
+	e.Server.Addr = ":"+port
+	portInt, err := strconv.Atoi(port)
+	if err != nil{
+		panic(err)
+	}
+	graceful.DefaultLogger().Println("Application has successfully started at port: ", portInt)
 	graceful.ListenAndServe(e.Server, 5*time.Second)
 
 }
 
 func health(c echo.Context) error {
 	return c.String(http.StatusOK, "OK")
+}
+
+func registerServiceWithConsul() {
+	config := consulapi.DefaultConfig()
+	config.Address = os.Getenv("CONSUL_ADDR")
+	consul, err := consulapi.NewClient(config)
+	if err != nil {
+		log.Fatalln("XXY: => ", err)
+	}
+
+	registration := new(consulapi.AgentServiceRegistration)
+	registration.ID = "cars"
+	registration.Name = "cars"
+	address := os.Getenv("MY_ADDR")
+	registration.Address = address
+	port := 8080
+	registration.Port = port
+	registration.Check = new(consulapi.AgentServiceCheck)
+	registration.Check.HTTP = fmt.Sprintf("http://%s:%v/health", address, port)
+	registration.Check.Method = "GET"
+	registration.Check.Interval = "10s"
+	registration.Check.Timeout = "2s"
+	log.Println(*registration.Check)
+	err = consul.Agent().ServiceRegister(registration)
+	if err != nil {
+		log.Fatalln("XXX: => ", err)
+	}
+	fmt.Println(*registration.Check)
 }

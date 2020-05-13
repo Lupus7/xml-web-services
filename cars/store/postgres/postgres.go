@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"fmt"
 	"time"
 	"xml-web-services/cars/model"
 
@@ -37,7 +38,22 @@ func Open(config string) (*Store, error) {
 	return store, nil
 }
 
+func OpenWithUrl(config Config) (*Store, error) {
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		config.Host, config.Port, config.User, config.Password, config.Name)
+
+	db, err := gorm.Open("postgres", psqlInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	store := NewStore(db)
+	return store, nil
+}
+
+
 func (store *Store) AutoMigrate() error {
+	store.db.SingularTable(true)
 	return store.db.AutoMigrate(&model.Image{}, &model.Ad{}, &model.Car{}, &model.Brand{}, &model.Model{}, &model.Class{}, &model.Transmission{}, &model.Fuel{}).Error
 }
 

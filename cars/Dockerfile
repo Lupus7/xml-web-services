@@ -14,11 +14,17 @@ RUN go mod download
 # Copy the code into the container
 COPY . .
 # Build the application
+#RUN cd seed
+#RUN go build -o data .
+#RUN cd ..
+#RUN ls seed/
+#RUN ls
 RUN go build -o main .
 # Move to /dist directory as the place for resulting binary folder
 WORKDIR /dist
 # Copy binary from build to main folder
 RUN cp /build/main .
+#RUN cp /build/data .
 # COPY consul-client.json /consul-config/consul-client.json
 RUN apk --no-cache add \
     curl \
