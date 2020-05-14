@@ -160,7 +160,7 @@ func main() {
 		Host:     "localhost",
 		Port:     5432,
 		User:     "postgres",
-		Password: "postgres",
+		Password: "root",
 		Name:     "xws",
 	}
 	fmt.Println("Connected ... ")

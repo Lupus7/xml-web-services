@@ -10,7 +10,7 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "base64", unique = false, nullable = false)
+    @Column(name = "base64", unique = false, nullable = false, length = 100000)
     private String base64;
 
     public Image() {

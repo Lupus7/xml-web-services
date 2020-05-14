@@ -14,9 +14,6 @@ public class Role {
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "roles")
-    private Collection<User> users;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_privilege",
@@ -41,14 +38,6 @@ public class Role {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Collection<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Collection<User> users) {
-        this.users = users;
     }
 
     public Collection<Privilege> getPrivileges() {
