@@ -18,7 +18,6 @@ import (
 	//"xml-web-services/cars/store/postgres"
 
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 	"gopkg.in/tylerb/graceful.v1"
 
 	consulapi "github.com/hashicorp/consul/api"
@@ -78,13 +77,13 @@ func main() {
 	carHandler := handler.NewCarHandler(carService)
 
 	e := echo.New()
-	e.Use(middleware.CORS())
+	/*e.Use(middleware.CORS())
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
-	}))
+	}))*/
 
 	//   ADS
 	e.GET("/api/ads", carHandler.FindAll)

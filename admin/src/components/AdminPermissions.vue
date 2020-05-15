@@ -3,25 +3,22 @@
         <br />
         <b-card-group deck class="row">
             <div v-for="user in this.users" :key="user.id" class="col-12 col-md-3 col-lg-4">
-                <div v-if="user.role === 'CLIENT'">
+                <div>
                     <b-card
-                        img-src="../assets/user.gif"
-                        img-alt="Image"
-                        img-top
-                        img-height="200px"
-                        img-width="50px"
-                        style="width:285px"
+                        style="width:300px"
                     >
                         <b-card-title>{{user.email}}</b-card-title>
 
-                        <b-card-sub-title class="mb-2">Name: {{user.name}}</b-card-sub-title>
+                        <b-card-sub-title class="mb-3">Name: {{user.name}}</b-card-sub-title>
                         <b-card-sub-title class="mb-3">Address: {{user.address}}</b-card-sub-title>
+                        <b-card-sub-title class="mb-3">Role: {{user.role}}</b-card-sub-title>
+
 
                         <div class="modal-footer">
                             <center>
                                 <b-button
                                     type="button"
-                                    class="btn btn-success"
+                                    class="btn btn-dark"
                                     @click="goToPermissions(user)"
                                     style="width:100%"
                                 >
@@ -32,63 +29,6 @@
                     </b-card>
                 </div>
 
-                <div v-if="user.role === 'COMPANY'">
-                    <b-card
-                        img-src="../assets/company.png"
-                        img-alt="Image"
-                        img-top
-                        img-height="200px"
-                        img-width="50px"
-                        style="width:285px"
-                    >
-                        <b-card-title>{{user.email}}</b-card-title>
-
-                        <b-card-sub-title class="mb-2">Name: {{user.name}}</b-card-sub-title>
-                        <b-card-sub-title class="mb-3">Address: {{user.address}}</b-card-sub-title>
-
-                        <div class="modal-footer">
-                            <center>
-                                <b-button
-                                    type="button"
-                                    class="btn btn-success"
-                                    @click="goToPermissions(user)"
-                                    style="width:100%"
-                                >
-                                    <b-icon icon="lock-fill" aria-hidden="true"></b-icon>Permissions
-                                </b-button>
-                            </center>
-                        </div>
-                    </b-card>
-                </div>
-
-                <div v-if="user.role === 'ADMIN'">
-                    <b-card
-                        img-src="../assets/admin.png"
-                        img-alt="Image"
-                        img-top
-                        img-height="200px"
-                        img-width="50px"
-                        style="width:285px"
-                    >
-                        <b-card-title>{{user.email}}</b-card-title>
-
-                        <b-card-sub-title class="mb-2">Name: {{user.name}}</b-card-sub-title>
-                        <b-card-sub-title class="mb-3">Address: {{user.address}}</b-card-sub-title>
-
-                        <div class="modal-footer">
-                            <center>
-                                <b-button
-                                    type="button"
-                                    class="btn btn-success"
-                                    @click="goToPermissions(user)"
-                                    style="width:100%"
-                                >
-                                    <b-icon icon="lock-fill" aria-hidden="true"></b-icon>Permissions
-                                </b-button>
-                            </center>
-                        </div>
-                    </b-card>
-                </div>
 
                 <br />
             </div>

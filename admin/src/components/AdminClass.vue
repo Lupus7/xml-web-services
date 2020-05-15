@@ -4,12 +4,13 @@
         <table class="table table-bordered table-sm" v-if="this.classes.length>0">
           <thead class="thead-dark">
             <tr>
-              <th colspan="3"><h3> Car Classes </h3></th> 
+              <th colspan="2"><h3> Car Classes </h3></th> 
+              <th style="width:30%" colspan="1"> <center> <b-button class="btn btn-success" style="width:45%" href="#" data-toggle="modal" data-target="#newclass" > <b-icon icon="plus-circle" aria-hidden="true"/> New Class</b-button> </center> </th>
             </tr>
           </thead>
 
           <tbody >
-            <tr v-for="cclass in this.classes" :key="cclass.id" >
+            <tr v-for="cclass in this.classes" :key="cclass.id" style="background:	#F5F5F5" >
               <td  scope="row">{{cclass.name}}</td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-warning" v-on:click="editClass(cclass)" data-toggle="modal" data-target="#editclass"  > <b-icon icon="wrench" aria-hidden="true"/> Edit Class </b-button> </center> </td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-danger" v-on:click="removeClass(cclass)" > <b-icon icon="x-circle" aria-hidden="true"/> Remove Class </b-button> </center> </td>
@@ -17,10 +18,6 @@
           </tbody>
 
         </table>
-
-        <div class="modal-footer" style="">
-            <b-button class="btn btn-success" href="#" data-toggle="modal" data-target="#newclass" > <b-icon icon="plus-circle" aria-hidden="true"/> New Class</b-button>
-        </div> 
 
     <!-- Add New Class -->
     <div class="modal fade" id="newclass" tabindex="-1" role="dialog" aria-hidden="true">

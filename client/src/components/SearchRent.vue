@@ -119,7 +119,7 @@
   <!-- Oglasi --> 
     <br>
    <div class="container">
-    <b-table hover :fields="fields" :items="adds" v-if="this.adds.length > 0" >
+    <b-table hover :fields="fields" :items="adds" :dark='true'  v-if="this.adds.length > 0" >
            <template v-slot:cell(images)= "{value}">
             <img style="width:250px;height:330px" thumbnail fluid :src = value[0] />
           </template>
@@ -158,7 +158,7 @@
           </template>
           
           <template v-slot:cell(moredetails)>
-            <b-button style="background:#006400; width:150px"> Book Car </b-button>
+            <b-button style="background:#b20000; width:150px"> Book Car </b-button>
           </template>
           <br>
     </b-table>
@@ -274,7 +274,7 @@ export default {
                             SeatsNumber : res.SeatsNumber,
 
                          }
-                         let add = {
+                          let add = {
                             Images: res.Images,
                             Card: card,
                             TotalMileage : res.TotalMileage,
@@ -283,7 +283,7 @@ export default {
                             Rating : res.Rating,
                          };
                          
-                         this.adds.push(add);
+                          this.adds.push(add);
 
                        }
                      
@@ -357,5 +357,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
 
 </style>

@@ -18,16 +18,28 @@
                             </th>
                         </tr>
                         <tr>
-                            <th colspan="2">
+                            <th colspan="1">
                                 <h4>Permissions</h4>
+                            </th>
+                            <th colspan="1">
+                                <center>
+                                    <button
+                                    type="button"
+                                    class="btn btn-success"
+                                    data-toggle="modal"
+                                    data-target="#newperm"
+                                >
+                                    <b-icon icon="plus-circle" aria-hidden="true"></b-icon> Add New Permission
+                                    </button>
+                                </center>
                             </th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        <tr v-for="permission in this.userPermissions" :key="permission.id">
-                            <td v-if="permission.def" scope="row">
-                                <b-icon title="default" icon="gear-fill" aria-hidden="true"></b-icon>
+                        <tr v-for="permission in this.userPermissions" :key="permission.id" style="background:	#F5F5F5" >
+                            <td v-if="permission.def" scope="row" >
+                                <b-icon   v-b-tooltip.hover title="Default Permission" icon="gear-fill" aria-hidden="true"></b-icon>
                                 {{permission.name}}
                             </td>
                             <td v-if="!permission.def" scope="row">{{permission.name}}</td>
@@ -38,24 +50,13 @@
                                         class="btn btn-danger"
                                         v-on:click="removePermission(permission)"
                                     >
-                                        <b-icon icon="x-circle" aria-hidden="true" />Remove Permission
+                                        <b-icon icon="x-circle" aria-hidden="true" /> Remove Permission
                                     </b-button>
                                 </center>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-            </div>
-
-            <div class="modal-footer">
-                <button
-                    type="button"
-                    class="btn btn-success"
-                    data-toggle="modal"
-                    data-target="#newperm"
-                >
-                    <b-icon icon="plus-circle" aria-hidden="true"></b-icon>Add New Permission
-                </button>
             </div>
         </div>
 
@@ -90,7 +91,12 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" data-dismiss="modal" class="btn btn-success" @click="addNewPermission()">
+                        <button
+                            type="button"
+                            data-dismiss="modal"
+                            class="btn btn-success"
+                            @click="addNewPermission()"
+                        >
                             <b-icon icon="check-circle" aria-hidden="true"></b-icon>Confirm
                         </button>
                         <button
@@ -131,7 +137,12 @@ export default {
                 }
             }
 
-            if (perms === null || this.selected === null || this.selected === "") return;
+            if (
+                perms === null ||
+                this.selected === null ||
+                this.selected === ""
+            )
+                return;
 
             axios
                 .put(url, {
@@ -160,7 +171,7 @@ export default {
         },
         removePermission(permission) {
             let url = "/admin/privilege/" + this.email;
-            console.log(permission)
+            console.log(permission);
             axios
                 .put(url, {
                     name: permission.name,
@@ -185,7 +196,6 @@ export default {
                         });
                     }
                 });
-
         },
         reset() {
             this.selected = "";
@@ -198,7 +208,7 @@ export default {
         },
 
         fillAvailable() {
-            this.privileges = []
+            this.privileges = [];
             let url = "/admin/privilege/available/" + this.email;
             axios.get(url).then(response => {
                 this.permissionList = response.data;

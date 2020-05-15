@@ -4,14 +4,27 @@
         <table class="table table-bordered table-sm" v-if="this.fuels.length>0">
             <thead class="thead-dark">
                 <tr>
-                    <th colspan="3">
+                    <th colspan="2">
                         <h3>Fuel Types</h3>
+                    </th>
+                    <th style="width:30%" colspan="1">
+                        <center>
+                            <b-button
+                                class="btn btn-success"
+                                style="width:45%"
+                                href="#"
+                                data-toggle="modal"
+                                data-target="#newfuel"
+                            >
+                                <b-icon icon="plus-circle" aria-hidden="true" /> New Fuel
+                            </b-button>
+                        </center>
                     </th>
                 </tr>
             </thead>
 
             <tbody>
-                <tr v-for="fuel in this.fuels" :key="fuel.id">
+                <tr v-for="fuel in this.fuels" :key="fuel.id" style="background:#F5F5F5" >
                     <td scope="row">{{fuel.name}}</td>
                     <td style="width:30%" scope="row">
                         <center>
@@ -21,14 +34,14 @@
                                 data-toggle="modal"
                                 data-target="#editfuel"
                             >
-                                <b-icon icon="wrench" aria-hidden="true" />Edit Fuel
+                                <b-icon icon="wrench" aria-hidden="true" /> Edit Fuel
                             </b-button>
                         </center>
                     </td>
                     <td style="width:30%" scope="row">
                         <center>
                             <b-button class="btn btn-danger" @click="removeFuel(fuel)">
-                                <b-icon icon="x-circle" aria-hidden="true" />Remove Fuel
+                                <b-icon icon="x-circle" aria-hidden="true" /> Remove Fuel
                             </b-button>
                         </center>
                     </td>
@@ -36,11 +49,6 @@
             </tbody>
         </table>
 
-        <div class="modal-footer" style>
-            <b-button class="btn btn-success" href="#" data-toggle="modal" data-target="#newfuel">
-                <b-icon icon="plus-circle" aria-hidden="true" />New Fuel Type
-            </b-button>
-        </div>
 
         <!-- Add New Fuel -->
         <div class="modal fade" id="newfuel" tabindex="-1" role="dialog" aria-hidden="true">
@@ -204,9 +212,8 @@ export default {
 
             axios
                 .put(url, {
-                    "id": this.fuelId,
-                    "name":this.fuelEdit
-                    
+                    id: this.fuelId,
+                    name: this.fuelEdit
                 })
                 .then(response => {
                     if (response.status === 200) {

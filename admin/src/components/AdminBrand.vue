@@ -1,28 +1,26 @@
 <template>
     <div style="width:90%" class="container">
         <br>
-        <table class="table table-bordered table-sm" v-if="this.brands.length>0">
+        <table class="table table-bordered table-sm " v-if="this.brands.length>0">
           <thead class="thead-dark">
             <tr>
-              <th colspan="3"><h3> Brands </h3></th> 
+              <th colspan="2"><h3> Brands </h3></th> 
+              <th style="width:30%" colspan="1"> <center> <b-button class="btn btn-success" style="width:45%" href="#" data-toggle="modal" data-target="#newbrand" > <b-icon icon="plus-circle" aria-hidden="true"/> New Brand</b-button> </center> </th>
             </tr>
           </thead>
 
           <tbody >
-            <tr v-for="brand in this.brands" :key="brand.id" >
+            <tr v-for="brand in this.brands" :key="brand.id" style="background:	#F5F5F5" >
               <td  scope="row">{{brand.name}}</td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-warning" v-on:click="editBrand(brand)"  data-toggle="modal" data-target="#editbrand"  > <b-icon icon="wrench" aria-hidden="true"/> Edit Brand </b-button> </center> </td>
               <td  style="width:30%" scope="row"> <center><b-button class="btn btn-danger" v-on:click="removeBrand(brand)" > <b-icon icon="x-circle" aria-hidden="true"/> Remove Brand </b-button> </center> </td>
 
             </tr>           
           </tbody>
-
+           
         </table>
 
-        <div class="modal-footer" style="">
-            <b-button class="btn btn-success" href="#" data-toggle="modal" data-target="#newbrand" > <b-icon icon="plus-circle" aria-hidden="true"/> New Brand</b-button>
-        </div> 
-
+      
     <!-- Add New Brand -->
     <div class="modal fade" id="newbrand" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">

@@ -1,6 +1,12 @@
 <template>
     <div class="container" style=" width:90%">
         <br />
+        <b-card v-if="this.comments.length === 0" class="text-center" style="background:#DCDCDC		">
+            <div>
+               <h4 style="color:#696969		"> No more comments! </h4>
+            </div>
+        </b-card>
+
         <b-card-group deck class="row">
             <div
                 v-for="comment in this.comments"
@@ -20,7 +26,7 @@
                             <div class="col">
                                 <b-button
                                     type="button"
-                                    class="btn btn-success"
+                                    class="btn btn-dark"
                                     @click="approveComment(comment)"
                                     style="width:120%"
                                 >
