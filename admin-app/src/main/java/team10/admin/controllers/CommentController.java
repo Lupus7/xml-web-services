@@ -2,6 +2,7 @@ package team10.admin.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import team10.admin.models.dto.ClientDTO;
 import team10.admin.models.dto.CommentDTO;
@@ -16,6 +17,7 @@ public class CommentController {
     CommentService commentService;
 
     @GetMapping("")
+    @PreAuthorize("hasAuthority('READ_PENDING_COMMENTS')")
     public ResponseEntity<List<CommentDTO>> getAllComments() {
         List<CommentDTO> retVal = commentService.getAll();
         if (retVal != null)
@@ -24,6 +26,7 @@ public class CommentController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('UPDATE_PENDING_COMMENTS')")
     public ResponseEntity<String> approveComment(@PathVariable("id") Long id) {
         if (commentService.approve(id))
             return ResponseEntity.ok("Comment approved");
@@ -31,6 +34,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('UPDATE_PENDING_COMMENTS')")
     public ResponseEntity<String> deleteComment(@PathVariable("id") Long id) {
         if (commentService.delete(id))
             return ResponseEntity.ok("Comment deleted");

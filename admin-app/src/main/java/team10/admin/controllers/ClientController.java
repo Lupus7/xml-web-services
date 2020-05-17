@@ -2,6 +2,7 @@ package team10.admin.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import team10.admin.models.dto.ClientDTO;
 import team10.admin.models.dto.NewAgentDTO;
@@ -17,6 +18,7 @@ public class ClientController {
     ClientService clientService;
 
     @GetMapping("")
+    @PreAuthorize("hasAuthority('READ_CLIENTS')")
     public ResponseEntity<List<ClientDTO>> getAllClients() {
         List<ClientDTO> retVal = clientService.getAll();
         if (retVal != null)
@@ -25,6 +27,7 @@ public class ClientController {
     }
 
     @PutMapping("/block/{email}")
+    @PreAuthorize("hasAuthority('UPDATE_CLIENT_BLOCK')")
     public ResponseEntity<String> blockClient(@PathVariable("email") String email) {
         if (clientService.block(email))
             return ResponseEntity.ok("Operation successful!");
@@ -32,6 +35,7 @@ public class ClientController {
     }
 
     @PutMapping("/activate/{email}")
+    @PreAuthorize("hasAuthority('UPDATE_CLIENT_BLOCK')")
     public ResponseEntity<String> activateClient(@PathVariable("email") String email) {
         if (clientService.activate(email))
             return ResponseEntity.ok("Operation successful!");
@@ -39,6 +43,7 @@ public class ClientController {
     }
 
     @DeleteMapping("/{email}")
+    @PreAuthorize("hasAuthority('DELETE_CLIENT')")
     public ResponseEntity<String> deleteClient(@PathVariable("email") String email) {
         if (clientService.delete(email))
             return ResponseEntity.ok("Operation successful!");
@@ -46,6 +51,7 @@ public class ClientController {
     }
 
     @PostMapping("/company")
+    @PreAuthorize("hasAuthority('ADD_COMPANY')")
     public ResponseEntity<String> registerCompany(@RequestBody NewCompanyDTO newCompanyDTO) {
         if (clientService.registerCompany(newCompanyDTO))
             return ResponseEntity.ok("Operation successful!");
@@ -53,6 +59,7 @@ public class ClientController {
     }
 
     @PostMapping("/agent")
+    @PreAuthorize("hasAuthority('ADD_AGENT')")
     public ResponseEntity<String> registerAgent(@RequestBody NewAgentDTO newAgentDTO) {
         if (clientService.registerAgent(newAgentDTO))
             return ResponseEntity.ok("Operation successful!");

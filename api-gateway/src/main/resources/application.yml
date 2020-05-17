@@ -19,12 +19,12 @@ spring:
                 locator:
                     enabled: true
             routes:
-#                - id: authentication
-#                  uri: lb://authentication
-#                  predicates:
-#                    - Path=/authentication/**
-#                  filters:
-#                    - RewritePath=/authentication/(?<path>.*), /$\{path}
+                - id: authentication
+                  uri: lb://authentication
+                  predicates:
+                    - Path=/authentication/**
+                  filters:
+                    - RewritePath=/authentication/(?<path>.*), /$\{path}
                 - id: admin
                   uri: lb://admin
                   predicates:

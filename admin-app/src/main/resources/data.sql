@@ -1,6 +1,6 @@
 insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (1, true, false, 'user1', 'Johh', 'Doe', '1', '', 'some address', 'ROLE_CLIENT;READ_ADS;SEND_RENT_REQUEST;READ_USER_PRIVILEGES', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
 insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (2, true, false, 'company1', '', '', '2', 'some company name', 'some address', 'ROLE_COMPANY;READ_ADS;SEND_RENT_REQUEST;READ_USER_PRIVILEGES', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
-insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (3, true, false, 'admin1', 'Johh', 'Doe', '3', '', 'some address', 'ROLE_ADMIN;READ_ADS;READ_USER_PRIVILEGES;SEND_RENT_REQUEST', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
+insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (3, true, false, 'admin1', 'Johh', 'Doe', '3', '', 'some address', 'ROLE_ADMIN;READ_USER_PRIVILEGES;UPDATE_USER_PRIVILEGES;READ_CLIENTS;UPDATE_CLIENT_BLOCK;DELETE_CLIENT;ADD_AGENT;ADD_COMPANY;READ_CODEBOOK;UPDATE_CODEBOOK;READ_PENDING_COMMENTS;UPDATE_PENDING_COMMENTS;READ_USER_PRIVILEGES;UPDATE_USER_PRIVILEGES', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
 
 alter sequence user_id_seq RESTART with 4;
 
@@ -9,16 +9,46 @@ insert into role(id, name) values (2, 'ROLE_COMPANY');
 insert into role(id, name) values (3, 'ROLE_ADMIN');
 insert into role(id, name) values (4, 'ROLE_AGENT');
 
+-- admin
 insert into privilege(id, name) values (1, 'READ_USER_PRIVILEGES');
 insert into privilege(id, name) values (2, 'UPDATE_USER_PRIVILEGES');
+
+insert into privilege(id, name) values (5, 'READ_CLIENTS');
+insert into privilege(id, name) values (6, 'UPDATE_CLIENT_BLOCK');
+insert into privilege(id, name) values (7, 'DELETE_CLIENT');
+insert into privilege(id, name) values (8, 'ADD_AGENT');
+insert into privilege(id, name) values (9, 'ADD_COMPANY');
+insert into privilege(id, name) values (10, 'READ_CODEBOOK');
+insert into privilege(id, name) values (11, 'UPDATE_CODEBOOK');
+insert into privilege(id, name) values (12, 'READ_PENDING_COMMENTS');
+insert into privilege(id, name) values (13, 'UPDATE_PENDING_COMMENTS');
+insert into privilege(id, name) values (14, 'READ_USER_PRIVILEGES');
+insert into privilege(id, name) values (15, 'UPDATE_USER_PRIVILEGES');
+
+-- random
 insert into privilege(id, name) values (3, 'READ_ADS');
 insert into privilege(id, name) values (4, 'SEND_RENT_REQUEST');
 
+-- admin
+insert into role_privilege(role_id, privilege_id) values (3, 1);
+insert into role_privilege(role_id, privilege_id) values (3, 2);
+
+insert into role_privilege(role_id, privilege_id) values (3, 5);
+insert into role_privilege(role_id, privilege_id) values (3, 6);
+insert into role_privilege(role_id, privilege_id) values (3, 7);
+insert into role_privilege(role_id, privilege_id) values (3, 8);
+insert into role_privilege(role_id, privilege_id) values (3, 9);
+insert into role_privilege(role_id, privilege_id) values (3, 10);
+insert into role_privilege(role_id, privilege_id) values (3, 11);
+insert into role_privilege(role_id, privilege_id) values (3, 12);
+insert into role_privilege(role_id, privilege_id) values (3, 13);
+insert into role_privilege(role_id, privilege_id) values (3, 14);
+insert into role_privilege(role_id, privilege_id) values (3, 15);
+
+-- random
 insert into role_privilege(role_id, privilege_id) values (1, 3);
 insert into role_privilege(role_id, privilege_id) values (1, 4);
 insert into role_privilege(role_id, privilege_id) values (2, 4);
-insert into role_privilege(role_id, privilege_id) values (3, 1);
-insert into role_privilege(role_id, privilege_id) values (3, 2);
 insert into role_privilege(role_id, privilege_id) values (4, 2);
 
 insert into brand(id, name) values (30, 'opel');

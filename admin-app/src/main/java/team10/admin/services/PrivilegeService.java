@@ -36,7 +36,7 @@ public class PrivilegeService {
         if (privilege == null) return false;
 
         if (user.getPrivileges().contains(privilegeDTO.getName()) && !privilegeDTO.isActive()) {
-            user.setAuthorities(user.getAuthorities().replace(privilegeDTO.getName(), ""));
+            user.setAuthorities(user.getAuthorities().replace(privilegeDTO.getName(), "").replace(";;", ";"));
             userRepository.save(user);
         } else if (!user.getPrivileges().contains(privilegeDTO.getName()) && privilegeDTO.isActive()) {
             user.setAuthorities(user.getAuthorities() + ";" + privilegeDTO.getName());

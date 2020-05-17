@@ -2,6 +2,7 @@ package team10.admin.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import team10.admin.models.dto.PrivilegeDTO;
 import team10.admin.models.dto.UserPrivilegeDTO;
@@ -17,6 +18,7 @@ public class PrivilegeController {
     PrivilegeService privilegeService;
 
     @GetMapping("")
+    @PreAuthorize("hasAuthority('READ_USER_PRIVILEGES')")
     public ResponseEntity<List<UserPrivilegeDTO>> getAllUserPrivileges() {
         List<UserPrivilegeDTO> retVal = privilegeService.getAllUserPrivileges();
 
@@ -25,6 +27,7 @@ public class PrivilegeController {
     }
 
     @GetMapping("/{email}")
+    @PreAuthorize("hasAuthority('READ_USER_PRIVILEGES')")
     public ResponseEntity<List<PrivilegeDTO>> getPrivileges(@PathVariable("email") String email) {
         List<PrivilegeDTO> retVal = privilegeService.getByUser(email);
 
@@ -33,6 +36,7 @@ public class PrivilegeController {
     }
 
     @GetMapping("/available/{email}")
+    @PreAuthorize("hasAuthority('READ_USER_PRIVILEGES')")
     public ResponseEntity<List<PrivilegeDTO>> getAvailablePrivileges(@PathVariable("email") String email) {
         List<PrivilegeDTO> retVal = privilegeService.getAvailableByUser(email);
 
@@ -41,8 +45,9 @@ public class PrivilegeController {
     }
 
     @PutMapping("/{email}")
+    @PreAuthorize("hasAuthority('UPDATE_USER_PRIVILEGES')")
     public ResponseEntity<String> updatePrivilege(@PathVariable("email") String email, @RequestBody PrivilegeDTO privilegeDTO) {
-        if (privilegeService.updatePrivilege(email, privilegeDTO))
+            if (privilegeService.updatePrivilege(email, privilegeDTO))
             return ResponseEntity.ok("Privilege '" + privilegeDTO.getName() + "' updated for user '" + email + "'");
         return ResponseEntity.badRequest().body("Invalid request");
     }
