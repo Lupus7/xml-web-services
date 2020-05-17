@@ -1,4 +1,4 @@
-insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (1, true, false, 'user1', 'Johh', 'Doe', '1', '', 'some address', 'ROLE_CLIENT;READ_ADS;SEND_RENT_REQUEST;READ_USER_PRIVILEGES', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
+insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (1, true, false, 'user1', 'Johh', 'Doe', '1', '', 'some address', 'ROLE_CLIENT;READ_ADS;SEND_RENT_REQUEST;READ_USER_PRIVILEGES;UPDATE_CART;DELETE_FROM_CART;READ_CART;CREATE_BOOKING;ACCEPT_BOOKING;CANCEL_BOOKING;READ_BOOKINGS', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
 insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (2, true, false, 'company1', '', '', '2', 'some company name', 'some address', 'ROLE_COMPANY;READ_ADS;SEND_RENT_REQUEST;READ_USER_PRIVILEGES', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
 insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (3, true, false, 'admin1', 'Johh', 'Doe', '3', '', 'some address', 'ROLE_ADMIN;READ_USER_PRIVILEGES;UPDATE_USER_PRIVILEGES;READ_CLIENTS;UPDATE_CLIENT_BLOCK;DELETE_CLIENT;ADD_AGENT;ADD_COMPANY;READ_CODEBOOK;UPDATE_CODEBOOK;READ_PENDING_COMMENTS;UPDATE_PENDING_COMMENTS;READ_USER_PRIVILEGES;UPDATE_USER_PRIVILEGES', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
 
@@ -24,6 +24,20 @@ insert into privilege(id, name) values (12, 'READ_PENDING_COMMENTS');
 insert into privilege(id, name) values (13, 'UPDATE_PENDING_COMMENTS');
 insert into privilege(id, name) values (14, 'READ_USER_PRIVILEGES');
 insert into privilege(id, name) values (15, 'UPDATE_USER_PRIVILEGES');
+insert into privilege(id, name) values (16, 'UPDATE_CART');
+insert into privilege(id, name) values (17, 'DELETE_FROM_CART');
+insert into privilege(id, name) values (18, 'READ_CART');
+insert into privilege(id, name) values (19, 'CREATE_BOOKING');
+insert into privilege(id, name) values (20, 'ACCEPT_BOOKING');
+insert into privilege(id, name) values (21, 'CANCEL_BOOKING');
+insert into privilege(id, name) values (22, 'READ_BOOKINGS');
+
+
+
+
+
+
+
 
 -- random
 insert into privilege(id, name) values (3, 'READ_ADS');
@@ -44,6 +58,22 @@ insert into role_privilege(role_id, privilege_id) values (3, 12);
 insert into role_privilege(role_id, privilege_id) values (3, 13);
 insert into role_privilege(role_id, privilege_id) values (3, 14);
 insert into role_privilege(role_id, privilege_id) values (3, 15);
+
+--client
+insert into role_privilege(role_id, privilege_id) values (1, 16);
+insert into role_privilege(role_id, privilege_id) values (1, 17);
+insert into role_privilege(role_id, privilege_id) values (1, 18);
+insert into role_privilege(role_id, privilege_id) values (1, 19);
+insert into role_privilege(role_id, privilege_id) values (1, 20);
+insert into role_privilege(role_id, privilege_id) values (1, 21);
+insert into role_privilege(role_id, privilege_id) values (1, 22);
+
+--company
+
+
+--agent
+
+
 
 -- random
 insert into role_privilege(role_id, privilege_id) values (1, 3);
