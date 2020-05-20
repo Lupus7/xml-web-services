@@ -53,6 +53,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
                 .sign(HMAC512(JwtProperties.SECRET.getBytes()));
 
-        response.addHeader(JwtProperties.HEADER, JwtProperties.TOKEN_PREFIX + token);
+        response.getWriter().write(JwtProperties.TOKEN_PREFIX + token);
+        response.setHeader("Content-Type", "application/json;charset=utf-8");
     }
 }

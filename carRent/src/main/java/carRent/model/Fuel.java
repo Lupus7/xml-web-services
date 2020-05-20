@@ -10,7 +10,7 @@ public class Fuel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "type", unique = false, nullable = false)
+    @Column(name = "name", unique = false, nullable = false)
     private String type;
 
     public Fuel() {

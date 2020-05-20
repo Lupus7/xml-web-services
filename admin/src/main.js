@@ -8,6 +8,7 @@ import axios from 'axios'
 import VueRouter from 'vue-router'
 import router from './routes'
 import VueResource from 'vue-resource'
+import "./token"
 Vue.use(VueResource)
 
 

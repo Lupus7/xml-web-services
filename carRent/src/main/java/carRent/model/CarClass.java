@@ -3,7 +3,7 @@ package carRent.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "car_class")
+@Table(name = "class")
 public class CarClass {
 
     @Id

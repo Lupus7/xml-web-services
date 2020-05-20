@@ -51,7 +51,7 @@ public class Car {
     private Transmission transmission;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="car_class_id",referencedColumnName = "id")
+    @JoinColumn(name="class_id",referencedColumnName = "id")
     private CarClass carClass;
 
     @LazyCollection(LazyCollectionOption.FALSE)
