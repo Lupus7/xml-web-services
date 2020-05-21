@@ -1,5 +1,5 @@
 
-package cars;
+package community;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;

@@ -1,5 +1,5 @@
 
-package cars;
+package price;
 
 import java.util.ArrayList;
 import java.util.List;

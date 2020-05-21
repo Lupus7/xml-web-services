@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="xml-web-services-price"
+    elementFormDefault="qualified" xmlns:xws-price="xml-web-services-price"
+    xmlns:xws-cars="xml-web-services-cars">
+    <xs:import id="xws-cars" namespace="xml-web-services-cars" schemaLocation="Cars.xsd"/>
+    <xs:complexType name="Price">
+        <xs:sequence>
+            <xs:element name="long" type="xs:long"/>
+            <xs:element name="date" type="xs:date"/>
+            <xs:element name="price" type="xs:double"/>
+            <xs:element name="priceKm" type="xs:double"/>
+            <xs:element name="priceCDW" type="xs:double"/>
+            <xs:element name="ad" type="xws-cars:Ad"/>
+            <xs:element minOccurs="0" name="discount" type="xws-price:Discount"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Discount">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="percent" type="xs:int"/>
+            <xs:element name="minDays" type="xs:int"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="prices" type="xws-price:Price"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

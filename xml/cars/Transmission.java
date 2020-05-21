@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Transmission", namespace = "xml-web-services", propOrder = {
+@XmlType(name = "Transmission", namespace = "xml-web-services-cars", propOrder = {
     "id",
     "name"
 })
 public class Transmission {
 
-    @XmlElement(namespace = "xml-web-services")
+    @XmlElement(namespace = "xml-web-services-cars")
     protected long id;
-    @XmlElement(namespace = "xml-web-services", required = true)
+    @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String name;
 
     /**
