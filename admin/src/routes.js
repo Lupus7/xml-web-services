@@ -2,24 +2,37 @@ import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
 
-const router = new Router({
-    mode: 'history',
-    routes: [
-      {
-        path: '/'
-      },
-      {
-        path: '/admin',
-        name: 'AdminPanel',
-        component: ()=> import ('./views/AdminPanel')
-      },
-      {
-        path: '/permission',
-        name: 'PermissionPage',
-        props: true,
-        component: ()=> import ('./views/PermissionPage')
-      },
-    ]
-  })
+function authetication(to, from, next) {
+  const token = localStorage.getItem("accessToken");
 
-  export default router;
+  if (!(token === null || token === ""))
+    return next();
+
+  router.push('/');
+}
+
+const router = new Router({
+  mode: 'history',
+  routes: [
+    {
+      path: '/'
+    },
+    {
+      path: '/admin',
+      name: 'AdminPanel',
+      component: () => import('./views/AdminPanel'),
+      beforeEnter: authetication
+
+    },
+    {
+      path: '/permission',
+      name: 'PermissionPage',
+      props: true,
+      component: () => import('./views/PermissionPage'),
+      beforeEnter: authetication
+
+    },
+  ]
+})
+
+export default router;
