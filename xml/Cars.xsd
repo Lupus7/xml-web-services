@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xws="xml-web-services"
+    targetNamespace="xml-web-services" elementFormDefault="qualified">
+
+    <xs:complexType name="Car">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="totalMileage" type="xs:double"/>
+            <xs:element name="allowedMileage" type="xs:double"/>
+            <xs:element name="childrenSeats" type="xs:int"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="colDamProtection" type="xs:boolean"/>
+            <xs:element name="owned" type="xs:string"/>
+            <xs:element name="brand" type="xws:Brand"/>
+            <xs:element name="model" type="xws:Model"/>
+            <xs:element name="carClass" type="xws:Class"/>
+            <xs:element name="fuel" type="xws:Fuel"/>
+            <xs:element name="transmission" type="xws:Transmission"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="bookings" type="xws:Booking"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="images" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="ads" type="xws:Ad"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Ad">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="startDate" type="xs:date"/>
+            <xs:element name="endDate" type="xs:date"/>
+            <xs:element name="place" type="xs:string"/>
+            <xs:element name="car" type="xws:Car"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Booking">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="startDate" type="xs:date"/>
+            <xs:element name="endDate" type="xs:date"/>
+            <xs:element name="state" type="xws:RequestState"/>
+            <xs:element name="place" type="xs:string"/>
+            <xs:element name="created" type="xs:date"/>
+            <xs:element name="loaner" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="1" name="cars" type="xws:Car"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="RequestState" final="">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PENDING"/>
+            <xs:enumeration value="RESERVED"/>
+            <xs:enumeration value="PAID"/>
+            <xs:enumeration value="CANCELED"/>
+            <xs:enumeration value="ENDED"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="Brand">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="models" type="xws:Model"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Model">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="name" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Class">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="name" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Fuel">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="name" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Transmission">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="name" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
