@@ -1,5 +1,5 @@
 
-package cars;
+package price;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,18 +10,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Brand complex type.
+ * <p>Java class for Cart complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Brand"&gt;
+ * &lt;complexType name="Cart"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
- *         &lt;element name="models" type="{xml-web-services-cars}Model" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="user" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="ads" type="{xml-web-services-cars}Ad" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -31,19 +31,19 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Brand", namespace = "xml-web-services-cars", propOrder = {
+@XmlType(name = "Cart", namespace = "xml-web-services-cars", propOrder = {
     "id",
-    "name",
-    "models"
+    "user",
+    "ads"
 })
-public class Brand {
+public class Cart {
 
     @XmlElement(namespace = "xml-web-services-cars")
     protected long id;
     @XmlElement(namespace = "xml-web-services-cars", required = true)
-    protected String name;
+    protected String user;
     @XmlElement(namespace = "xml-web-services-cars")
-    protected List<Model> models;
+    protected List<Ad> ads;
 
     /**
      * Gets the value of the id property.
@@ -62,56 +62,56 @@ public class Brand {
     }
 
     /**
-     * Gets the value of the name property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getName() {
-        return name;
+    public String getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the name property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setName(String value) {
-        this.name = value;
+    public void setUser(String value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the models property.
+     * Gets the value of the ads property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the models property.
+     * This is why there is not a <CODE>set</CODE> method for the ads property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getModels().add(newItem);
+     *    getAds().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Model }
+     * {@link Ad }
      * 
      * 
      */
-    public List<Model> getModels() {
-        if (models == null) {
-            models = new ArrayList<Model>();
+    public List<Ad> getAds() {
+        if (ads == null) {
+            ads = new ArrayList<Ad>();
         }
-        return this.models;
+        return this.ads;
     }
 
 }

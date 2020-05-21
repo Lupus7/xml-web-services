@@ -23,7 +23,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="startDate" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
  *         &lt;element name="endDate" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
  *         &lt;element name="place" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
- *         &lt;element name="car" type="{xml-web-services}Car"/&gt;
+ *         &lt;element name="car" type="{xml-web-services-cars}Car"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -33,7 +33,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Ad", namespace = "xml-web-services", propOrder = {
+@XmlType(name = "Ad", namespace = "xml-web-services-cars", propOrder = {
     "id",
     "startDate",
     "endDate",
@@ -42,17 +42,17 @@ import javax.xml.datatype.XMLGregorianCalendar;
 })
 public class Ad {
 
-    @XmlElement(namespace = "xml-web-services")
+    @XmlElement(namespace = "xml-web-services-cars")
     protected long id;
-    @XmlElement(namespace = "xml-web-services", required = true)
+    @XmlElement(namespace = "xml-web-services-cars", required = true)
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar startDate;
-    @XmlElement(namespace = "xml-web-services", required = true)
+    @XmlElement(namespace = "xml-web-services-cars", required = true)
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar endDate;
-    @XmlElement(namespace = "xml-web-services", required = true)
+    @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String place;
-    @XmlElement(namespace = "xml-web-services", required = true)
+    @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected Car car;
 
     /**
