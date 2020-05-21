@@ -5,6 +5,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,7 +34,7 @@ public class Booking {
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "booking_car", joinColumns = @JoinColumn(name = "booking_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "car_id", referencedColumnName = "id"))
-    private List<Car> cars;
+    private List<Car> cars = new ArrayList<>();
 
     @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name="loaner",referencedColumnName = "id")

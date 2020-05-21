@@ -129,7 +129,7 @@
               
                     <b-card style="width:300px;height:330px;border:none;">
 
-                        <b-card-title class="mb-1"> {{value.Brand}} </b-card-title>
+                        <b-card-title class="mb-1" style="color: black"> {{value.Brand}} </b-card-title>
                         
                         <hr>
                         <b-card-sub-title class="mb-3"> <b-icon icon="building" aria-hidden="true" variant="dark" ></b-icon> {{value.Advertiser}} </b-card-sub-title>
@@ -147,18 +147,13 @@
                         <b-card-sub-title class="mb-2"><b-icon icon="calendar" aria-hidden="true" variant="dark" /> Start Date: {{value.StartDate}}</b-card-sub-title>
                         <b-card-sub-title class="mb-2"><b-icon icon="calendar-fill" aria-hidden="true" variant="dark" /> End Date: {{value.EndDate}}</b-card-sub-title>
 
-
-
-
-
-          
                     </b-card>
 
             </b-card-group>
           </template>
           
-          <template v-slot:cell(moredetails)>
-            <b-button style="background:#b20000; width:150px"> Book Car </b-button>
+          <template v-slot:cell(moredetails)="value">
+            <b-button style="background:#b20000; width:150px" @click="goToAd(value.item.Id)"> Book Car </b-button>
           </template>
           <br>
     </b-table>
@@ -178,7 +173,7 @@ export default {
       // adds ce da se popuni posle search,onda podesi key u fields i items zameni sa adds
       fields: [
           { key: 'Images', label:'Image', sortable: false},{ key: 'Card', label:'Car Info', sortable: false}, { key:"TotalMileage",label: 'Traveled Km', sortable: true},{key:"AllowedMileage", label: 'Predicted Km', sortable: true},
-          { key:'Price',label: 'Price[$]', sortable: true},{key:'Rating', label: 'Rate', sortable: true}, {key:'moredetails',label:""}         
+          { key:'Price',label: 'Price[€]', sortable: true},{key:'Rating', label: 'Rate', sortable: true}, {key:'moredetails',label:""}         
          
         ],
         adds: [],
@@ -275,6 +270,7 @@ export default {
 
                          }
                           let add = {
+                            Id: res.Id,
                             Images: res.Images,
                             Card: card,
                             TotalMileage : res.TotalMileage,
@@ -346,7 +342,14 @@ export default {
         this.models.push(m);
       this.modelBool = false;
 
-    }
+    },
+    goToAd(id) {
+      console.log(id)
+        this.$router.push({
+            name: "Ad",
+            params: { id: id },
+        });
+    },
   },
   created(){
     this.getCarSpec();
