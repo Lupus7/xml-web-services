@@ -1,8 +1,5 @@
 package carRent.model.dto;
 
-import carRent.model.Car;
-
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 public class AdDTO {

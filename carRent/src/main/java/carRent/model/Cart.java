@@ -1,8 +1,5 @@
 package carRent.model;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,18 +12,16 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private User user;
+    @Column(name = "user", nullable = false)
+    private Long user;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "cart_ad", joinColumns = @JoinColumn(name = "cart_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "ad_id", referencedColumnName = "id"))
-    private List<Ad> ads;
+    @ElementCollection
+    private List<Long> ads;
 
     public Cart() {
     }
 
-    public Cart(User user) {
+    public Cart(Long user) {
         this.user = user;
         this.ads = new ArrayList<>();
     }
@@ -39,19 +34,19 @@ public class Cart {
         this.id = id;
     }
 
-    public User getUser() {
+    public Long getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Long user) {
         this.user = user;
     }
 
-    public List<Ad> getAds() {
+    public List<Long> getAds() {
         return ads;
     }
 
-    public void setAds(List<Ad> ads) {
+    public void setAds(List<Long> ads) {
         this.ads = ads;
     }
 }

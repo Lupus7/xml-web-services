@@ -1,8 +1,5 @@
 package carRent.model;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,20 +28,17 @@ public class Booking {
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "booking_car", joinColumns = @JoinColumn(name = "booking_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "car_id", referencedColumnName = "id"))
-    private List<Car> cars = new ArrayList<>();
+    @ElementCollection
+    private List<Long> cars = new ArrayList<>();
 
-    @ManyToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name="loaner",referencedColumnName = "id")
-    private User loaner;
+    @Column(name = "loaner", nullable = false)
+    private Long loaner;
 
     public Booking() {
 
     }
 
-    public Booking(LocalDateTime startDate, LocalDateTime endDate, RequestState requestState, String place, LocalDateTime created, Car car, User user) {
+    public Booking(LocalDateTime startDate, LocalDateTime endDate, RequestState requestState, String place, LocalDateTime created, Long car, Long user) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.state = requestState;
@@ -54,21 +48,6 @@ public class Booking {
         this.loaner = user;
     }
 
-    public List<Car> getCars() {
-        return cars;
-    }
-
-    public void setCars(List<Car> cars) {
-        this.cars = cars;
-    }
-
-    public User getUser() {
-        return loaner;
-    }
-
-    public void setUser(User user) {
-        this.loaner = user;
-    }
 
     public Long getId() {
         return id;
@@ -118,11 +97,19 @@ public class Booking {
         this.created = created;
     }
 
-    public User getLoaner() {
+    public List<Long> getCars() {
+        return cars;
+    }
+
+    public void setCars(List<Long> cars) {
+        this.cars = cars;
+    }
+
+    public Long getLoaner() {
         return loaner;
     }
 
-    public void setLoaner(User loaner) {
+    public void setLoaner(Long loaner) {
         this.loaner = loaner;
     }
 }
