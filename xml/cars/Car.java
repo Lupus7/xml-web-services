@@ -26,12 +26,12 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="colDamProtection" type="{http://www.w3.org/2001/XMLSchema}boolean"/&gt;
  *         &lt;element name="owned" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
- *         &lt;element name="brand" type="{xml-web-services-cars}Brand"/&gt;
- *         &lt;element name="model" type="{xml-web-services-cars}Model"/&gt;
- *         &lt;element name="carClass" type="{xml-web-services-cars}Class"/&gt;
- *         &lt;element name="fuel" type="{xml-web-services-cars}Fuel"/&gt;
- *         &lt;element name="transmission" type="{xml-web-services-cars}Transmission"/&gt;
- *         &lt;element name="bookings" type="{xml-web-services-cars}Booking" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="brand" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="model" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="carClass" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="fuel" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="transmission" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="bookings" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="images" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="ads" type="{xml-web-services-cars}Ad" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
@@ -77,17 +77,17 @@ public class Car {
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String owned;
     @XmlElement(namespace = "xml-web-services-cars", required = true)
-    protected Brand brand;
+    protected String brand;
     @XmlElement(namespace = "xml-web-services-cars", required = true)
-    protected Model model;
+    protected String model;
     @XmlElement(namespace = "xml-web-services-cars", required = true)
-    protected Class carClass;
+    protected String carClass;
     @XmlElement(namespace = "xml-web-services-cars", required = true)
-    protected Fuel fuel;
+    protected String fuel;
     @XmlElement(namespace = "xml-web-services-cars", required = true)
-    protected Transmission transmission;
-    @XmlElement(namespace = "xml-web-services-cars")
-    protected List<Booking> bookings;
+    protected String transmission;
+    @XmlElement(namespace = "xml-web-services-cars", type = Long.class)
+    protected List<Long> bookings;
     @XmlElement(namespace = "xml-web-services-cars")
     protected List<String> images;
     @XmlElement(namespace = "xml-web-services-cars")
@@ -226,10 +226,10 @@ public class Car {
      * 
      * @return
      *     possible object is
-     *     {@link Brand }
+     *     {@link String }
      *     
      */
-    public Brand getBrand() {
+    public String getBrand() {
         return brand;
     }
 
@@ -238,10 +238,10 @@ public class Car {
      * 
      * @param value
      *     allowed object is
-     *     {@link Brand }
+     *     {@link String }
      *     
      */
-    public void setBrand(Brand value) {
+    public void setBrand(String value) {
         this.brand = value;
     }
 
@@ -250,10 +250,10 @@ public class Car {
      * 
      * @return
      *     possible object is
-     *     {@link Model }
+     *     {@link String }
      *     
      */
-    public Model getModel() {
+    public String getModel() {
         return model;
     }
 
@@ -262,10 +262,10 @@ public class Car {
      * 
      * @param value
      *     allowed object is
-     *     {@link Model }
+     *     {@link String }
      *     
      */
-    public void setModel(Model value) {
+    public void setModel(String value) {
         this.model = value;
     }
 
@@ -274,10 +274,10 @@ public class Car {
      * 
      * @return
      *     possible object is
-     *     {@link Class }
+     *     {@link String }
      *     
      */
-    public Class getCarClass() {
+    public String getCarClass() {
         return carClass;
     }
 
@@ -286,10 +286,10 @@ public class Car {
      * 
      * @param value
      *     allowed object is
-     *     {@link Class }
+     *     {@link String }
      *     
      */
-    public void setCarClass(Class value) {
+    public void setCarClass(String value) {
         this.carClass = value;
     }
 
@@ -298,10 +298,10 @@ public class Car {
      * 
      * @return
      *     possible object is
-     *     {@link Fuel }
+     *     {@link String }
      *     
      */
-    public Fuel getFuel() {
+    public String getFuel() {
         return fuel;
     }
 
@@ -310,10 +310,10 @@ public class Car {
      * 
      * @param value
      *     allowed object is
-     *     {@link Fuel }
+     *     {@link String }
      *     
      */
-    public void setFuel(Fuel value) {
+    public void setFuel(String value) {
         this.fuel = value;
     }
 
@@ -322,10 +322,10 @@ public class Car {
      * 
      * @return
      *     possible object is
-     *     {@link Transmission }
+     *     {@link String }
      *     
      */
-    public Transmission getTransmission() {
+    public String getTransmission() {
         return transmission;
     }
 
@@ -334,10 +334,10 @@ public class Car {
      * 
      * @param value
      *     allowed object is
-     *     {@link Transmission }
+     *     {@link String }
      *     
      */
-    public void setTransmission(Transmission value) {
+    public void setTransmission(String value) {
         this.transmission = value;
     }
 
@@ -359,13 +359,13 @@ public class Car {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Booking }
+     * {@link Long }
      * 
      * 
      */
-    public List<Booking> getBookings() {
+    public List<Long> getBookings() {
         if (bookings == null) {
-            bookings = new ArrayList<Booking>();
+            bookings = new ArrayList<Long>();
         }
         return this.bookings;
     }

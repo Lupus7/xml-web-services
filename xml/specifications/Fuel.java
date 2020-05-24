@@ -1,5 +1,5 @@
 
-package price;
+package specifications;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,12 +8,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Class complex type.
+ * <p>Java class for Fuel complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Class"&gt;
+ * &lt;complexType name="Fuel"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Class", namespace = "xml-web-services-cars", propOrder = {
+@XmlType(name = "Fuel", namespace = "xml-web-service-specs", propOrder = {
     "id",
     "name"
 })
-public class Class {
+public class Fuel {
 
-    @XmlElement(namespace = "xml-web-services-cars")
+    @XmlElement(namespace = "xml-web-service-specs")
     protected long id;
-    @XmlElement(namespace = "xml-web-services-cars", required = true)
+    @XmlElement(namespace = "xml-web-service-specs", required = true)
     protected String name;
 
     /**

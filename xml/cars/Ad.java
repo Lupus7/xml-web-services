@@ -23,7 +23,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="startDate" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
  *         &lt;element name="endDate" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
  *         &lt;element name="place" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
- *         &lt;element name="car" type="{xml-web-services-cars}Car"/&gt;
+ *         &lt;element name="carID" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -38,7 +38,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "startDate",
     "endDate",
     "place",
-    "car"
+    "carID"
 })
 public class Ad {
 
@@ -52,8 +52,8 @@ public class Ad {
     protected XMLGregorianCalendar endDate;
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String place;
-    @XmlElement(namespace = "xml-web-services-cars", required = true)
-    protected Car car;
+    @XmlElement(namespace = "xml-web-services-cars")
+    protected long carID;
 
     /**
      * Gets the value of the id property.
@@ -144,27 +144,19 @@ public class Ad {
     }
 
     /**
-     * Gets the value of the car property.
+     * Gets the value of the carID property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Car }
-     *     
      */
-    public Car getCar() {
-        return car;
+    public long getCarID() {
+        return carID;
     }
 
     /**
-     * Sets the value of the car property.
+     * Sets the value of the carID property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Car }
-     *     
      */
-    public void setCar(Car value) {
-        this.car = value;
+    public void setCarID(long value) {
+        this.carID = value;
     }
 
 }

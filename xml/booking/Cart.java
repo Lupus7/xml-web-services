@@ -1,5 +1,5 @@
 
-package community;
+package booking;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence&gt;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *         &lt;element name="user" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
- *         &lt;element name="ads" type="{xml-web-services-cars}Ad" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="ads" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -31,19 +31,19 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Cart", namespace = "xml-web-services-cars", propOrder = {
+@XmlType(name = "Cart", namespace = "xml-web-service-booking", propOrder = {
     "id",
     "user",
     "ads"
 })
 public class Cart {
 
-    @XmlElement(namespace = "xml-web-services-cars")
+    @XmlElement(namespace = "xml-web-service-booking")
     protected long id;
-    @XmlElement(namespace = "xml-web-services-cars", required = true)
+    @XmlElement(namespace = "xml-web-service-booking", required = true)
     protected String user;
-    @XmlElement(namespace = "xml-web-services-cars")
-    protected List<Ad> ads;
+    @XmlElement(namespace = "xml-web-service-booking", type = Long.class)
+    protected List<Long> ads;
 
     /**
      * Gets the value of the id property.
@@ -103,13 +103,13 @@ public class Cart {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Ad }
+     * {@link Long }
      * 
      * 
      */
-    public List<Ad> getAds() {
+    public List<Long> getAds() {
         if (ads == null) {
-            ads = new ArrayList<Ad>();
+            ads = new ArrayList<Long>();
         }
         return this.ads;
     }

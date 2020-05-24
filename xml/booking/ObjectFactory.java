@@ -1,5 +1,5 @@
 
-package cars;
+package booking;
 
 import javax.xml.bind.annotation.XmlRegistry;
 
@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRegistry;
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the cars package. 
+ * generated in the booking package. 
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -23,26 +23,26 @@ public class ObjectFactory {
 
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: cars
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: booking
      * 
      */
     public ObjectFactory() {
     }
 
     /**
-     * Create an instance of {@link Car }
+     * Create an instance of {@link Booking }
      * 
      */
-    public Car createCar() {
-        return new Car();
+    public Booking createBooking() {
+        return new Booking();
     }
 
     /**
-     * Create an instance of {@link Ad }
+     * Create an instance of {@link Cart }
      * 
      */
-    public Ad createAd() {
-        return new Ad();
+    public Cart createCart() {
+        return new Cart();
     }
 
 }

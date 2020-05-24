@@ -1,5 +1,5 @@
 
-package community;
+package specifications;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Transmission", namespace = "xml-web-services-cars", propOrder = {
+@XmlType(name = "Transmission", namespace = "xml-web-service-specs", propOrder = {
     "id",
     "name"
 })
 public class Transmission {
 
-    @XmlElement(namespace = "xml-web-services-cars")
+    @XmlElement(namespace = "xml-web-service-specs")
     protected long id;
-    @XmlElement(namespace = "xml-web-services-cars", required = true)
+    @XmlElement(namespace = "xml-web-service-specs", required = true)
     protected String name;
 
     /**

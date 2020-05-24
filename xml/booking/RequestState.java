@@ -1,5 +1,5 @@
 
-package price;
+package booking;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  * 
  */
-@XmlType(name = "RequestState", namespace = "xml-web-services-cars")
+@XmlType(name = "RequestState", namespace = "xml-web-service-booking")
 @XmlEnum
 public enum RequestState {
 

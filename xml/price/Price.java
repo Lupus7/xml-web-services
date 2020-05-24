@@ -24,7 +24,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="price" type="{http://www.w3.org/2001/XMLSchema}double"/&gt;
  *         &lt;element name="priceKm" type="{http://www.w3.org/2001/XMLSchema}double"/&gt;
  *         &lt;element name="priceCDW" type="{http://www.w3.org/2001/XMLSchema}double"/&gt;
- *         &lt;element name="ad" type="{xml-web-services-cars}Ad"/&gt;
+ *         &lt;element name="ad" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *         &lt;element name="discount" type="{xml-web-services-price}Discount" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
@@ -57,8 +57,8 @@ public class Price {
     protected double priceKm;
     @XmlElement(namespace = "xml-web-services-price")
     protected double priceCDW;
-    @XmlElement(namespace = "xml-web-services-price", required = true)
-    protected Ad ad;
+    @XmlElement(namespace = "xml-web-services-price")
+    protected long ad;
     @XmlElement(namespace = "xml-web-services-price")
     protected Discount discount;
 
@@ -153,24 +153,16 @@ public class Price {
     /**
      * Gets the value of the ad property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Ad }
-     *     
      */
-    public Ad getAd() {
+    public long getAd() {
         return ad;
     }
 
     /**
      * Sets the value of the ad property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Ad }
-     *     
      */
-    public void setAd(Ad value) {
+    public void setAd(long value) {
         this.ad = value;
     }
 

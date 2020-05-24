@@ -22,7 +22,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *         &lt;element name="body" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="date" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
- *         &lt;element name="booking" type="{xml-web-services-cars}Booking"/&gt;
+ *         &lt;element name="booking" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -47,8 +47,8 @@ public class Message {
     @XmlElement(namespace = "xml-web-services-community", required = true)
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar date;
-    @XmlElement(namespace = "xml-web-services-community", required = true)
-    protected Booking booking;
+    @XmlElement(namespace = "xml-web-services-community")
+    protected long booking;
 
     /**
      * Gets the value of the id property.
@@ -117,24 +117,16 @@ public class Message {
     /**
      * Gets the value of the booking property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Booking }
-     *     
      */
-    public Booking getBooking() {
+    public long getBooking() {
         return booking;
     }
 
     /**
      * Sets the value of the booking property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Booking }
-     *     
      */
-    public void setBooking(Booking value) {
+    public void setBooking(long value) {
         this.booking = value;
     }
 

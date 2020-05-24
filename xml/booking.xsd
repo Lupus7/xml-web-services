@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xws-booking="xml-web-service-booking"
+    targetNamespace="xml-web-service-booking" elementFormDefault="qualified">
+
+    <xs:complexType name="Booking">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="startDate" type="xs:date"/>
+            <xs:element name="endDate" type="xs:date"/>
+            <xs:element name="state" type="xws-booking:RequestState"/>
+            <xs:element name="place" type="xs:string"/>
+            <xs:element name="created" type="xs:date"/>
+            <xs:element name="loaner" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="1" name="cars" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType final="" name="RequestState">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PENDING"/>
+            <xs:enumeration value="RESERVED"/>
+            <xs:enumeration value="PAID"/>
+            <xs:enumeration value="CANCELED"/>
+            <xs:enumeration value="ENDED"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="Cart">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="user" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="ads" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

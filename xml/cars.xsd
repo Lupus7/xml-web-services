@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="xml-web-services-cars"
+    elementFormDefault="qualified" xmlns:xws-cars="xml-web-services-cars">
+
+    <xs:complexType name="Car">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="totalMileage" type="xs:double"/>
+            <xs:element name="allowedMileage" type="xs:double"/>
+            <xs:element name="childrenSeats" type="xs:int"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="colDamProtection" type="xs:boolean"/>
+            <xs:element name="owned" type="xs:string"/>
+            <xs:element name="brand" type="xs:string"/>
+            <xs:element name="model" type="xs:string"/>
+            <xs:element name="carClass" type="xs:string"/>
+            <xs:element name="fuel" type="xs:string"/>
+            <xs:element name="transmission" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="bookings" type="xs:long"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="images" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="ads" type="xws-cars:Ad"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Ad">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="startDate" type="xs:date"/>
+            <xs:element name="endDate" type="xs:date"/>
+            <xs:element name="place" type="xs:string"/>
+            <xs:element name="carID" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

@@ -1,5 +1,5 @@
 
-package cars;
+package booking;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +24,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *         &lt;element name="startDate" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
  *         &lt;element name="endDate" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
- *         &lt;element name="state" type="{xml-web-services-cars}RequestState"/&gt;
+ *         &lt;element name="state" type="{xml-web-service-booking}RequestState"/&gt;
  *         &lt;element name="place" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="created" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
  *         &lt;element name="loaner" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
- *         &lt;element name="cars" type="{xml-web-services-cars}Car" maxOccurs="unbounded"/&gt;
+ *         &lt;element name="cars" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -38,7 +38,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Booking", namespace = "xml-web-services-cars", propOrder = {
+@XmlType(name = "Booking", namespace = "xml-web-service-booking", propOrder = {
     "id",
     "startDate",
     "endDate",
@@ -50,26 +50,26 @@ import javax.xml.datatype.XMLGregorianCalendar;
 })
 public class Booking {
 
-    @XmlElement(namespace = "xml-web-services-cars")
+    @XmlElement(namespace = "xml-web-service-booking")
     protected long id;
-    @XmlElement(namespace = "xml-web-services-cars", required = true)
+    @XmlElement(namespace = "xml-web-service-booking", required = true)
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar startDate;
-    @XmlElement(namespace = "xml-web-services-cars", required = true)
+    @XmlElement(namespace = "xml-web-service-booking", required = true)
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar endDate;
-    @XmlElement(namespace = "xml-web-services-cars", required = true)
+    @XmlElement(namespace = "xml-web-service-booking", required = true)
     @XmlSchemaType(name = "string")
     protected RequestState state;
-    @XmlElement(namespace = "xml-web-services-cars", required = true)
+    @XmlElement(namespace = "xml-web-service-booking", required = true)
     protected String place;
-    @XmlElement(namespace = "xml-web-services-cars", required = true)
+    @XmlElement(namespace = "xml-web-service-booking", required = true)
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar created;
-    @XmlElement(namespace = "xml-web-services-cars", required = true)
+    @XmlElement(namespace = "xml-web-service-booking", required = true)
     protected String loaner;
-    @XmlElement(namespace = "xml-web-services-cars", required = true)
-    protected List<Car> cars;
+    @XmlElement(namespace = "xml-web-service-booking", type = Long.class)
+    protected List<Long> cars;
 
     /**
      * Gets the value of the id property.
@@ -249,13 +249,13 @@ public class Booking {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Car }
+     * {@link Long }
      * 
      * 
      */
-    public List<Car> getCars() {
+    public List<Long> getCars() {
         if (cars == null) {
-            cars = new ArrayList<Car>();
+            cars = new ArrayList<Long>();
         }
         return this.cars;
     }

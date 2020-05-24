@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *         &lt;element name="extraInfo" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="allowedMileage" type="{http://www.w3.org/2001/XMLSchema}double"/&gt;
- *         &lt;element name="booking" type="{xml-web-services-cars}Booking"/&gt;
+ *         &lt;element name="booking" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -44,8 +44,8 @@ public class Report {
     protected String extraInfo;
     @XmlElement(namespace = "xml-web-services-community")
     protected double allowedMileage;
-    @XmlElement(namespace = "xml-web-services-community", required = true)
-    protected Booking booking;
+    @XmlElement(namespace = "xml-web-services-community")
+    protected long booking;
 
     /**
      * Gets the value of the id property.
@@ -106,24 +106,16 @@ public class Report {
     /**
      * Gets the value of the booking property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Booking }
-     *     
      */
-    public Booking getBooking() {
+    public long getBooking() {
         return booking;
     }
 
     /**
      * Sets the value of the booking property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Booking }
-     *     
      */
-    public void setBooking(Booking value) {
+    public void setBooking(long value) {
         this.booking = value;
     }
 

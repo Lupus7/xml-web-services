@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="rate" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
  *         &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="approved" type="{http://www.w3.org/2001/XMLSchema}boolean"/&gt;
- *         &lt;element name="booking" type="{xml-web-services-cars}Booking"/&gt;
+ *         &lt;element name="booking" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -48,8 +48,8 @@ public class Rate {
     protected String comment;
     @XmlElement(namespace = "xml-web-services-community")
     protected boolean approved;
-    @XmlElement(namespace = "xml-web-services-community", required = true)
-    protected Booking booking;
+    @XmlElement(namespace = "xml-web-services-community")
+    protected long booking;
 
     /**
      * Gets the value of the id property.
@@ -126,24 +126,16 @@ public class Rate {
     /**
      * Gets the value of the booking property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Booking }
-     *     
      */
-    public Booking getBooking() {
+    public long getBooking() {
         return booking;
     }
 
     /**
      * Sets the value of the booking property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Booking }
-     *     
      */
-    public void setBooking(Booking value) {
+    public void setBooking(long value) {
         this.booking = value;
     }
 

@@ -2,7 +2,6 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="xml-web-services-price"
     elementFormDefault="qualified" xmlns:xws-price="xml-web-services-price"
     xmlns:xws-cars="xml-web-services-cars">
-    <xs:import id="xws-cars" namespace="xml-web-services-cars" schemaLocation="Cars.xsd"/>
     <xs:complexType name="Price">
         <xs:sequence>
             <xs:element name="long" type="xs:long"/>
@@ -10,7 +9,7 @@
             <xs:element name="price" type="xs:double"/>
             <xs:element name="priceKm" type="xs:double"/>
             <xs:element name="priceCDW" type="xs:double"/>
-            <xs:element name="ad" type="xws-cars:Ad"/>
+            <xs:element name="ad" type="xs:long"/>
             <xs:element minOccurs="0" name="discount" type="xws-price:Discount"/>
         </xs:sequence>
     </xs:complexType>
