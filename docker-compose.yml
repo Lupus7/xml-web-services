@@ -28,40 +28,73 @@ services:
         depends_on:
             - consul-server
 
-    authentication-service:
-        image: authentication-service
-        build:
-            context: ./authentication-app
-            dockerfile: Dockerfile
-        tty: true
-        depends_on:
-            - consul-server
-            - db
-        restart: unless-stopped
-        environment:
-            DB_PATH: jdbc:postgresql://db:5432/
-        networks:
-            - static-network
+    # authentication-service:
+    #     image: authentication-service
+    #     build:
+    #         context: ./authentication-app
+    #         dockerfile: Dockerfile
+    #     tty: true
+    #     depends_on:
+    #         - consul-server
+    #         - db
+    #     restart: unless-stopped
+    #     environment:
+    #         DB_PATH: jdbc:postgresql://db:5432/
+    #     networks:
+    #         - static-network
 
-    #admin-service:
-    #    image: admin-service
-    #    build:
-    #        context: ./admin-app
-    #        dockerfile: Dockerfile
-    #    tty: true
-    #    depends_on:
-    #        - consul-server
-    #        - db
-    #    restart: unless-stopped
-    #    environment:
-    #        DB_PATH: jdbc:postgresql://db:5432/
-    #    networks:
-    #        - static-network
+    # admin-service:
+    #     image: admin-service
+    #     build:
+    #         context: ./admin-app
+    #         dockerfile: Dockerfile
+    #     tty: true
+    #     depends_on:
+    #         - consul-server
+    #         - db
+    #     restart: unless-stopped
+    #     environment:
+    #         DB_PATH: jdbc:postgresql://db:5432/
+    #     networks:
+    #         - static-network
 
-    rent-service:
-        image: rent-service
+    # rent-service:
+    #     image: rent-service
+    #     build:
+    #         context: ./carRent
+    #         dockerfile: Dockerfile
+    #     tty: true
+    #     depends_on:
+    #         - consul-server
+    #         - db 
+    #     restart: unless-stopped
+    #     environment:
+    #         DB_PATH: jdbc:postgresql://db:5432/
+    #     networks:
+    #         - static-network
+
+    # cars-service:
+    #     image: cars-service
+    #     build:
+    #         context: ./cars
+    #         dockerfile: Dockerfile
+    #     tty: true
+    #     depends_on:
+    #         - consul-server
+    #         - db
+    #     restart: unless-stopped
+    #     environment:
+    #         DB_PATH: postgres://postgres:postgres@db:5432/
+    #         CONSUL_ADDR: consul-server:8500
+    #         MY_ADDR: cars-service
+    #         PORT: 8080
+    #     networks:
+    #         - static-network
+    
+    user-service:
+        image: user-service
         build:
-            context: ./carRent
+            context: ./user
             dockerfile: Dockerfile
         tty: true
         depends_on:
@@ -73,24 +106,21 @@ services:
         networks:
             - static-network
 
-    #cars-service:
-    #    image: cars-service
-    #    build:
-    #        context: ./cars
-    #        dockerfile: Dockerfile
-    #    tty: true
-    #    depends_on:
-    #        - consul-server
-    #        - db
-    #    restart: unless-stopped
-    #    environment:
-    #        DB_PATH: postgres://postgres:postgres@db:5432/
-    #        CONSUL_ADDR: consul-server:8500
-    #        MY_ADDR: cars-service
-    #        PORT: 8080
-    #    networks:
-    #        - static-network
-
+    codebook-service:
+        image: codebook-service
+        build:
+            context: ./codebook
+            dockerfile: Dockerfile
+        tty: true
+        depends_on:
+            - consul-server
+            - db 
+        restart: unless-stopped
+        environment:
+            DB_PATH: jdbc:postgresql://db:5432/
+        networks:
+            - static-network
+            
     gateway:
         image: gateway
         build:
@@ -124,7 +154,6 @@ services:
     #    ports:
     #        - "8082:8081"
     #    restart: unless-stopped
-
 
 networks:
     static-network:
