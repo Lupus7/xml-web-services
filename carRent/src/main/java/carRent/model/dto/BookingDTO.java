@@ -1,12 +1,8 @@
 package carRent.model.dto;
 
 import carRent.model.Booking;
-import carRent.model.Car;
 import carRent.model.RequestState;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,8 +33,8 @@ public class BookingDTO {
         this.state = booking.getState();
         this.place = booking.getPlace();
         this.created = booking.getCreated();
-        for (Car car : booking.getCars())
-            this.cars.add(car.getId());
+        for (Long car : booking.getCars())
+            this.cars.add(car);
 
     }
 

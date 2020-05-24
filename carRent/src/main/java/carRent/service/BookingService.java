@@ -1,17 +1,17 @@
 package carRent.service;
 
-import carRent.model.Ad;
 import carRent.model.Booking;
 import carRent.model.RequestState;
 import carRent.model.User;
+import carRent.model.dto.AdDTO;
 import carRent.model.dto.BookingDTO;
-import carRent.repository.AdRepository;
 import carRent.repository.BookingRepository;
 import carRent.repository.UserRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -22,13 +22,10 @@ import java.util.Optional;
 public class BookingService {
 
     @Autowired
-    private AdRepository adRepo;
+    private BookingRepository bookingRepo;
 
     @Autowired
     private UserRepository userRepo;
-
-    @Autowired
-    private BookingRepository bookingRepo;
 
     public boolean createBookingRequest(String json, String name) throws JSONException {
 
@@ -46,8 +43,10 @@ public class BookingService {
                 || obj.get("place").equals(""))
             return false;
 
-        Optional<Ad> ad = adRepo.findById(obj.getLong("adId"));
-        if (!ad.isPresent())
+        AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/"+obj.getLong("adId"),
+                AdDTO.class);
+
+        if (ad == null)
             return false;
 
         // proveri da li konvertuje datume kako treba
@@ -55,7 +54,7 @@ public class BookingService {
         LocalDateTime startDate = LocalDateTime.parse((String) obj.get("startDate"), formatter);
         LocalDateTime endDate = LocalDateTime.parse((String) obj.get("endDate"), formatter);
 
-        Booking booking = new Booking(startDate, endDate, RequestState.PENDING, obj.getString("place"), LocalDateTime.now(), ad.get().getCar(), user);
+        Booking booking = new Booking(startDate, endDate, RequestState.PENDING, obj.getString("place"), LocalDateTime.now(), ad.getCarId(), user.getId());
         bookingRepo.save(booking);
 
         new java.util.Timer().schedule(

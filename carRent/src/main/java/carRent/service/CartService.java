@@ -1,16 +1,14 @@
 package carRent.service;
 
-import carRent.model.Ad;
 import carRent.model.Cart;
 import carRent.model.User;
 import carRent.model.dto.AdDTO;
-import carRent.repository.AdRepository;
 import carRent.repository.CartRepository;
 import carRent.repository.UserRepository;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -19,14 +17,10 @@ import java.util.Optional;
 public class CartService {
 
     @Autowired
-    private AdRepository adRepo;
-
-    @Autowired
     private CartRepository cartRepo;
 
     @Autowired
     private UserRepository userRepo;
-
 
     public boolean addAdToCart(Long id, String name) throws JSONException {
         // provera da li user sa name postoji
@@ -35,13 +29,18 @@ public class CartService {
         if (user == null)
             return false;
 
-        Cart cart = user.getCart();
-        Optional<Ad> ad = adRepo.findById(id);
-        if(!ad.isPresent())
+        Optional<Cart> cart = cartRepo.findById(user.getCart());
+        if (!cart.isPresent())
             return false;
 
-        cart.getAds().add(ad.get());
-        cartRepo.save(cart);
+        AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + id,
+                AdDTO.class);
+
+        if (ad == null)
+            return false;
+
+        cart.get().getAds().add(ad.getId());
+        cartRepo.save(cart.get());
 
         return true;
     }
@@ -53,13 +52,17 @@ public class CartService {
         if (user == null)
             return false;
 
-        Cart cart = user.getCart();
-        Optional<Ad> ad = adRepo.findById(id);
-        if(!ad.isPresent())
+        Optional<Cart> cart = cartRepo.findById(user.getCart());
+        if (!cart.isPresent())
             return false;
 
-        cart.getAds().remove(ad.get());
-        cartRepo.save(cart);
+        AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + id,
+                AdDTO.class);
+        if (ad == null)
+            return false;
+
+        cart.get().getAds().remove(ad.getId());
+        cartRepo.save(cart.get());
 
         return true;
     }
@@ -70,8 +73,18 @@ public class CartService {
         User user = userRepo.findByEmail(name);
         if (user == null)
             return list;
-        for (Ad ad : user.getCart().getAds())
-            list.add(new AdDTO(ad.getId(), ad.getStartDate(), ad.getEndDate(), ad.getPlace(), ad.getCar().getId()));
+
+        Optional<Cart> cart = cartRepo.findById(user.getCart());
+        if (!cart.isPresent())
+            return list;
+
+        for (Long id : cart.get().getAds()) {
+            AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + id,
+                    AdDTO.class);
+            if (ad != null)
+                list.add(new AdDTO(ad.getId(), ad.getStartDate(), ad.getEndDate(), ad.getPlace(), ad.getCarId()));
+
+        }
 
         return list;
     }

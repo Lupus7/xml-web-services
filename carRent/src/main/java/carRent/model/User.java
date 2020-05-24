@@ -43,14 +43,14 @@ public class User {
     @Column(name = "authorities", unique = false, nullable = false)
     private String authorities;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private Cart cart;
+    @Column(name = "cart", unique = true, nullable = false)
+    private Long cart;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Booking> bookings;
+    @ElementCollection
+    private List<Long> bookings;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Car> cars;
+    @ElementCollection
+    private List<Long> cars;
 
     public User() {
     }
@@ -135,27 +135,27 @@ public class User {
         this.approved = approved;
     }
 
-    public Cart getCart() {
+    public Long getCart() {
         return cart;
     }
 
-    public void setCart(Cart cart) {
+    public void setCart(Long cart) {
         this.cart = cart;
     }
 
-    public List<Booking> getBookings() {
+    public List<Long> getBookings() {
         return bookings;
     }
 
-    public void setBookings(List<Booking> bookings) {
+    public void setBookings(List<Long> bookings) {
         this.bookings = bookings;
     }
 
-    public List<Car> getCars() {
+    public List<Long> getCars() {
         return cars;
     }
 
-    public void setCars(List<Car> cars) {
+    public void setCars(List<Long> cars) {
         this.cars = cars;
     }
 
