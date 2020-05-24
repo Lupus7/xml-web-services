@@ -23,12 +23,12 @@ spring:
             - Path=/authentication/**
           filters:
             - 'RewritePath=/authentication/(?<path>.*), /$\{path}'
-        - id: admin
-          uri: 'lb://admin'
-          predicates:
-            - Path=/admin/**
-          filters:
-            - 'RewritePath=/admin/(?<path>.*), /$\{path}'
+#        - id: admin
+#          uri: 'lb://admin'
+#          predicates:
+#            - Path=/admin/**
+#          filters:
+#            - 'RewritePath=/admin/(?<path>.*), /$\{path}'
         - id: cars
           uri: 'lb://cars'
           predicates:
@@ -41,3 +41,15 @@ spring:
             - Path=/rent/**
           filters:
             - 'RewritePath=/rent/(?<path>.*), /$\{path}'
+        - id: user
+          uri: 'lb://user'
+          predicates:
+            - Path=/user/**
+          filters:
+            - 'RewritePath=/user/(?<path>.*), /$\{path}'
+        - id: codebook
+          uri: 'lb://codebook'
+          predicates:
+            - Path=/codebook/**
+          filters:
+            - 'RewritePath=/codebook/(?<path>.*), /$\{path}'
