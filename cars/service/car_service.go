@@ -59,7 +59,11 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	if request.Brand != "" {
 		//search by brand
 		for i := len(ads) - 1; i >= 0; i-- {
-			if !strings.Contains(strings.ToLower(ads[i].Car.Brand.Name), strings.ToLower(request.Brand)) {
+			car, err := cs.Store.FindCarById(ads[i].CarID)
+			if err != nil {
+				return nil, err
+			}
+			if !strings.Contains(strings.ToLower(car.Brand), strings.ToLower(request.Brand)) {
 				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
@@ -68,7 +72,11 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	if request.Model != "" {
 		//search by model
 		for i := len(ads) - 1; i >= 0; i-- {
-			if !strings.Contains(strings.ToLower(ads[i].Car.Model.Name), strings.ToLower(request.Model)) {
+			car, err := cs.Store.FindCarById(ads[i].CarID)
+			if err != nil {
+				return nil, err
+			}
+			if !strings.Contains(strings.ToLower(car.Model), strings.ToLower(request.Model)) {
 				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
@@ -77,7 +85,11 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	if request.Fuel != "" {
 		//search by fuel
 		for i := len(ads) - 1; i >= 0; i-- {
-			if !strings.Contains(strings.ToLower(ads[i].Car.Fuel.Name), strings.ToLower(request.Fuel)) {
+			car, err := cs.Store.FindCarById(ads[i].CarID)
+			if err != nil {
+				return nil, err
+			}
+			if !strings.Contains(strings.ToLower(car.Fuel), strings.ToLower(request.Fuel)) {
 				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
@@ -86,7 +98,11 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	if request.Transmission != "" {
 		//search by transmission type
 		for i := len(ads) - 1; i >= 0; i-- {
-			if !strings.Contains(strings.ToLower(ads[i].Car.Transmission.Name), strings.ToLower(request.Transmission)) {
+			car, err := cs.Store.FindCarById(ads[i].CarID)
+			if err != nil {
+				return nil, err
+			}
+			if !strings.Contains(strings.ToLower(car.Transmission), strings.ToLower(request.Transmission)) {
 				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
@@ -95,34 +111,43 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	if request.Class != "" {
 		//search by class
 		for i := len(ads) - 1; i >= 0; i-- {
-			if !strings.Contains(strings.ToLower(ads[i].Car.Class.Name), strings.ToLower(request.Class)) {
+			car, err := cs.Store.FindCarById(ads[i].CarID)
+			if err != nil {
+				return nil, err
+			}
+			if !strings.Contains(strings.ToLower(car.CarClass), strings.ToLower(request.Class)) {
 				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
 	}
 
-	if request.PriceMin != 0 {
-		//search by minimum price
-		for i := len(ads) - 1; i >= 0; i-- {
-			if request.PriceMin > ads[i].Car.Price {
-				ads = append(ads[:i], ads[i+1:]...)
-			}
-		}
-	}
+	//TODO: wait to implement price service first
+	//if request.PriceMin != 0 {
+	//	//search by minimum price
+	//	for i := len(ads) - 1; i >= 0; i-- {
+	//		if request.PriceMin > ads[i].Car.Price {
+	//			ads = append(ads[:i], ads[i+1:]...)
+	//		}
+	//	}
+	//}
 
-	if request.PriceMax != 0 {
-		//search by maximum price
-		for i := len(ads) - 1; i >= 0; i-- {
-			if request.PriceMax < ads[i].Car.Price {
-				ads = append(ads[:i], ads[i+1:]...)
-			}
-		}
-	}
+	//if request.PriceMax != 0 {
+	//	//search by maximum price
+	//	for i := len(ads) - 1; i >= 0; i-- {
+	//		if request.PriceMax < ads[i].Car.Price {
+	//			ads = append(ads[:i], ads[i+1:]...)
+	//		}
+	//	}
+	//}
 
 	if request.TotalMileAge != 0 {
 		//search by total mileage
 		for i := len(ads) - 1; i >= 0; i-- {
-			if request.TotalMileAge < ads[i].Car.MileAgeInTotal {
+			car, err := cs.Store.FindCarById(ads[i].CarID)
+			if err != nil {
+				return nil, err
+			}
+			if request.TotalMileAge < car.TotalMileage {
 				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
@@ -130,7 +155,11 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 
 	//filtratind by CollisinDamage
 	for i := len(ads) - 1; i >= 0; i-- {
-		if request.CollisionDamage != ads[i].Car.CollisionDamageWaiver {
+		car, err := cs.Store.FindCarById(ads[i].CarID)
+		if err != nil {
+			return nil, err
+		}
+		if request.CollisionDamage != car.ColDamProtection {
 			ads = append(ads[:i], ads[i+1:]...)
 
 		}
@@ -139,7 +168,11 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	if request.SeatsNumber != 0 {
 		//search by seats number
 		for i := len(ads) - 1; i >= 0; i-- {
-			if request.SeatsNumber != ads[i].Car.NumberOfSeats {
+			car, err := cs.Store.FindCarById(ads[i].CarID)
+			if err != nil {
+				return nil, err
+			}
+			if request.SeatsNumber != car.ChildrenSeats {
 				ads = append(ads[:i], ads[i+1:]...)
 			}
 		}
@@ -147,8 +180,12 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 
 	if request.PlannedMileAge != 0 {
 		for i := len(ads) - 1; i >= 0; i-- {
-			if ads[i].Car.AllowedMileAge != 0 {
-				allowedInt := ads[i].Car.AllowedMileAge
+			car, err := cs.Store.FindCarById(ads[i].CarID)
+			if err != nil {
+				return nil, err
+			}
+			if car.AllowedMileage != 0 {
+				allowedInt := car.AllowedMileage
 				wantedInt := request.PlannedMileAge
 				if allowedInt < wantedInt {
 					ads = append(ads[:i], ads[i+1:]...)

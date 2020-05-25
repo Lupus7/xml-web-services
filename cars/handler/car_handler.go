@@ -27,7 +27,11 @@ func (ch *CarHandler) FindAll(c echo.Context) error {
 	}
 	carsDto := []*dto.SearchResponse{}
 	for _, ad := range ads {
-		carsDto = append(carsDto, toResponse(ad))
+		car, err := ch.CarService.Store.FindCarById(ad.CarID)
+		if err != nil{
+			return err
+		}
+		carsDto = append(carsDto, toResponse(ad, car))
 	}
 
 	return c.JSON(http.StatusOK, carsDto)
@@ -45,7 +49,11 @@ func (ch *CarHandler) SearchAds(c echo.Context) error {
 	}
 	carsResponse := []*dto.SearchResponse{}
 	for _, ad := range filtrated {
-		carsResponse = append(carsResponse, toResponse(ad))
+		car, err := ch.CarService.Store.FindCarById(ad.CarID)
+		if err != nil{
+			return err
+		}
+		carsResponse = append(carsResponse, toResponse(ad, car))
 	}
 	return c.JSON(http.StatusOK, carsResponse)
 }
@@ -60,7 +68,11 @@ func (ch *CarHandler) GetAdById(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	adResponse := toResponse(ad)
+	car ,err := ch.CarService.Store.FindCarById(ad.CarID)
+	if err != nil {
+		return err
+	}
+	adResponse := toResponse(ad, car)
 	return c.JSON(http.StatusOK, adResponse)
 }
 
@@ -76,7 +88,8 @@ func (ch *CarHandler) AllBrands(c echo.Context) error {
 	responses := []Response{}
 	for _, brand := range brands {
 		models := []string{}
-		for _, model := range brand.Models {
+		mds := ch.CarService.Store.FindModelsByBrandID(brand.Id)
+		for _, model := range mds {
 			models = append(models, model.Name)
 		}
 
@@ -137,38 +150,38 @@ func (ch *CarHandler) AllClasses(c echo.Context) error {
 	return c.JSON(http.StatusOK, classNames)
 }
 
-func toResponse(ad *model.Ad) *dto.SearchResponse {
+func toResponse(ad *model.Ad, car *model.Car) *dto.SearchResponse {
 	collisionDamage := "not allowed"
-	if ad.Car.CollisionDamageWaiver {
+	if car.ColDamProtection {
 		collisionDamage = "allowed"
 	}
 	allowedMileage := "UNLIMITED"
-	if ad.Car.AllowedMileAge == 0 {
-		allowedMileage = fmt.Sprintf("%f", ad.Car.AllowedMileAge)
+	if car.AllowedMileage == 0 {
+		allowedMileage = fmt.Sprintf("%f", car.AllowedMileage)
 	}
-	images := []string{}
-	if len(ad.Car.Images) != 0 {
-		for _, image := range ad.Car.Images {
-			images = append(images, image.Encoded64Image)
-		}
-	}
+	//images := []string{}
+	//if len(car.) != 0 {
+	//	for _, image := range ad.Car.Images {
+	//		images = append(images, image.Encoded64Image)
+	//	}
+	//}
 
 	return &dto.SearchResponse{
-		Id:              ad.Id,
-		Advertiser:      ad.Car.Advertiser,
-		Brand:           ad.Car.Brand.Name,
-		Model:           ad.Car.Model.Name,
-		Fuel:            ad.Car.Fuel.Name,
-		Transmission:    ad.Car.Transmission.Name,
-		Class:           ad.Car.Class.Name,
-		Price:           ad.Car.Price,
+		Id:              int(ad.Id),
+		Advertiser:      car.Owned,
+		Brand:           car.Brand,
+		Model:           car.Model,
+		Fuel:            car.Fuel,
+		Transmission:    car.Transmission,
+		Class:           car.CarClass,
+		//Price:           ad.Car.Price,
 		AllowedMileage:  allowedMileage,
-		TotalMileage:    ad.Car.MileAgeInTotal,
-		SeatsNumber:     ad.Car.NumberOfSeats,
+		TotalMileage:    float32(car.TotalMileage),
+		SeatsNumber:     car.ChildrenSeats,
 		CollisionDamage: collisionDamage,
-		Rating:          ad.Car.Rating,
-		Description:     ad.Car.Description,
-		Images:          images,
+		//Rating:          ad.Car.Rating,
+		Description:     car.Description,
+		//Images:          images,
 		Place:           ad.Place,
 		StartDate:       strings.Split(ad.StartDate.String(), " ")[0],
 		EndDate:         strings.Split(ad.EndDate.String(), " ")[0],

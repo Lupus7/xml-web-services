@@ -1,4 +1,4 @@
-package model
+package ipam
 
 import (
 	"bytes"
@@ -6,33 +6,41 @@ import (
 	"time"
 )
 
-//type Car struct {
-//	ID                    int          `gorm:"primary_key"`
-//	Advertiser            string
-//	Brand                 Brand        `gorm:"foreignkey:BrandId"`
-//	BrandId               int          `gorm:"not null"`
-//	Model                 Model        `gorm:"foreignkey:ModelId"`
-//	ModelId               int          `gorm:"not null"`
-//	Fuel                  Fuel         `gorm:"foreignkey:FuelId"`
-//	FuelId                int          `gorm:"not null"`
-//	Transmission          Transmission `gorm:"foreignkey:TransmissionId"`
-//	TransmissionId        int          `gorm:"not null"`
-//	Class                 Class        `gorm:"foreignkey:ClassId"`
-//	ClassId               int          `gorm:"not null"`
-//	Price                 float32
-//	AllowedMileAge        float32 //if its 0 that means its unlimited
-//	MileAgeInTotal        float32
-//	CollisionDamageWaiver bool
-//	NumberOfSeats         int
-//	Rating                float32
-//	Description           string
-//	Images                []Image      `gorm:"foreignkey:"CarId"`
-//}
+type Ad struct {
+	Id        int64     `xml:"xml-web-services-cars id"`
+	StartDate time.Time `xml:"xml-web-services-cars startDate"`
+	EndDate   time.Time `xml:"xml-web-services-cars endDate"`
+	Place     string    `xml:"xml-web-services-cars place"`
+	CarID     int64     `xml:"xml-web-services-cars carID"`
+}
 
-
+func (t *Ad) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	type T Ad
+	var layout struct {
+		*T
+		StartDate *xsdDate `xml:"xml-web-services-cars startDate"`
+		EndDate   *xsdDate `xml:"xml-web-services-cars endDate"`
+	}
+	layout.T = (*T)(t)
+	layout.StartDate = (*xsdDate)(&layout.T.StartDate)
+	layout.EndDate = (*xsdDate)(&layout.T.EndDate)
+	return e.EncodeElement(layout, start)
+}
+func (t *Ad) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	type T Ad
+	var overlay struct {
+		*T
+		StartDate *xsdDate `xml:"xml-web-services-cars startDate"`
+		EndDate   *xsdDate `xml:"xml-web-services-cars endDate"`
+	}
+	overlay.T = (*T)(t)
+	overlay.StartDate = (*xsdDate)(&overlay.T.StartDate)
+	overlay.EndDate = (*xsdDate)(&overlay.T.EndDate)
+	return d.DecodeElement(&overlay, &start)
+}
 
 type Car struct {
-	Id               int64    `xml:"xml-web-services-cars id" gorm:"primary_key"`
+	Id               int64    `xml:"xml-web-services-cars id"`
 	TotalMileage     float64  `xml:"xml-web-services-cars totalMileage"`
 	AllowedMileage   float64  `xml:"xml-web-services-cars allowedMileage"`
 	ChildrenSeats    int      `xml:"xml-web-services-cars childrenSeats"`
@@ -44,9 +52,9 @@ type Car struct {
 	CarClass         string   `xml:"xml-web-services-cars carClass"`
 	Fuel             string   `xml:"xml-web-services-cars fuel"`
 	Transmission     string   `xml:"xml-web-services-cars transmission"`
-	//Bookings         []int64  `xml:"xml-web-services-cars bookings,omitempty" gorm:"-"`
-	//Images           []string `xml:"xml-web-services-cars images,omitempty" gorm:"-"`
-	//Ads              []Ad     `xml:"xml-web-services-cars ads,omitempty" gorm:"-"`
+	Bookings         []int64  `xml:"xml-web-services-cars bookings,omitempty"`
+	Images           []string `xml:"xml-web-services-cars images,omitempty"`
+	Ads              []Ad     `xml:"xml-web-services-cars ads,omitempty"`
 }
 
 type xsdDate time.Time
