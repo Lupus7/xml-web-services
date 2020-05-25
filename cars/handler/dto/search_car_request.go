@@ -11,8 +11,8 @@ type SearchDTO struct {
 	Class           string  `json:"class"`
 	PriceMin        float32 `json:"price_min"`
 	PriceMax        float32 `json:"price_max"`
-	TotalMileAge    float32 `json:"total_mileage"`
-	PlannedMileAge  float32 `json:"planned_mileage"`
+	TotalMileAge    float64 `json:"total_mileage"`
+	PlannedMileAge  float64 `json:"planned_mileage"`
 	CollisionDamage bool    `json:"collision_damage"`
 	SeatsNumber     int     `json:"seats_number"`
 }

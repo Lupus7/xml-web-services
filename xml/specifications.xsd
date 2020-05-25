@@ -6,13 +6,13 @@
         <xs:sequence>
             <xs:element name="id" type="xs:long"/>
             <xs:element name="name" type="xs:string"/>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="models" type="xws-specs:Model"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="Model">
         <xs:sequence>
             <xs:element name="id" type="xs:long"/>
             <xs:element name="name" type="xs:string"/>
+            <xs:element name="brandId" type="xs:long"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="Class">

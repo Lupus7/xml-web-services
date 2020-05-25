@@ -54,7 +54,7 @@ func OpenWithUrl(config Config) (*Store, error) {
 
 func (store *Store) AutoMigrate() error {
 	store.db.SingularTable(true)
-	return store.db.AutoMigrate(&model.Image{}, &model.Ad{}, &model.Car{}, &model.Brand{}, &model.Model{}, &model.Class{}, &model.Transmission{}, &model.Fuel{}).Error
+	return store.db.AutoMigrate(&model.Image{}, &model.Ad{}, &model.Brand{}, &model.Model{}, &model.Class{}, &model.Transmission{}, &model.Fuel{}, &model.Car{}).Error
 }
 
 func (store *Store) CheckStoreConnection() error {
@@ -182,4 +182,20 @@ func (store *Store) FindAdById(id int) (*model.Ad, error) {
 		return nil, err
 	}
 	return ad, nil
+}
+
+func(store *Store)FindCarById(id int64)(*model.Car,error){
+	car := &model.Car{}
+	if err := store.db.Find(&car, id).Error; err != nil{
+		return nil, err
+	}
+	return car, nil
+}
+
+func(store *Store)FindModelsByBrandID(id int64)[]*model.Model{
+	models := []*model.Model{}
+	if err := store.db.Find(&models,"brand_id = ?",id).Error;err != nil{
+		return nil
+	}
+	return models
 }

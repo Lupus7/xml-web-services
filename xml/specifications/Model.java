@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence&gt;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="brandId" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -30,7 +31,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Model", namespace = "xml-web-service-specs", propOrder = {
     "id",
-    "name"
+    "name",
+    "brandId"
 })
 public class Model {
 
@@ -38,6 +40,8 @@ public class Model {
     protected long id;
     @XmlElement(namespace = "xml-web-service-specs", required = true)
     protected String name;
+    @XmlElement(namespace = "xml-web-service-specs")
+    protected long brandId;
 
     /**
      * Gets the value of the id property.
@@ -77,6 +81,22 @@ public class Model {
      */
     public void setName(String value) {
         this.name = value;
+    }
+
+    /**
+     * Gets the value of the brandId property.
+     * 
+     */
+    public long getBrandId() {
+        return brandId;
+    }
+
+    /**
+     * Sets the value of the brandId property.
+     * 
+     */
+    public void setBrandId(long value) {
+        this.brandId = value;
     }
 
 }

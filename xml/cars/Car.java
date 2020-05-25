@@ -32,8 +32,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="fuel" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="transmission" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="bookings" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;element name="images" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;element name="ads" type="{xml-web-services-cars}Ad" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -56,9 +54,7 @@ import javax.xml.bind.annotation.XmlType;
     "carClass",
     "fuel",
     "transmission",
-    "bookings",
-    "images",
-    "ads"
+    "bookings"
 })
 public class Car {
 
@@ -88,10 +84,6 @@ public class Car {
     protected String transmission;
     @XmlElement(namespace = "xml-web-services-cars", type = Long.class)
     protected List<Long> bookings;
-    @XmlElement(namespace = "xml-web-services-cars")
-    protected List<String> images;
-    @XmlElement(namespace = "xml-web-services-cars")
-    protected List<Ad> ads;
 
     /**
      * Gets the value of the id property.
@@ -368,64 +360,6 @@ public class Car {
             bookings = new ArrayList<Long>();
         }
         return this.bookings;
-    }
-
-    /**
-     * Gets the value of the images property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the images property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getImages().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
-    public List<String> getImages() {
-        if (images == null) {
-            images = new ArrayList<String>();
-        }
-        return this.images;
-    }
-
-    /**
-     * Gets the value of the ads property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ads property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAds().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Ad }
-     * 
-     * 
-     */
-    public List<Ad> getAds() {
-        if (ads == null) {
-            ads = new ArrayList<Ad>();
-        }
-        return this.ads;
     }
 
 }
