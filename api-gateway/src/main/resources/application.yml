@@ -29,6 +29,12 @@ spring:
 #            - Path=/admin/**
 #          filters:
 #            - 'RewritePath=/admin/(?<path>.*), /$\{path}'
+        - id: cars-ads
+          uri: 'lb://cars-ads'
+          predicates:
+            - Path=/cars-ads/**
+          filters:
+            - 'RewritePath=/cars-ads/(?<path>.*), /$\{path}'
         - id: cars
           uri: 'lb://cars'
           predicates:
