@@ -54,7 +54,7 @@ public class BookingService {
         LocalDateTime startDate = LocalDateTime.parse((String) obj.get("startDate"), formatter);
         LocalDateTime endDate = LocalDateTime.parse((String) obj.get("endDate"), formatter);
 
-        Booking booking = new Booking(startDate, endDate, RequestState.PENDING, obj.getString("place"), LocalDateTime.now(), ad.getCarId(), user.getId());
+        Booking booking = new Booking(startDate, endDate, RequestState.PENDING, obj.getString("place"), LocalDateTime.now(), ad.getId(), user.getId());
         bookingRepo.save(booking);
 
         new java.util.Timer().schedule(

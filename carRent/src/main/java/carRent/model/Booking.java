@@ -29,7 +29,7 @@ public class Booking {
     private LocalDateTime created;
 
     @ElementCollection
-    private List<Long> cars = new ArrayList<>();
+    private List<Long> ads = new ArrayList<>();
 
     @Column(name = "loaner", nullable = false)
     private Long loaner;
@@ -38,13 +38,13 @@ public class Booking {
 
     }
 
-    public Booking(LocalDateTime startDate, LocalDateTime endDate, RequestState requestState, String place, LocalDateTime created, Long car, Long user) {
+    public Booking(LocalDateTime startDate, LocalDateTime endDate, RequestState requestState, String place, LocalDateTime created, Long ad, Long user) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.state = requestState;
         this.place = place;
         this.created = created;
-        this.cars.add(car);
+        this.ads.add(ad);
         this.loaner = user;
     }
 
@@ -98,11 +98,11 @@ public class Booking {
     }
 
     public List<Long> getCars() {
-        return cars;
+        return ads;
     }
 
     public void setCars(List<Long> cars) {
-        this.cars = cars;
+        this.ads = cars;
     }
 
     public Long getLoaner() {
