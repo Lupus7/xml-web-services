@@ -29,6 +29,11 @@ public class Booking {
     private LocalDateTime created;
 
     @ElementCollection
+    @CollectionTable(
+            name = "booking_ads",
+            joinColumns=@JoinColumn(name = "booking_id", referencedColumnName = "id")
+    )
+    @Column(name = "ad_id")
     private List<Long> ads = new ArrayList<>();
 
     @Column(name = "loaner", nullable = false)
@@ -97,12 +102,12 @@ public class Booking {
         this.created = created;
     }
 
-    public List<Long> getCars() {
+    public List<Long> getAds() {
         return ads;
     }
 
-    public void setCars(List<Long> cars) {
-        this.ads = cars;
+    public void setAds(List<Long> ads) {
+        this.ads = ads;
     }
 
     public Long getLoaner() {

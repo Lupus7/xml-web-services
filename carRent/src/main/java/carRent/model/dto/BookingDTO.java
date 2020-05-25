@@ -20,7 +20,7 @@ public class BookingDTO {
 
     private LocalDateTime created;
 
-    private List<Long> cars;
+    private List<Long> ads;
 
     public BookingDTO() {
 
@@ -33,8 +33,8 @@ public class BookingDTO {
         this.state = booking.getState();
         this.place = booking.getPlace();
         this.created = booking.getCreated();
-        for (Long car : booking.getCars())
-            this.cars.add(car);
+        for (Long ad : booking.getAds())
+            this.ads.add(ad);
 
     }
 
@@ -86,11 +86,11 @@ public class BookingDTO {
         this.created = created;
     }
 
-    public List<Long> getCars() {
-        return cars;
+    public List<Long> getAds() {
+        return ads;
     }
 
-    public void setCars(List<Long> cars) {
-        this.cars = cars;
+    public void setAds(List<Long> ads) {
+        this.ads = ads;
     }
 }

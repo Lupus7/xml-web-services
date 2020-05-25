@@ -16,6 +16,11 @@ public class Cart {
     private Long user;
 
     @ElementCollection
+    @CollectionTable(
+            name = "cart_ads",
+            joinColumns=@JoinColumn(name = "cart_id", referencedColumnName = "id")
+    )
+    @Column(name = "ad_id")
     private List<Long> ads;
 
     public Cart() {
