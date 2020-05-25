@@ -11,7 +11,7 @@
             <xs:element name="place" type="xs:string"/>
             <xs:element name="created" type="xs:date"/>
             <xs:element name="loaner" type="xs:string"/>
-            <xs:element maxOccurs="unbounded" minOccurs="1" name="cars" type="xs:long"/>
+            <xs:element maxOccurs="unbounded" minOccurs="1" name="ads" type="xs:long"/>
         </xs:sequence>
     </xs:complexType>
     <xs:simpleType final="" name="RequestState">
