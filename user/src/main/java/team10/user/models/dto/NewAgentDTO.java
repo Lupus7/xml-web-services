@@ -1,24 +1,16 @@
 package team10.user.models.dto;
 
-import javax.validation.constraints.NotBlank;
-
 public class NewAgentDTO {
-    @NotBlank
     String email;
 
-    @NotBlank
     String password;
 
-    @NotBlank
     String firstName;
 
-    @NotBlank
     String lastName;
 
-    @NotBlank
     String address;
 
-    @NotBlank
     String businessNumber;
 
     public NewAgentDTO() {

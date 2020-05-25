@@ -1,13 +1,8 @@
 package team10.user.models.dto;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 public class PrivilegeDTO {
-    @NotBlank
-    String name;
+    private String name;
 
-    @NotNull
     boolean active;
 
     boolean def;

@@ -1,11 +1,8 @@
 package team10.user.models.dto;
 
-import javax.validation.constraints.NotNull;
-
 public class ClientDTO {
     String email;
 
-    @NotNull
     boolean blocked;
 
     public ClientDTO() {

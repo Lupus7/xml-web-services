@@ -1,9 +1,6 @@
 package team10.codebook.models.dto;
 
-import javax.validation.constraints.NotBlank;
-
 public class CodebookItemDTO {
-    @NotBlank
     String name;
 
     Long id;
