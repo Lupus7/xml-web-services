@@ -16,7 +16,6 @@
             <xs:element name="carClass" type="xs:string"/>
             <xs:element name="fuel" type="xs:string"/>
             <xs:element name="transmission" type="xs:string"/>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="bookings" type="xs:long"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="Ad">
