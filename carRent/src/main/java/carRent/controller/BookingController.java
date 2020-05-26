@@ -1,6 +1,7 @@
 package carRent.controller;
 
 import carRent.model.dto.BookingDTO;
+import carRent.model.dto.BundleDTO;
 import carRent.service.BookingService;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,20 @@ public class BookingController {
     // Kreiranje bookinga
     @PostMapping(value = "/api/booking", produces = "application/json", consumes = "application/json")
     //@PreAuthorize("hasAuthority('CREATE_BOOKING')")
-    public ResponseEntity<String> createBookingRequest(@RequestBody String json, Principal user) throws JSONException {
+    public ResponseEntity<String> createBookingRequest(@RequestBody BundleDTO bundleDTO, Principal user) throws JSONException {
 
-        if (bookingService.createBookingRequest(json, user.getName()))
+        if (bookingService.createBookingRequest(bundleDTO, user.getName()))
+            return ResponseEntity.ok("Booking request successfully created!");
+        else
+            return ResponseEntity.status(400).body("Could not accept");
+    }
+
+    // Samostalno zauzece
+    @PostMapping(value = "/api/booking/reserved", produces = "application/json", consumes = "application/json")
+    //@PreAuthorize("hasAuthority('CREATE_BOOKING')")
+    public ResponseEntity<String> reserveBookingRequest(@RequestBody BundleDTO bundleDTO, Principal user) throws JSONException {
+
+        if (bookingService.reserveBookingRequest(bundleDTO, user.getName()))
             return ResponseEntity.ok("Booking request successfully created!");
         else
             return ResponseEntity.status(400).body("Could not accept");
