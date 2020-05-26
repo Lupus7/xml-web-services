@@ -2,6 +2,13 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xws-booking="xml-web-service-booking"
     targetNamespace="xml-web-service-booking" elementFormDefault="qualified">
 
+    <xs:complexType name="Bundle">
+        <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" name="id" type="xs:long"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="bookings"
+                type="xws-booking:Booking"/>
+        </xs:sequence>
+    </xs:complexType>
     <xs:complexType name="Booking">
         <xs:sequence>
             <xs:element name="id" type="xs:long"/>
@@ -11,7 +18,8 @@
             <xs:element name="place" type="xs:string"/>
             <xs:element name="created" type="xs:date"/>
             <xs:element name="loaner" type="xs:string"/>
-            <xs:element maxOccurs="unbounded" minOccurs="1" name="ads" type="xs:long"/>
+            <xs:element maxOccurs="1" minOccurs="1" name="ad" type="xs:long"/>
+            <xs:element minOccurs="0" name="bundle" type="xws-booking:Bundle"/>
         </xs:sequence>
     </xs:complexType>
     <xs:simpleType final="" name="RequestState">

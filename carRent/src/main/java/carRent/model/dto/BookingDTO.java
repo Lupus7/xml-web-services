@@ -4,7 +4,6 @@ import carRent.model.Booking;
 import carRent.model.RequestState;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class BookingDTO {
 
@@ -20,7 +19,7 @@ public class BookingDTO {
 
     private LocalDateTime created;
 
-    private List<Long> ads;
+    private Long ad;
 
     public BookingDTO() {
 
@@ -33,8 +32,7 @@ public class BookingDTO {
         this.state = booking.getState();
         this.place = booking.getPlace();
         this.created = booking.getCreated();
-        for (Long ad : booking.getAds())
-            this.ads.add(ad);
+        this.ad = booking.getAd();
 
     }
 
@@ -86,11 +84,11 @@ public class BookingDTO {
         this.created = created;
     }
 
-    public List<Long> getAds() {
-        return ads;
+    public Long getAd() {
+        return ad;
     }
 
-    public void setAds(List<Long> ads) {
-        this.ads = ads;
+    public void setAd(Long ad) {
+        this.ad = ad;
     }
 }

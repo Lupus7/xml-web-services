@@ -1,8 +1,6 @@
 
 package booking;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -28,7 +26,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="place" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="created" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
  *         &lt;element name="loaner" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
- *         &lt;element name="cars" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded"/&gt;
+ *         &lt;element name="ad" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
+ *         &lt;element name="bundle" type="{xml-web-service-booking}Bundle" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -46,7 +45,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "place",
     "created",
     "loaner",
-    "cars"
+    "ad",
+    "bundle"
 })
 public class Booking {
 
@@ -68,8 +68,10 @@ public class Booking {
     protected XMLGregorianCalendar created;
     @XmlElement(namespace = "xml-web-service-booking", required = true)
     protected String loaner;
-    @XmlElement(namespace = "xml-web-service-booking", type = Long.class)
-    protected List<Long> cars;
+    @XmlElement(namespace = "xml-web-service-booking")
+    protected long ad;
+    @XmlElement(namespace = "xml-web-service-booking")
+    protected Bundle bundle;
 
     /**
      * Gets the value of the id property.
@@ -232,32 +234,43 @@ public class Booking {
     }
 
     /**
-     * Gets the value of the cars property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the cars property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getCars().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Long }
-     * 
+     * Gets the value of the ad property.
      * 
      */
-    public List<Long> getCars() {
-        if (cars == null) {
-            cars = new ArrayList<Long>();
-        }
-        return this.cars;
+    public long getAd() {
+        return ad;
+    }
+
+    /**
+     * Sets the value of the ad property.
+     * 
+     */
+    public void setAd(long value) {
+        this.ad = value;
+    }
+
+    /**
+     * Gets the value of the bundle property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Bundle }
+     *     
+     */
+    public Bundle getBundle() {
+        return bundle;
+    }
+
+    /**
+     * Sets the value of the bundle property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Bundle }
+     *     
+     */
+    public void setBundle(Bundle value) {
+        this.bundle = value;
     }
 
 }

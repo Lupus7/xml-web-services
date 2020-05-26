@@ -1,6 +1,7 @@
 package carRent.service;
 
 import carRent.model.Booking;
+import carRent.model.Bundle;
 import carRent.model.RequestState;
 import carRent.model.User;
 import carRent.model.dto.AdDTO;
@@ -37,26 +38,68 @@ public class BookingService {
         User user = userRepo.findByEmail(name);
         if (user == null)
             return false;
+        Bundle bundle = new Bundle();
 
-        for (BookDTO bookDTO : bundleDTO.getBooks()) {
 
-            if (bookDTO == null || bookDTO.getAdId() == null || bookDTO.getEndDate() == null || bookDTO.getStartDate() == null || bookDTO.getPlace() == null)
+        if (bundleDTO.getBooks().size() > 1) {
+            for (BookDTO bookDTO : bundleDTO.getBooks()) {
+
+                if (bookDTO == null || bookDTO.getAdId() == null || bookDTO.getEndDate() == null || bookDTO.getStartDate() == null || bookDTO.getPlace() == null)
+                    return false;
+
+                if (bookDTO.getPlace().equals(""))
+                    return false;
+
+                if (bookDTO.getStartDate().isAfter(bookDTO.getEndDate()))
+                    return false;
+
+                AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + bookDTO.getAdId(),
+                        AdDTO.class);
+
+                if (ad == null)
+                    return false;
+
+                Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PENDING, bookDTO.getPlace(), LocalDateTime.now(), ad.getId(), user.getId());
+                bundle.getBookings().add(booking);
+
+                bookingRepo.save(booking);
+
+                new java.util.Timer().schedule(
+                        new java.util.TimerTask() {
+                            @Override
+                            public void run() {
+                                if (booking.getState().equals(RequestState.PENDING)) {
+                                    booking.setState(RequestState.CANCELED);
+                                    bookingRepo.save(booking);
+                                    cancel();
+                                }
+                            }
+                        },
+                        24 * 60 * 60 * 1000
+                );
+
+
+            }
+        } else {
+            if (bundleDTO.getBooks().get(0) == null || bundleDTO.getBooks().get(0).getAdId() == null || bundleDTO.getBooks().get(0).getEndDate() == null || bundleDTO.getBooks().get(0).getStartDate() == null || bundleDTO.getBooks().get(0).getPlace() == null)
                 return false;
 
-            if (bookDTO.getPlace().equals(""))
+            if (bundleDTO.getBooks().get(0).getPlace().equals(""))
                 return false;
 
-            if (bookDTO.getStartDate().isAfter(bookDTO.getEndDate()))
+            if (bundleDTO.getBooks().get(0).getStartDate().isAfter(bundleDTO.getBooks().get(0).getEndDate()))
                 return false;
 
-            AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + bookDTO.getAdId(),
+            AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + bundleDTO.getBooks().get(0).getAdId(),
                     AdDTO.class);
 
             if (ad == null)
                 return false;
 
-            Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PENDING, bookDTO.getPlace(), LocalDateTime.now(), ad.getId(), user.getId());
+            Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PENDING, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), ad.getId(), user.getId());
+            bundle.getBookings().add(booking);
             bookingRepo.save(booking);
+
 
             new java.util.Timer().schedule(
                     new java.util.TimerTask() {
@@ -71,6 +114,7 @@ public class BookingService {
                     },
                     24 * 60 * 60 * 1000
             );
+
         }
 
         return true;
@@ -89,34 +133,62 @@ public class BookingService {
         if (loaner == null)
             return false;
 
-        for (BookDTO bookDTO : bundleDTO.getBooks()) {
+        Bundle bundle = new Bundle();
+        if (bundleDTO.getBooks().size() > 1) {
+            for (BookDTO bookDTO : bundleDTO.getBooks()) {
 
-            if (bookDTO == null || bookDTO.getAdId() == null || bookDTO.getEndDate() == null || bookDTO.getStartDate() == null || bookDTO.getPlace() == null)
+                if (bookDTO == null || bookDTO.getAdId() == null || bookDTO.getEndDate() == null || bookDTO.getStartDate() == null || bookDTO.getPlace() == null)
+                    return false;
+
+                if (bookDTO.getPlace().equals(""))
+                    return false;
+
+                if (bookDTO.getStartDate().isAfter(bookDTO.getEndDate()))
+                    return false;
+
+
+                AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + bookDTO.getAdId(),
+                        AdDTO.class);
+
+                if (ad == null)
+                    return false;
+
+                Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), ad.getId(), loaner.getId());
+                bundle.getBookings().add(booking);
+                bookingRepo.save(booking);
+
+            }
+        } else {
+
+            if (bundleDTO.getBooks().get(0) == null || bundleDTO.getBooks().get(0).getAdId() == null || bundleDTO.getBooks().get(0).getEndDate() == null || bundleDTO.getBooks().get(0).getStartDate() == null || bundleDTO.getBooks().get(0).getPlace() == null)
                 return false;
 
-            if (bookDTO.getPlace().equals(""))
+            if (bundleDTO.getBooks().get(0).getPlace().equals(""))
                 return false;
 
-            if (bookDTO.getStartDate().isAfter(bookDTO.getEndDate()))
+            if (bundleDTO.getBooks().get(0).getStartDate().isAfter(bundleDTO.getBooks().get(0).getEndDate()))
                 return false;
 
-
-            AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + bookDTO.getAdId(),
+            AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + bundleDTO.getBooks().get(0).getAdId(),
                     AdDTO.class);
 
             if (ad == null)
                 return false;
 
-            Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), ad.getId(), loaner.getId());
+            Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PAID, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), ad.getId(), loaner.getId());
+            bundle.getBookings().add(booking);
             bookingRepo.save(booking);
 
-            //canceluj sve ostale bookinge koju su vezani za taj ad, mozda ne izvlaci kako treba iz baze, proveri kasnije
-            ArrayList<Booking> bookings = bookingRepo.findAllByAds(ad.getId());
-            for(Booking b:bookings){
-                b.setState(RequestState.CANCELED);
-                bookingRepo.save(b);
-            }
+        }
 
+        //canceluj sve ostale bookinge koju su vezani za taj ad
+
+        for (Booking b : bundle.getBookings()) {
+            ArrayList<Booking> bookings = bookingRepo.findAllByAd(b.getAd());
+            for (Booking b1 : bookings) {
+                b1.setState(RequestState.CANCELED);
+                bookingRepo.save(b1);
+            }
         }
 
         return true;
@@ -136,11 +208,10 @@ public class BookingService {
         booking.get().setState(RequestState.RESERVED);
         bookingRepo.save(booking.get());
 
-        for (Long ad : booking.get().getAds()) {
-            Map<String, Long> params = new HashMap<String, Long>();
-            params.put("id", ad);
-            new RestTemplate().delete("http://cars-ads/api/ad/deactivate/{id}", params);
-        }
+        Map<String, Long> params = new HashMap<String, Long>();
+        params.put("id", booking.get().getAd());
+        new RestTemplate().delete("http://cars-ads/api/ad/deactivate/{id}", params);
+
 
         new java.util.Timer().schedule(
                 new java.util.TimerTask() {
@@ -191,8 +262,7 @@ public class BookingService {
 
         //provera da li je ad ili ads userov
         JSONArray array = new JSONArray();
-        for (Long ad : booking.get().getAds())
-            array.put(ad);
+        array.put(booking.get().getAd());
         JSONObject object = new JSONObject();
         object.put("array", array);
 

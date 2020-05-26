@@ -2,8 +2,6 @@ package carRent.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "booking")
@@ -28,16 +26,15 @@ public class Booking {
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "booking_ads",
-            joinColumns=@JoinColumn(name = "booking_id", referencedColumnName = "id")
-    )
-    @Column(name = "ad_id")
-    private List<Long> ads = new ArrayList<>();
+    @Column(name = "ad")
+    private Long ad;
 
     @Column(name = "loaner", nullable = false)
     private Long loaner;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bundle_id", referencedColumnName = "id")
+    private Bundle bundle;
 
     public Booking() {
 
@@ -49,7 +46,7 @@ public class Booking {
         this.state = requestState;
         this.place = place;
         this.created = created;
-        this.ads.add(ad);
+        this.ad = ad;
         this.loaner = user;
     }
 
@@ -102,13 +99,6 @@ public class Booking {
         this.created = created;
     }
 
-    public List<Long> getAds() {
-        return ads;
-    }
-
-    public void setAds(List<Long> ads) {
-        this.ads = ads;
-    }
 
     public Long getLoaner() {
         return loaner;
@@ -116,5 +106,13 @@ public class Booking {
 
     public void setLoaner(Long loaner) {
         this.loaner = loaner;
+    }
+
+    public Long getAd() {
+        return ad;
+    }
+
+    public void setAd(Long ad) {
+        this.ad = ad;
     }
 }

@@ -30,6 +30,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Bundle }
+     * 
+     */
+    public Bundle createBundle() {
+        return new Bundle();
+    }
+
+    /**
      * Create an instance of {@link Booking }
      * 
      */
