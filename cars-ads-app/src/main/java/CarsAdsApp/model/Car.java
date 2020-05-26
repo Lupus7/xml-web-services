@@ -3,6 +3,7 @@ package CarsAdsApp.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -54,11 +55,14 @@ import javax.xml.bind.annotation.XmlType;
     "carClass",
     "fuel",
     "transmission",
-    "bookings"
 })
+@Entity
+@Table(name="car")
 public class Car {
 
     @XmlElement(namespace = "xml-web-services-cars")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected long id;
     @XmlElement(namespace = "xml-web-services-cars")
     protected double totalMileage;
@@ -82,8 +86,6 @@ public class Car {
     protected String fuel;
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String transmission;
-    @XmlElement(namespace = "xml-web-services-cars", type = Long.class)
-    protected List<Long> bookings;
 
     /**
      * Gets the value of the id property.
@@ -333,6 +335,9 @@ public class Car {
         this.transmission = value;
     }
 
+    public void printCar(Car car){
+        System.out.println("Brand: " + car.getBrand() + " \nModel: " + car.getModel() + " \nClass:" +car.getCarClass() + " \nOwner: " +car.getOwned() + " \nDesc: " + car.getDescription() + " \nFuel: " + car.getFuel() + " \nTrans: " +car.getTransmission() + " \nCDP : " + car.isColDamProtection() + " \nSEATS: "+car.getChildrenSeats() + " \nallowedkm: "+car.getAllowedMileage() + " \ntotal km : " + car.getTotalMileage());
+    }
     /**
      * Gets the value of the bookings property.
      * 
@@ -355,11 +360,6 @@ public class Car {
      * 
      * 
      */
-    public List<Long> getBookings() {
-        if (bookings == null) {
-            bookings = new ArrayList<Long>();
-        }
-        return this.bookings;
-    }
+
 
 }
