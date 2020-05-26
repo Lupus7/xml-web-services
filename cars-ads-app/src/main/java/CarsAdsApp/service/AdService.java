@@ -30,7 +30,7 @@ public class AdService {
             return 400;
 
         // provera za 3 ad-a
-        ArrayList<Ad> ads = adRepo.findAllByOwnerAndActive(user.getId(), true);
+        ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(user.getId(), true);
         if (ads.size() == 3)
             return 402;
 
@@ -75,7 +75,7 @@ public class AdService {
         if (!ad.isPresent() || ad.get().getOwnerId() != user.getId() || ad.get().isActive())
             return 400;
 
-        ArrayList<Ad> ads = adRepo.findAllByOwnerAndActive(user.getId(), true);
+        ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(user.getId(), true);
         if (ads.size() == 3)
             return 402;
 
