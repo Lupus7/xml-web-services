@@ -1,8 +1,6 @@
 
 package cars;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,13 +23,12 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="childrenSeats" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="colDamProtection" type="{http://www.w3.org/2001/XMLSchema}boolean"/&gt;
- *         &lt;element name="owned" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="owner" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="brand" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="model" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="carClass" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="fuel" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="transmission" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
- *         &lt;element name="bookings" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -48,13 +45,12 @@ import javax.xml.bind.annotation.XmlType;
     "childrenSeats",
     "description",
     "colDamProtection",
-    "owned",
+    "owner",
     "brand",
     "model",
     "carClass",
     "fuel",
-    "transmission",
-    "bookings"
+    "transmission"
 })
 public class Car {
 
@@ -71,7 +67,7 @@ public class Car {
     @XmlElement(namespace = "xml-web-services-cars")
     protected boolean colDamProtection;
     @XmlElement(namespace = "xml-web-services-cars", required = true)
-    protected String owned;
+    protected String owner;
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String brand;
     @XmlElement(namespace = "xml-web-services-cars", required = true)
@@ -82,8 +78,6 @@ public class Car {
     protected String fuel;
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String transmission;
-    @XmlElement(namespace = "xml-web-services-cars", type = Long.class)
-    protected List<Long> bookings;
 
     /**
      * Gets the value of the id property.
@@ -190,27 +184,27 @@ public class Car {
     }
 
     /**
-     * Gets the value of the owned property.
+     * Gets the value of the owner property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getOwned() {
-        return owned;
+    public String getOwner() {
+        return owner;
     }
 
     /**
-     * Sets the value of the owned property.
+     * Sets the value of the owner property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setOwned(String value) {
-        this.owned = value;
+    public void setOwner(String value) {
+        this.owner = value;
     }
 
     /**
@@ -331,35 +325,6 @@ public class Car {
      */
     public void setTransmission(String value) {
         this.transmission = value;
-    }
-
-    /**
-     * Gets the value of the bookings property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the bookings property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getBookings().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Long }
-     * 
-     * 
-     */
-    public List<Long> getBookings() {
-        if (bookings == null) {
-            bookings = new ArrayList<Long>();
-        }
-        return this.bookings;
     }
 
 }

@@ -23,7 +23,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="startDate" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
  *         &lt;element name="endDate" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
  *         &lt;element name="place" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
- *         &lt;element name="carID" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
+ *         &lt;element name="carId" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
+ *         &lt;element name="ownerId" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
+ *         &lt;element name="active" type="{http://www.w3.org/2001/XMLSchema}boolean"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -38,7 +40,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "startDate",
     "endDate",
     "place",
-    "carID"
+    "carId",
+    "ownerId",
+    "active"
 })
 public class Ad {
 
@@ -53,7 +57,11 @@ public class Ad {
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String place;
     @XmlElement(namespace = "xml-web-services-cars")
-    protected long carID;
+    protected long carId;
+    @XmlElement(namespace = "xml-web-services-cars")
+    protected long ownerId;
+    @XmlElement(namespace = "xml-web-services-cars")
+    protected boolean active;
 
     /**
      * Gets the value of the id property.
@@ -144,19 +152,51 @@ public class Ad {
     }
 
     /**
-     * Gets the value of the carID property.
+     * Gets the value of the carId property.
      * 
      */
-    public long getCarID() {
-        return carID;
+    public long getCarId() {
+        return carId;
     }
 
     /**
-     * Sets the value of the carID property.
+     * Sets the value of the carId property.
      * 
      */
-    public void setCarID(long value) {
-        this.carID = value;
+    public void setCarId(long value) {
+        this.carId = value;
+    }
+
+    /**
+     * Gets the value of the ownerId property.
+     * 
+     */
+    public long getOwnerId() {
+        return ownerId;
+    }
+
+    /**
+     * Sets the value of the ownerId property.
+     * 
+     */
+    public void setOwnerId(long value) {
+        this.ownerId = value;
+    }
+
+    /**
+     * Gets the value of the active property.
+     * 
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * Sets the value of the active property.
+     * 
+     */
+    public void setActive(boolean value) {
+        this.active = value;
     }
 
 }

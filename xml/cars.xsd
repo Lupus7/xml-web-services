@@ -10,7 +10,7 @@
             <xs:element name="childrenSeats" type="xs:int"/>
             <xs:element name="description" type="xs:string"/>
             <xs:element name="colDamProtection" type="xs:boolean"/>
-            <xs:element name="owned" type="xs:string"/>
+            <xs:element name="owner" type="xs:string"/>
             <xs:element name="brand" type="xs:string"/>
             <xs:element name="model" type="xs:string"/>
             <xs:element name="carClass" type="xs:string"/>
@@ -24,7 +24,9 @@
             <xs:element name="startDate" type="xs:date"/>
             <xs:element name="endDate" type="xs:date"/>
             <xs:element name="place" type="xs:string"/>
-            <xs:element name="carID" type="xs:long"/>
+            <xs:element name="carId" type="xs:long"/>
+            <xs:element name="ownerId" type="xs:long"/>
+            <xs:element name="active" type="xs:boolean"/>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>
