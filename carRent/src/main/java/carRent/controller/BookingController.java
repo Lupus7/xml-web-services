@@ -38,12 +38,23 @@ public class BookingController {
             return ResponseEntity.status(400).body("Could not accept");
     }
 
-    // Otkazivanje booking requesta od strane clienta
+    // Otkazivanje booking requesta od strane clienta koje je zatrazio booking
     @DeleteMapping(value = "/api/booking/{id}", produces = "application/json", consumes = "application/json")
     //@PreAuthorize("hasAuthority('CANCEL_BOOKING')")
     public ResponseEntity<String> cancelBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
         if (bookingService.cancelBookingRequest(id, user.getName()))
+            return ResponseEntity.ok("Booking request canceled!");
+        else
+            return ResponseEntity.status(400).body("Could not accept");
+    }
+
+    // Odbijanje booking requesta od strane vlasnika auta
+    @DeleteMapping(value = "/api/booking/reject/{id}", produces = "application/json", consumes = "application/json")
+    //@PreAuthorize("hasAuthority('REJECT_BOOKING')")
+    public ResponseEntity<String> rejectBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
+
+        if (bookingService.rejectBookingRequest(id, user.getName()))
             return ResponseEntity.ok("Booking request canceled!");
         else
             return ResponseEntity.status(400).body("Could not accept");
