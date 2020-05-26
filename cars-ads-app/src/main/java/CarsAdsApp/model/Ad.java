@@ -1,162 +1,112 @@
-
 package CarsAdsApp.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.datatype.XMLGregorianCalendar;
+import CarsAdsApp.model.dto.AdDTO;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
-/**
- * <p>Java class for Ad complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="Ad"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
- *         &lt;element name="startDate" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
- *         &lt;element name="endDate" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
- *         &lt;element name="place" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
- *         &lt;element name="carID" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Ad", namespace = "xml-web-services-cars", propOrder = {
-    "id",
-    "startDate",
-    "endDate",
-    "place",
-    "carID"
-})
+@Entity
+@Table(name = "ad")
 public class Ad {
 
-    @XmlElement(namespace = "xml-web-services-cars")
-    protected long id;
-    @XmlElement(namespace = "xml-web-services-cars", required = true)
-    @XmlSchemaType(name = "date")
-    protected XMLGregorianCalendar startDate;
-    @XmlElement(namespace = "xml-web-services-cars", required = true)
-    @XmlSchemaType(name = "date")
-    protected XMLGregorianCalendar endDate;
-    @XmlElement(namespace = "xml-web-services-cars", required = true)
-    protected String place;
-    @XmlElement(namespace = "xml-web-services-cars")
-    protected long carID;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    /**
-     * Gets the value of the id property.
-     * 
-     */
-    public long getId() {
+    @Column(unique = false, nullable = false)
+    private LocalDateTime startDate;
+
+    @Column(unique = false, nullable = false)
+    private LocalDateTime endDate;
+
+    @Column(name = "place", unique = false, nullable = false)
+    private String place;
+
+    @Column(name = "car_id", unique = false, nullable = false)
+    private Long carId;
+
+    @Column(name = "owner_id", unique = false, nullable = false)
+    private Long ownerId;
+
+    @Column(name = "active", unique = false, nullable = false)
+    private boolean active;
+
+    public Ad() {
+
+    }
+
+    public Ad(LocalDateTime startDate, LocalDateTime endDate, String place, Long car, Long owner) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.place = place;
+        this.carId = car;
+        this.ownerId = owner;
+        this.active = true;
+    }
+
+    public Ad(AdDTO adDTO, Long owner) {
+        this.startDate = adDTO.getStartDate();
+        this.endDate = adDTO.getEndDate();
+        this.place = adDTO.getPlace();
+        this.carId = adDTO.getCarId();
+        this.ownerId = owner;
+        this.active = true;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    /**
-     * Sets the value of the id property.
-     * 
-     */
-    public void setId(long value) {
-        this.id = value;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    /**
-     * Gets the value of the startDate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public XMLGregorianCalendar getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    /**
-     * Sets the value of the startDate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public void setStartDate(XMLGregorianCalendar value) {
-        this.startDate = value;
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
     }
 
-    /**
-     * Gets the value of the endDate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public XMLGregorianCalendar getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    /**
-     * Sets the value of the endDate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public void setEndDate(XMLGregorianCalendar value) {
-        this.endDate = value;
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
     }
 
-    /**
-     * Gets the value of the place property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getPlace() {
         return place;
     }
 
-    /**
-     * Sets the value of the place property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setPlace(String value) {
-        this.place = value;
+    public void setPlace(String place) {
+        this.place = place;
     }
 
-    /**
-     * Gets the value of the carID property.
-     * 
-     */
-    public long getCarID() {
-        return carID;
+    public Long getCarId() {
+        return carId;
     }
 
-    /**
-     * Sets the value of the carID property.
-     * 
-     */
-    public void setCarID(long value) {
-        this.carID = value;
+    public void setCarId(Long car) {
+        this.carId = car;
     }
 
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }
+
