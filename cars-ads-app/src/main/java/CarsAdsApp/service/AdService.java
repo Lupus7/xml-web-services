@@ -1,9 +1,12 @@
 package CarsAdsApp.service;
 
 import CarsAdsApp.model.Ad;
+import CarsAdsApp.model.Car;
 import CarsAdsApp.model.User;
+import CarsAdsApp.model.dto.AdClientDTO;
 import CarsAdsApp.model.dto.AdDTO;
 import CarsAdsApp.repository.AdRepository;
+import CarsAdsApp.repository.CarRepository;
 import CarsAdsApp.repository.UserRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +26,9 @@ public class AdService {
 
     @Autowired
     private AdRepository adRepo;
+
+    @Autowired
+    private CarRepository carRepo;
 
     public int createAd(AdDTO adDTO, String email) {
         // provera da li user sa name postoji, provera da li je ad userov
@@ -128,9 +134,29 @@ public class AdService {
         return true;
     }
 
-    public List<Ad>getAll(){
+    // bojanovo
+    public List<Ad> getAll() {
         List<Ad> ads = adRepo.findAll();
         return ads;
     }
 
+    public List<AdClientDTO> getClientAds(String name) {
+
+        User user = userRepo.findByEmail(name);
+        if (user == null)
+            return new ArrayList<>();
+
+        List<AdClientDTO> adClientDTOS = new ArrayList<>();
+
+        List<Ad> ads = adRepo.findAllByOwnerId(user.getId());
+        for (Ad ad : ads) {
+            Optional<Car> car = carRepo.findById(ad.getCarId());
+            if (car.isPresent()) {
+                AdClientDTO adClientDTO = new AdClientDTO(ad, car.get());
+                adClientDTOS.add(adClientDTO);
+            }
+        }
+
+        return adClientDTOS;
+    }
 }

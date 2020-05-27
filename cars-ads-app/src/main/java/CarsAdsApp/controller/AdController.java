@@ -1,6 +1,7 @@
 package CarsAdsApp.controller;
 
 import CarsAdsApp.model.Ad;
+import CarsAdsApp.model.dto.AdClientDTO;
 import CarsAdsApp.model.dto.AdDTO;
 import CarsAdsApp.service.AdService;
 import org.json.JSONException;
@@ -81,7 +82,14 @@ public class AdController {
 
     }
 
-    @GetMapping(value = "/api/ads")
+    // Svi adovi clienta
+    @GetMapping(value = "/api/ad/client")
+    public ResponseEntity<List<AdClientDTO>> getClientAds(Principal user){
+        List<AdClientDTO> ads = adService.getClientAds(user.getName());
+        return ResponseEntity.ok(ads);
+    }
+
+    @GetMapping(value = "/api/ad")
     public ResponseEntity<List<Ad>> getAll(){
         List<Ad> ads = adService.getAll();
         return ResponseEntity.ok(ads);
