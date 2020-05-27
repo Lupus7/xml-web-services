@@ -1,5 +1,6 @@
 package CarsAdsApp.controller;
 
+import CarsAdsApp.model.Ad;
 import CarsAdsApp.model.dto.AdDTO;
 import CarsAdsApp.service.AdService;
 import org.json.JSONException;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 public class AdController {
@@ -77,5 +79,11 @@ public class AdController {
         else
             return ResponseEntity.status(400).body("Could not accept");
 
+    }
+
+    @GetMapping(value = "/api/ads")
+    public ResponseEntity<List<Ad>> getAll(){
+        List<Ad> ads = adService.getAll();
+        return ResponseEntity.ok(ads);
     }
 }
