@@ -87,16 +87,16 @@ func main() {
 	}))*/
 
 	//   ADS
-	e.GET("cars/api/ads", carHandler.FindAll)
-	e.POST("cars/api/ads/", carHandler.SearchAds)
-	e.GET("cars/api/ads/:id", carHandler.GetAdById)
+	e.GET("/api/ads", carHandler.FindAll)
+	e.POST("/api/ads/", carHandler.SearchAds)
+	e.GET("/api/ads/:id", carHandler.GetAdById)
 
 	//   SPECIFICATIONS
-	e.GET("cars/api/brands", carHandler.AllBrands)
-	e.GET("cars/api/models", carHandler.AllModels)
-	e.GET("cars/api/fuels", carHandler.AllFuels)
-	e.GET("cars/api/transmissions", carHandler.AllTransmissions)
-	e.GET("cars/api/classes", carHandler.AllClasses)
+	e.GET("/api/brands", carHandler.AllBrands)
+	e.GET("/api/models", carHandler.AllModels)
+	e.GET("/api/fuels", carHandler.AllFuels)
+	e.GET("/api/transmissions", carHandler.AllTransmissions)
+	e.GET("/api/classes", carHandler.AllClasses)
 
 	// HEALTH CHECK
 	e.GET("/health", health)
