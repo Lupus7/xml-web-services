@@ -22,8 +22,8 @@ public class CarController {
     CarService carService;
 
     @PostMapping("/cars")
-    public ResponseEntity<String> postCar(@RequestBody NewCarDTO newCarDto){
-        if(carService.CreateCar(newCarDto))
+    public ResponseEntity<String> postCar(@RequestBody NewCarDTO newCarDto,Principal user){
+        if(carService.CreateCar(newCarDto,user.getName()))
             return ResponseEntity.ok("Successfully created");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }

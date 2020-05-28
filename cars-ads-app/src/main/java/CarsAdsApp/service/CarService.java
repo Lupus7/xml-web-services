@@ -23,8 +23,8 @@ public class CarService {
     UserRepository userRepository;
 
     //MEthod for creating new car in dataabse
-    public boolean CreateCar(NewCarDTO newCarDto) {
-        if (newCarDto.getBrand() == null || newCarDto.getModel() == null || newCarDto.getFuel() == null || newCarDto.getCarClass() == null || newCarDto.getOwned() == null || newCarDto.getTransmission() == null) {
+    public boolean CreateCar(NewCarDTO newCarDto,String user) {
+        if (newCarDto.getBrand() == null || newCarDto.getModel() == null || newCarDto.getFuel() == null || newCarDto.getCarClass() == null  || newCarDto.getTransmission() == null) {
             return false;
         }
         System.out.println("Des: " + newCarDto.getDescription());
@@ -35,7 +35,7 @@ public class CarService {
         car.setChildrenSeats(newCarDto.getChildrenSeats());
         car.setDescription(newCarDto.getDescription());
         car.setColDamProtection(newCarDto.isColDamProtection());
-        car.setOwned(newCarDto.getOwned());
+        car.setOwned(user);
         car.setBrand(newCarDto.getBrand());
         car.setModel(newCarDto.getModel());
         car.setCarClass(newCarDto.getCarClass());
