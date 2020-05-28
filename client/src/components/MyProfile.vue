@@ -16,7 +16,7 @@
                         <b-dropdown-item data-toggle="modal" data-target="#newcar">
                             <b-icon icon="plus-circle-fill" aria-hidden="true" variant="dark"></b-icon> New Car
                         </b-dropdown-item>
-                        <b-dropdown-item>
+                        <b-dropdown-item @click="showClientCars()">
                             <b-icon icon="tools" aria-hidden="true" variant="dark"></b-icon> All Cars
                         </b-dropdown-item>
                     </b-nav-item-dropdown>
@@ -25,6 +25,7 @@
         </b-navbar>
         <NewCarForm/>
         <NewAdForm/>
+        <ClientCars v-if="this.boolcars"/>
 
      
     </div>
@@ -33,19 +34,24 @@
 <script>
 import NewCarForm from './NewCarForm'
 import NewAdForm from './NewAdForm'
+import ClientCars from './ClientCars'
+
 
 export default {
     data() {
         return {
-         
+            boolcars:false
         };
     },
     components:{
         NewCarForm,
-        NewAdForm
+        NewAdForm,
+        ClientCars,
     },
     methods: {
-      
+        showClientCars(){
+            this.boolcars = true;
+        }
     },
     created() {
     }
