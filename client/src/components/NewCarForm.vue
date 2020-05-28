@@ -7,7 +7,13 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">New Car</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button
+                            type="button"
+                            class="close"
+                            @click="resetForm()"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -151,7 +157,12 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" data-dismiss="modal">
+                        <button
+                            @click="addNewCar()"
+                            type="button"
+                            class="btn btn-success"
+                            data-dismiss="modal"
+                        >
                             <b-icon icon="check-circle" aria-hidden="true"></b-icon>Add Car
                         </button>
                         <button
@@ -276,6 +287,48 @@ export default {
         },
         resetForm() {
             this.images = [];
+            this.descriptionF = "";
+            this.brandF = "";
+            this.modelF = "";
+            this.fuelF = "";
+            this.transmissionF = "";
+            this.classF = "";
+            this.total_mileageF = 0;
+            this.planned_mileageF = 0;
+            this.collision_damageF = false;
+            this.seats_numberF = 0;
+        },
+        addNewCar() {
+            event.preventDefault();
+            axios
+                .post("/cars-ads/cars", {
+                    brand: this.brandF,
+                    model: this.modelF,
+                    fuel: this.fuelF,
+                    transmission: this.transmissionF,
+                    carClass: this.classF,
+                    totalMileage: this.total_mileageF,
+                    allowedMilleage: this.planned_mileageF,
+                    colDamProtection: this.collision_damageF,
+                    childrenSeats: this.seats_numberF,
+                    description: this.descriptionF,
+                })
+                .then(response => {
+                    this.resetForm();
+                    if (response.status === 200) {
+                        this.$bvToast.toast(response.data, {
+                            title: "New Car",
+                            variant: "success",
+                            solid: true
+                        });
+                    } else {
+                        this.$bvToast.toast(response.data, {
+                            title: "New Car",
+                            variant: "warning",
+                            solid: true
+                        });
+                    }
+                });
         }
     },
     created() {

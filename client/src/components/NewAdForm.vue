@@ -7,7 +7,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">New Ad</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" @click="resetForm()" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -56,7 +56,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" data-dismiss="modal">
+                        <button @click="createNewAd()" type="button" class="btn btn-success" data-dismiss="modal">
                             <b-icon icon="check-circle" aria-hidden="true"></b-icon>Create Ad
                         </button>
                         <button
@@ -88,17 +88,60 @@ export default {
         };
     },
     methods: {
-        getCars() {
-            axios.get("").then(response => {
+        getClientCars() {
+            axios.get("/cars-ads/cars/client").then(response => {
                 // pokupi sve clientove aute
+                this.cars = []
+                for(let resp of response.data){
+                    var select = {value:resp.carId,text:resp.brand+" "+resp.model+" "+resp.carClass}
+                    this.cars.push(select);
+                }
                 this.cars = response.data;
             });
         },
 
-        resetForm() {}
+        resetForm() {
+            this.carF = "";
+            this.startDateF = "";
+            this.endDateF = "";
+            this.placeF = "";
+
+        },
+        createNewAd(){
+            event.preventDefault();
+            axios
+                .post("/cars-ads/api/ad", {
+                   startDate:this.startDateF,
+                   endDate:this.endDateF,
+                   place:this.placeF,
+                   carId:this.carF
+                })
+                .then(response => {
+                    this.resetForm();
+                    if (response.status === 200) {
+                        this.$bvToast.toast(response.data, {
+                            title: "New Ad",
+                            variant: "success",
+                            solid: true
+                        });
+                    } else if(response.status === 402) {
+                        this.$bvToast.toast(response.data, {
+                            title: "New Car",
+                            variant: "danger",
+                            solid: true
+                        });
+                    }else {
+                        this.$bvToast.toast(response.data, {
+                            title: "New Car",
+                            variant: "warning",
+                            solid: true
+                        });
+                    }
+                });
+        }
     },
     created() {
-        this.getCars();
+        this.getClientCars();
     }
 };
 </script>

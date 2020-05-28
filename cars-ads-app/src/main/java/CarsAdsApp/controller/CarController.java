@@ -3,6 +3,7 @@ package CarsAdsApp.controller;
 import CarsAdsApp.controller.dto.NewCarDTO;
 import CarsAdsApp.controller.dto.UpdateCarDTO;
 import CarsAdsApp.model.Car;
+import CarsAdsApp.model.dto.CarDTO;
 import CarsAdsApp.service.CarService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,6 +57,15 @@ public class CarController {
         if(deleted)
             return ResponseEntity.ok("Successfully deleted car from database");
         return ResponseEntity.badRequest().body("Oops.. try again");
+    }
+
+    // Clients cars
+    @GetMapping("/cars/client")
+    public ResponseEntity<List<CarDTO>>getClientCars(Principal user){
+        List<CarDTO> cars = carService.getClientCars(user.getName());
+        if (cars != null)
+            return ResponseEntity.ok(cars);
+        return ResponseEntity.badRequest().body(null);
     }
 
 }
