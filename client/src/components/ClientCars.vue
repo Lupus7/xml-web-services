@@ -48,8 +48,8 @@
 
                     <hr />
 
-                    <b-card-sub-title class="mb-2">Total Milleage: {{car.totalMilleage}}</b-card-sub-title>
-                    <b-card-sub-title class="mb-2">Allowed Mileage: {{car.allowedMilleage}}</b-card-sub-title>
+                    <b-card-sub-title class="mb-2">Total Milleage: {{car.totalMileage}}</b-card-sub-title>
+                    <b-card-sub-title class="mb-2">Allowed Mileage: {{car.allowedMileage}}</b-card-sub-title>
 
                     <div class="modal-footer">
                         <div class="row">
@@ -258,22 +258,7 @@ import axios from "axios";
 export default {
     data() {
         return {
-            cars: [
-                {
-                    brand: "opel",
-                    model: "model",
-                    carClass: "class",
-                    transmission: "trans",
-                    fuel: "fuel",
-                    idCar: "id",
-                    totalMilleage: 5400,
-                    allowedMilleage: 5000,
-                    childrenSeats: 5,
-                    description: "aaaaaaaaaa",
-                    colDamProtection: true,
-                    images: ["a", "b"]
-                },
-            ],
+            cars: [],
             descriptionF: "",
             brandF: "",
             modelF: "",

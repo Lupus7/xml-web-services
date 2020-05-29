@@ -50,7 +50,7 @@
                     <b-card-sub-title class="mb-2">Fuel Type: {{ad.fuel}}</b-card-sub-title>
                     <b-card-sub-title class="mb-2">Children Seats: {{ad.childrenSeats}}</b-card-sub-title>
                     <b-card-sub-title class="mb-2">Total Milleage: {{ad.totalMilleage}}</b-card-sub-title>
-                    <b-card-sub-title class="mb-2">Allowed Mileage: {{ad.allowedMilleage}}</b-card-sub-title>
+                    <b-card-sub-title class="mb-2">Allowed Mileage: {{ad.allowedMileage}}</b-card-sub-title>
 
                     <hr />
                     <b-card-sub-title class="mb-2">
@@ -188,40 +188,8 @@ import axios from "axios";
 export default {
     data() {
         return {
-            ads: [
-                {
-                    brand: "brand",
-                    model: "model",
-                    carClass: "class",
-                    transmission: "trans",
-                    fuel: "fuel",
-                    carId: 100,
-                    totalMilleage: 5400,
-                    allowedMilleage: 5000,
-                    childrenSeats: 5,
-                    description: "aaaaaaaaaa",
-                    colDamProtection: true,
-                    images: ["a", "b"],
-                    place: "Place",
-                    startDate: "aaa",
-                    endDate: "aaa",
-                    adId:100
-                },
-            ],
-            cars:[ {
-                    brand: "brand",
-                    model: "model",
-                    carClass: "class",
-                    transmission: "trans",
-                    fuel: "fuel",
-                    carId: 100,
-                    totalMilleage: 5400,
-                    allowedMilleage: 5000,
-                    childrenSeats: 5,
-                    description: "aaaaaaaaaa",
-                    colDamProtection: true,
-                    images: ["a", "b"]
-                }],
+            ads: [],
+            cars:[],
             carEditF:"",
             startDateEditF:"",
             endDateEditF:"",
