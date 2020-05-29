@@ -6,6 +6,7 @@ import CarsAdsApp.model.Car;
 import CarsAdsApp.model.dto.CarDTO;
 import CarsAdsApp.service.CarService;
 import javassist.NotFoundException;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +53,7 @@ public class CarController {
     }
 
     @DeleteMapping("cars/{id}")
-    public ResponseEntity<String>deleteCar(@PathVariable Long id){
+    public ResponseEntity<String>deleteCar(@PathVariable Long id) throws JSONException {
         boolean deleted = carService.delete(id);
         if(deleted)
             return ResponseEntity.ok("Successfully deleted car from database");
