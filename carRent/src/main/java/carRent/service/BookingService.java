@@ -210,7 +210,7 @@ public class BookingService {
 
         Map<String, Long> params = new HashMap<String, Long>();
         params.put("id", booking.get().getAd());
-        new RestTemplate().delete("http://cars-ads/api/ad/deactivate/{id}", params);
+        new RestTemplate().delete("http://localhost:8080/cars-ads/api/ad/deactivate/{id}", params);
 
 
         new java.util.Timer().schedule(
@@ -296,4 +296,41 @@ public class BookingService {
     }
 
 
+    public boolean checkingBookingRequests(JSONObject jsonObject, String name) throws JSONException {
+
+        User user = userRepo.findByEmail(name);
+        if (user == null)
+            return false;
+
+        String adsIds = jsonObject.getString("array");
+        String[] str = adsIds.split(";");
+        for (String s : str) {
+            for (Booking b : bookingRepo.findAllByAd(Long.parseLong("s"))) {
+                if (!b.getState().equals(RequestState.CANCELED) && !b.getState().equals(RequestState.PENDING))
+                    return false;
+            }
+        }
+
+
+        return true;
+    }
+
+    public boolean deleteCarsBookings(String id, String name) {
+
+
+        User user = userRepo.findByEmail(name);
+        if (user == null)
+            return false;
+
+        String[] str = id.split(";");
+        for (String s : str) {
+            for (Booking b : bookingRepo.findAllByAd(Long.parseLong("s"))) {
+                b.setState(RequestState.CANCELED);
+                bookingRepo.save(b);
+            }
+        }
+
+
+        return true;
+    }
 }

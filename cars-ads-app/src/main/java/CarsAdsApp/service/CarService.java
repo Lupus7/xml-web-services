@@ -2,29 +2,36 @@ package CarsAdsApp.service;
 
 import CarsAdsApp.controller.dto.NewCarDTO;
 import CarsAdsApp.controller.dto.UpdateCarDTO;
+import CarsAdsApp.model.Ad;
 import CarsAdsApp.model.Car;
 import CarsAdsApp.model.ObjectFactory;
 import CarsAdsApp.model.User;
 import CarsAdsApp.model.dto.CarDTO;
+import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.CarRepository;
 import CarsAdsApp.repository.UserRepository;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CarService {
     @Autowired
     CarRepository carRepository;
+
+    @Autowired
+    AdRepository adRepository;
+
     @Autowired
     UserRepository userRepository;
 
     //MEthod for creating new car in dataabse
-    public boolean CreateCar(NewCarDTO newCarDto,String user) {
-        if (newCarDto.getBrand() == null || newCarDto.getModel() == null || newCarDto.getFuel() == null || newCarDto.getCarClass() == null  || newCarDto.getTransmission() == null) {
+    public boolean CreateCar(NewCarDTO newCarDto, String user) {
+        if (newCarDto.getBrand() == null || newCarDto.getModel() == null || newCarDto.getFuel() == null || newCarDto.getCarClass() == null || newCarDto.getTransmission() == null) {
             return false;
         }
         System.out.println("Des: " + newCarDto.getDescription());
@@ -71,11 +78,32 @@ public class CarService {
         return false;
     }
 
-    public boolean delete(Long id) {
+    public boolean delete(Long id) throws JSONException {
         Optional<Car> car = carRepository.findById(id);
         if (!car.isPresent()) {
             return false;
         }
+
+        List<Ad> ads = adRepository.findAllByCarId(car.get().getId());
+        String adsIds = "";
+        for (Ad ad : ads) {
+            adsIds += ad.getId() + ";";
+        }
+
+        JSONObject object = new JSONObject();
+        object.put("array", adsIds);
+        Boolean check = new RestTemplate().postForObject("http://localhost:8080/rent/api/booking/checking", object, Boolean.class);
+
+        if (!check)
+            return false;
+
+        for (Ad ad : ads) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("id", adsIds);
+            new RestTemplate().delete("http://localhost:8080/rent/api/booking/checking/remove/{id}", params);
+            adRepository.delete(ad);
+        }
+
         carRepository.deleteById(id);
         return true;
     }
