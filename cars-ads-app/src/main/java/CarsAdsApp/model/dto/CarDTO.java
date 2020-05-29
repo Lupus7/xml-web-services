@@ -2,6 +2,7 @@ package CarsAdsApp.model.dto;
 
 import CarsAdsApp.model.Car;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CarDTO {
@@ -10,12 +11,28 @@ public class CarDTO {
     private String brand;
     private String model;
     private String carClass;
+    private double totalMileage;
+    private double allowedMileage;
+    private int childrenSeats;
+    private String description;
+    private boolean colDamProtection;
+    private String fuel;
+    private String transmission;
+    private List<String> images;
 
     public CarDTO(Car car) {
         this.carId = car.getId();
         this.brand = car.getBrand();
         this.model = car.getModel();
         this.carClass = car.getCarClass();
+        this.totalMileage = car.getTotalMileage();
+        this.allowedMileage = car.getAllowedMileage();
+        this.childrenSeats = car.getChildrenSeats();
+        this.description = car.getDescription();
+        this.colDamProtection = car.isColDamProtection();
+        this.fuel = car.getFuel();
+        this.transmission = car.getTransmission();
+        this.images = new ArrayList<>();
     }
 
     public CarDTO() {

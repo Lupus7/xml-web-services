@@ -27,6 +27,7 @@ const router = new Router({
             name: "MyProfile",
             component: () => import("./components/MyProfile"),
         },
+     
         {
             path: "/ad/:id",
             name: "Ad",

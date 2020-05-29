@@ -11,7 +11,7 @@
 
         <b-card-group deck class="row">
             <div v-for="ad in this.ads" :key="ad.id" class="col-12 col-md-3 col-lg-4">
-                <b-card style="width:104%">
+                <b-card style="width:90%">
                     <b-carousel
                         id="carousel-1"
                         controls
@@ -40,7 +40,6 @@
                         <b-icon icon="geo-alt" aria-hidden="true" variant="dark"></b-icon>
                         {{ad.place}}
                     </b-card-sub-title>
-                   
 
                     <hr />
 
@@ -66,21 +65,35 @@
                     <div class="modal-footer">
                         <div class="row">
                             <div class="col">
-                                <b-button v-if="ad.active" type="button" class="btn btn-dark" style="width:140%">
+                                <b-button
+                                    @click="deactivateAd(ad)"
+                                    v-if="ad.active"
+                                    type="button"
+                                    class="btn btn-dark"
+                                    style="width:120%"
+                                >
                                     <b-icon icon="wrench" aria-hidden="true"></b-icon> Deactive
                                 </b-button>
-                                <b-button v-if="!ad.active" type="button" class="btn btn-dark" style="width:140%">
+                                <b-button
+                                    @click="activateAd(ad)"
+                                    v-if="!ad.active"
+                                    type="button"
+                                    class="btn btn-dark"
+                                    style="width:120%"
+                                >
                                     <b-icon icon="wrench" aria-hidden="true"></b-icon> Active
                                 </b-button>
                             </div>
                             <div class="col">
-                                <b-button type="button" class="btn btn-secondary" style="width:140%">
+                                <b-button
+                                    data-toggle="modal"
+                                    data-target="#editad"
+                                    @click="editAd(ad)"
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    style="width:120%"
+                                >
                                     <b-icon icon="wrench" aria-hidden="true"></b-icon> Edit
-                                </b-button>
-                            </div>
-                            <div class="col">
-                                <b-button type="button" class="btn btn-danger" style="width:140%">
-                                    <b-icon icon="x" aria-hidden="true"></b-icon> Delete
                                 </b-button>
                             </div>
                         </div>
@@ -90,6 +103,83 @@
                 <br />
             </div>
         </b-card-group>
+
+
+
+        <!-- EDIT FORM -->
+
+           <div class="modal fade" id="editad" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Ad</h5>
+                        <button type="button" class="close" @click="resetEditForm()" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <b-form>
+                            <div>
+                                <div class="form-group">
+                                    <label>Place</label>
+                                    <b-input v-model="placeEditF" type="text" class="form-control" />
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Start Date</label>
+                                        <b-form-datepicker
+                                            v-model="startDateEditF"
+                                            :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"
+                                            locale="en"
+                                        ></b-form-datepicker>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>End Date</label>
+                                        <b-form-datepicker
+                                            v-model="endDateEditF"
+                                            :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"
+                                            locale="en"
+                                        ></b-form-datepicker>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label>Select Car</label>
+                                        <b-form-select
+                                            v-model="carEditF"
+                                            :options="cars"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                  
+                                </div>
+
+                               
+                            </div>
+                        </b-form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button @click="editAdFinal()" type="button" class="btn btn-success" data-dismiss="modal">
+                            <b-icon icon="check-circle" aria-hidden="true"></b-icon>Edit Ad
+                        </button>
+                        <button
+                            @click="resetEditForm()"
+                            type="button"
+                            class="btn btn-danger"
+                            data-dismiss="modal"
+                        >
+                            <b-icon icon="x-circle"></b-icon>Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </template>
 
@@ -105,7 +195,7 @@ export default {
                     carClass: "class",
                     transmission: "trans",
                     fuel: "fuel",
-                    idCar: "id",
+                    carId: 100,
                     totalMilleage: 5400,
                     allowedMilleage: 5000,
                     childrenSeats: 5,
@@ -113,55 +203,148 @@ export default {
                     colDamProtection: true,
                     images: ["a", "b"],
                     place: "Place",
-                    startDate:"aaa",
-                    endDate:"aaa",
+                    startDate: "aaa",
+                    endDate: "aaa",
+                    adId:100
                 },
-                {
+            ],
+            cars:[ {
                     brand: "brand",
                     model: "model",
                     carClass: "class",
                     transmission: "trans",
                     fuel: "fuel",
-                    idCar: "id",
+                    carId: 100,
                     totalMilleage: 5400,
                     allowedMilleage: 5000,
                     childrenSeats: 5,
                     description: "aaaaaaaaaa",
                     colDamProtection: true,
-                    images: ["a", "b"],
-                    place: "Place",
-                    startDate:"aaa",
-                    endDate:"aaa",
-                },
-                {
-                    brand: "brand",
-                    model: "model",
-                    carClass: "class",
-                    transmission: "trans",
-                    fuel: "fuel",
-                    idCar: "id",
-                    totalMilleage: 5400,
-                    allowedMilleage: 5000,
-                    childrenSeats: 5,
-                    description: "aaaaaaaaaa",
-                    colDamProtection: true,
-                    images: ["a", "b"],
-                    place: "Place",
-                    startDate:"aaa",
-                    endDate:"aaa",
-                }
-            ]
+                    images: ["a", "b"]
+                }],
+            carEditF:"",
+            startDateEditF:"",
+            endDateEditF:"",
+            placeEditF:"",
+            editID:"",
         };
     },
+   
     methods: {
-        getClientCars() {
+        getClientAds() {
             axios.get("/cars-ads/ads/client").then(response => {
                 this.ads = response.data;
             });
+        },
+        getClientCars() {
+            axios.get("/cars-ads/cars/client").then(response => {
+                // pokupi sve clientove aute
+                this.cars = []
+                for(let resp of response.data){
+                    var select = {value:resp.carId,text:resp.brand+" "+resp.model+" "+resp.carClass}
+                    this.cars.push(select);
+                }
+                this.cars = response.data;
+            });
+        },
+        deactivateAd(ad) {
+            event.preventDefault();
+            axios
+                .delete("/cars-ads/api/ad/deactivate/" + ad.adId)
+                .then(response => {
+                    this.getClientAds();
+                    if (response.status === 200) {
+                        this.$bvToast.toast(response.data, {
+                            title: "Ad Deactivation",
+                            variant: "success",
+                            solid: true
+                        });
+                    } else {
+                        this.$bvToast.toast(response.data, {
+                            title: "Ad Deactivation",
+                            variant: "warning",
+                            solid: true
+                        });
+                    }
+                });
+        },
+        activateAd(ad) {
+            event.preventDefault();
+            axios.put("/cars-ads/api/ad/activate/" + ad.adId).then(response => {
+                this.getClientAds();
+                if (response.status === 200) {
+                    this.$bvToast.toast(response.data, {
+                        title: "Ad Activation",
+                        variant: "success",
+                        solid: true
+                    });
+                } else if (response.status === 402) {
+                    this.$bvToast.toast(response.data, {
+                        title: "Ad Activation",
+                        variant: "danger",
+                        solid: true
+                    });
+                } else {
+                    this.$bvToast.toast(response.data, {
+                        title: "Ad Activation",
+                        variant: "warning",
+                        solid: true
+                    });
+                }
+            });
+        },
+        editAd(ad) {
+            this.getClientCars();
+            this.placeEditF = ad.place;
+            this.startDateEditF = ad.startDate;
+            this.endDateEditF = ad.endDate;
+            this.editID = ad.adId;
+            for(let car of this.cars){
+                if(car.carId === ad.carId){
+                    this.carEditF = car.carId
+                    break;
+
+                }
+            }
+        },
+
+        resetEditForm() {
+            this.carEditF = "";
+            this.startDateEditF = "";
+            this.endDateEditF = "";
+            this.placeEditF = "";
+            this.editID = "";
+
+        },
+        editAdFinal(){
+            event.preventDefault();
+            axios
+                .put("/cars-ads/api/ad/"+this.editID, {
+                   startDate:this.startDateEditF,
+                   endDate:this.endDateEditF,
+                   place:this.placeEditF,
+                   carId:this.carEditF
+                })
+                .then(response => {
+                    this.resetEditForm();
+                    if (response.status === 200) {
+                        this.$bvToast.toast(response.data, {
+                            title: "Edit Ad",
+                            variant: "success",
+                            solid: true
+                        });
+                    } else {
+                        this.$bvToast.toast(response.data, {
+                            title: "Edit Ad",
+                            variant: "warning",
+                            solid: true
+                        });
+                    }
+                });
         }
     },
     created() {
-        this.getClientCars();
+        this.getClientAds();
     }
 };
 </script>

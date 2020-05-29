@@ -72,6 +72,11 @@ public class CarService {
             car.get().setDescription(updateCarDTO.getDescription());
             car.get().setAllowedMileage(updateCarDTO.getAllowedMileage());
             car.get().setColDamProtection(updateCarDTO.isColDamProtection());
+            car.get().setBrand(updateCarDTO.getBrand());
+            car.get().setModel(updateCarDTO.getModel());
+            car.get().setCarClass(updateCarDTO.getCarClass());
+            car.get().setFuel(updateCarDTO.getFuel());
+            car.get().setTransmission(updateCarDTO.getTransmission());
             carRepository.save(car.get());
             return true;
         }
