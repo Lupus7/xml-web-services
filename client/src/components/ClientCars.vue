@@ -18,7 +18,7 @@
                         :interval=0
                         indicators
                         background="#ababab"
-                        img-width="1024"
+                        img-width="580"
                         img-height="480"
                         style="text-shadow: 1px 1px 2px #333;"
                         @sliding-start="onSlideStart"
@@ -27,9 +27,9 @@
                         <template>
                             <div v-for="image in car.images" :key="image.id">
                                 <b-carousel-slide 
-                                    img-width="1024"
+                                    img-width="580"
                                     img-height="480"
-                                    img-src="https://picsum.photos/1024/480/?image=52"
+                                    img-src="https://picsum.photos/580/480/?image=52"
                                 ></b-carousel-slide>
                             </div>
                         </template>

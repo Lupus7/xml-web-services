@@ -26,6 +26,7 @@ public class AdClientDTO {
     private String fuel;
     private String transmission;
     private List<String> images;
+    private boolean active;
 
     public AdClientDTO() {
     }
@@ -47,6 +48,7 @@ public class AdClientDTO {
         this.fuel = car.getFuel();
         this.transmission = car.getTransmission();
         this.images = new ArrayList<>();
+        this.active = ad.isActive();
         /*
            this.images = car.getImages();
          */
@@ -179,5 +181,13 @@ public class AdClientDTO {
 
     public void setImages(List<String> images) {
         this.images = images;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

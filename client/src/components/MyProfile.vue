@@ -7,7 +7,7 @@
                         <b-dropdown-item data-toggle="modal" data-target="#newad">
                             <b-icon icon="plus-circle-fill" aria-hidden="true" variant="dark"></b-icon> New Ad
                         </b-dropdown-item>
-                        <b-dropdown-item>
+                        <b-dropdown-item @click="showClientAds()">
                             <b-icon icon="newspaper" aria-hidden="true" variant="dark"></b-icon> All Ads
                         </b-dropdown-item>
                     </b-nav-item-dropdown>
@@ -26,6 +26,7 @@
         <NewCarForm/>
         <NewAdForm/>
         <ClientCars v-if="this.boolcars"/>
+        <ClientAds v-if="this.boolads"/>
 
      
     </div>
@@ -35,22 +36,30 @@
 import NewCarForm from './NewCarForm'
 import NewAdForm from './NewAdForm'
 import ClientCars from './ClientCars'
+import ClientAds from './ClientAds'
 
 
 export default {
     data() {
         return {
-            boolcars:false
+            boolcars:false,
+            boolads:false,
         };
     },
     components:{
         NewCarForm,
         NewAdForm,
         ClientCars,
+        ClientAds,
     },
     methods: {
         showClientCars(){
             this.boolcars = true;
+            this.boolads = false;
+        },
+        showClientAds(){
+            this.boolads = true;
+            this.boolcars = false;
         }
     },
     created() {
