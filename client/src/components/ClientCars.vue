@@ -11,7 +11,7 @@
 
         <b-card-group deck class="row">
             <div v-for="car in this.cars" :key="car.id" class="col-12 col-md-3 col-lg-4">
-                <b-card>
+                <b-card style="width:95%">
                     <b-carousel 
                         id="carousel-1"
                         controls
