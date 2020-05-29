@@ -96,7 +96,6 @@ export default {
                     var select = {value:resp.carId,text:resp.brand+" "+resp.model+" "+resp.carClass}
                     this.cars.push(select);
                 }
-                this.cars = response.data;
             });
         },
 

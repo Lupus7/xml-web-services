@@ -17,16 +17,28 @@
                             <b-icon icon="plus-circle-fill" aria-hidden="true" variant="dark"></b-icon> New Car
                         </b-dropdown-item>
                         <b-dropdown-item @click="showClientCars()">
-                            <b-icon icon="tools" aria-hidden="true" variant="dark"></b-icon> All Cars
+                            <b-icon icon="minecart" aria-hidden="true" variant="dark"></b-icon> All Cars
                         </b-dropdown-item>
                     </b-nav-item-dropdown>
+
+                    <b-nav-item-dropdown text="My Bookings">
+                        <b-dropdown-item data-toggle="modal" data-target="#newbooking">
+                            <b-icon icon="calendar-plus-fill" aria-hidden="true" variant="dark"></b-icon> Create Booking
+                        </b-dropdown-item>
+                       
+                    </b-nav-item-dropdown>
+
+            
+
                 </b-navbar-nav>
             </div>
         </b-navbar>
         <NewCarForm/>
         <NewAdForm/>
+        <BookingSubmitForm />
         <ClientCars v-if="this.boolcars"/>
         <ClientAds v-if="this.boolads"/>
+
 
      
     </div>
@@ -37,6 +49,7 @@ import NewCarForm from './NewCarForm'
 import NewAdForm from './NewAdForm'
 import ClientCars from './ClientCars'
 import ClientAds from './ClientAds'
+import BookingSubmitForm from './BookingSubmitForm'
 
 
 export default {
@@ -44,6 +57,7 @@ export default {
         return {
             boolcars:false,
             boolads:false,
+            boolbook:false
         };
     },
     components:{
@@ -51,6 +65,7 @@ export default {
         NewAdForm,
         ClientCars,
         ClientAds,
+        BookingSubmitForm,
     },
     methods: {
         showClientCars(){
@@ -60,7 +75,9 @@ export default {
         showClientAds(){
             this.boolads = true;
             this.boolcars = false;
-        }
+
+        },
+        
     },
     created() {
     }

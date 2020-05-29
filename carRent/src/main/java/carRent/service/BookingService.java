@@ -153,7 +153,7 @@ public class BookingService {
                 if (ad == null)
                     return false;
 
-                Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), ad.getId(), loaner.getId());
+                Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), ad.getId(), (long)-1);
                 bundle.getBookings().add(booking);
                 bookingRepo.save(booking);
 
@@ -175,7 +175,7 @@ public class BookingService {
             if (ad == null)
                 return false;
 
-            Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PAID, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), ad.getId(), loaner.getId());
+            Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PAID, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), ad.getId(), (long)-1);
             bundle.getBookings().add(booking);
             bookingRepo.save(booking);
 
