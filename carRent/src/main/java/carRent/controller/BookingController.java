@@ -4,6 +4,7 @@ import carRent.model.dto.BookingDTO;
 import carRent.model.dto.BundleDTO;
 import carRent.service.BookingService;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +62,25 @@ public class BookingController {
             return ResponseEntity.status(400).body("Could not accept");
     }
 
+    // Booking check
+    @PostMapping(value = "/api/booking/checking", produces = "application/json", consumes = "application/json")
+    //@PreAuthorize("hasAuthority('CANCEL_BOOKING')")
+    public ResponseEntity<Boolean> checkingBookingRequests(@RequestBody JSONObject jsonObject, Principal user) throws JSONException {
+        return ResponseEntity.ok(bookingService.checkingBookingRequests(jsonObject, user.getName()));
+
+    }
+
+    // Odbijanje booking requesta kod brisanja car-a
+    @DeleteMapping(value = "/api/booking/checking/remove/{id", produces = "application/json", consumes = "application/json")
+    //@PreAuthorize("hasAuthority('REJECT_BOOKING')")
+    public ResponseEntity<String> deleteCarsBookings(@PathVariable(value = "id") String id, Principal user) throws JSONException {
+
+        if (bookingService.deleteCarsBookings(id, user.getName()))
+            return ResponseEntity.ok("Booking request canceled!");
+        else
+            return ResponseEntity.status(400).body("Could not accept");
+    }
+
     // Odbijanje booking requesta od strane vlasnika auta
     @DeleteMapping(value = "/api/booking/reject/{id}", produces = "application/json", consumes = "application/json")
     //@PreAuthorize("hasAuthority('REJECT_BOOKING')")
@@ -77,7 +97,7 @@ public class BookingController {
     //@PreAuthorize("hasAuthority('READ_BOOKINGS')")
     public ResponseEntity<ArrayList<BookingDTO>> getAllBookingRequests(Principal user) throws JSONException {
 
-        return ResponseEntity.ok((ArrayList<BookingDTO>)bookingService.getAllBookingRequests(user.getName()));
+        return ResponseEntity.ok((ArrayList<BookingDTO>) bookingService.getAllBookingRequests(user.getName()));
 
     }
 }

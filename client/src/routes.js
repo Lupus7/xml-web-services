@@ -23,6 +23,12 @@ const router = new Router({
             component: () => import("./components/SearchRent"),
         },
         {
+            path: "/myprofile",
+            name: "MyProfile",
+            component: () => import("./components/MyProfile"),
+        },
+     
+        {
             path: "/ad/:id",
             name: "Ad",
             props: true,

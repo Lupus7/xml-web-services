@@ -1,8 +1,20 @@
-package CarsAdsApp.controller.dto;
+package CarsAdsApp.model.dto;
 
+import CarsAdsApp.model.Ad;
+import CarsAdsApp.model.Car;
+
+import javax.xml.bind.annotation.XmlElement;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateCarDTO {
+public class AdClientDTO {
+
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private String place;
+    private Long carId;
+    private Long adId;
     private double totalMileage;
     private double allowedMileage;
     private int childrenSeats;
@@ -14,22 +26,72 @@ public class UpdateCarDTO {
     private String fuel;
     private String transmission;
     private List<String> images;
+    private boolean active;
 
-    public UpdateCarDTO() {
+    public AdClientDTO() {
     }
 
-    public UpdateCarDTO(double totalMileage, double allowedMileage, int childrenSeats, String description, boolean colDamProtection, String brand, String model, String carClass, String fuel, String transmission, List<String> images) {
-        this.totalMileage = totalMileage;
-        this.allowedMileage = allowedMileage;
-        this.childrenSeats = childrenSeats;
-        this.description = description;
-        this.colDamProtection = colDamProtection;
-        this.brand = brand;
-        this.model = model;
-        this.carClass = carClass;
-        this.fuel = fuel;
-        this.transmission = transmission;
-        this.images = images;
+    public AdClientDTO(Ad ad, Car car) {
+        this.startDate = ad.getStartDate();
+        this.endDate = ad.getEndDate();
+        this.place = ad.getPlace();
+        this.carId = car.getId();
+        this.adId = ad.getId();
+        this.allowedMileage = car.getAllowedMileage();
+        this.totalMileage = car.getTotalMileage();
+        this.childrenSeats = car.getChildrenSeats();
+        this.description = car.getDescription();
+        this.colDamProtection = car.isColDamProtection();
+        this.brand = car.getBrand();
+        this.model = car.getModel();
+        this.carClass = car.getCarClass();
+        this.fuel = car.getFuel();
+        this.transmission = car.getTransmission();
+        this.images = new ArrayList<>();
+        this.active = ad.isActive();
+        /*
+           this.images = car.getImages();
+         */
+    }
+
+    public LocalDateTime getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getPlace() {
+        return place;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
+    public Long getCarId() {
+        return carId;
+    }
+
+    public void setCarId(Long carId) {
+        this.carId = carId;
+    }
+
+    public Long getAdId() {
+        return adId;
+    }
+
+    public void setAdId(Long adId) {
+        this.adId = adId;
     }
 
     public double getTotalMileage() {
@@ -71,6 +133,7 @@ public class UpdateCarDTO {
     public void setColDamProtection(boolean colDamProtection) {
         this.colDamProtection = colDamProtection;
     }
+
 
     public String getBrand() {
         return brand;
@@ -118,5 +181,13 @@ public class UpdateCarDTO {
 
     public void setImages(List<String> images) {
         this.images = images;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

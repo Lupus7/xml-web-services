@@ -3,13 +3,16 @@ package CarsAdsApp.controller;
 import CarsAdsApp.controller.dto.NewCarDTO;
 import CarsAdsApp.controller.dto.UpdateCarDTO;
 import CarsAdsApp.model.Car;
+import CarsAdsApp.model.dto.CarDTO;
 import CarsAdsApp.service.CarService;
 import javassist.NotFoundException;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +23,8 @@ public class CarController {
     CarService carService;
 
     @PostMapping("/cars")
-    public ResponseEntity<String> postCar(@RequestBody NewCarDTO newCarDto){
-        if(carService.CreateCar(newCarDto))
+    public ResponseEntity<String> postCar(@RequestBody NewCarDTO newCarDto,Principal user){
+        if(carService.CreateCar(newCarDto,user.getName()))
             return ResponseEntity.ok("Successfully created");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
@@ -50,11 +53,20 @@ public class CarController {
     }
 
     @DeleteMapping("cars/{id}")
-    public ResponseEntity<String>deleteCar(@PathVariable Long id){
+    public ResponseEntity<String>deleteCar(@PathVariable Long id) throws JSONException {
         boolean deleted = carService.delete(id);
         if(deleted)
             return ResponseEntity.ok("Successfully deleted car from database");
         return ResponseEntity.badRequest().body("Oops.. try again");
+    }
+
+    // Clients cars
+    @GetMapping("/cars/client")
+    public ResponseEntity<List<CarDTO>>getClientCars(Principal user){
+        List<CarDTO> cars = carService.getClientCars(user.getName());
+        if (cars != null)
+            return ResponseEntity.ok(cars);
+        return ResponseEntity.badRequest().body(null);
     }
 
 }

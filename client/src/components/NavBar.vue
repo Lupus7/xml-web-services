@@ -41,6 +41,16 @@
                         >
                             <b-icon icon="person-plus-fill" aria-hidden="true"></b-icon> Register
                         </b-link>
+                        
+                        <b-link
+                            class="nav-link active"
+                            type="button"
+                            v-on:click="profile()"
+                            href="#"
+                        >
+                            <b-icon icon="person-bounding-box" aria-hidden="true"></b-icon> My Profile
+                        </b-link>
+
                         <b-link
                             v-if="!this.show"
                             class="nav-link active"
@@ -163,6 +173,9 @@ export default {
             if (token === null || token === "") this.show = true;
             else this.show = false;
             console.log(this.show);
+        },
+        profile(){
+            this.$router.push("/myprofile");
         }
     },
     created() {
