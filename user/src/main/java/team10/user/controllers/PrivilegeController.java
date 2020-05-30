@@ -14,7 +14,7 @@ import java.util.List;
 public class PrivilegeController {
 
     @Autowired
-    PrivilegeService privilegeService;
+    private PrivilegeService privilegeService;
 
     @GetMapping("")
     //@PreAuthorize("hasAuthority('READ_USER_PRIVILEGES')")

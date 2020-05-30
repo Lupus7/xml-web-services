@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("client-control")
 public class ClientController {
     @Autowired
-    ClientService clientService;
+    private ClientService clientService;
 
     @GetMapping("")
     //@PreAuthorize("hasAuthority('READ_CLIENTS')")
