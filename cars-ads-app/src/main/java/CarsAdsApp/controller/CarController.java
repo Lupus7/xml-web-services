@@ -69,4 +69,45 @@ public class CarController {
         return ResponseEntity.badRequest().body(null);
     }
 
+    @GetMapping("/cars/brands/{brand}")
+    public ResponseEntity<List<CarDTO>>getCarsByBrand(@PathVariable String brand){
+        List<CarDTO> cars = carService.getCarsByBrand(brand);
+        if (cars != null)
+            return ResponseEntity.ok(cars);
+        return ResponseEntity.badRequest().body(null);
+    }
+
+    @GetMapping("/cars/class/{carClass}")
+    public ResponseEntity<List<CarDTO>>getCarsByCarClass(@PathVariable String carClass){
+        List<CarDTO> cars = carService.getCarsByCarClass(carClass);
+        if (cars != null)
+            return ResponseEntity.ok(cars);
+        return ResponseEntity.badRequest().body(null);
+    }
+
+    @GetMapping("/cars/models/{model}")
+    public ResponseEntity<List<CarDTO>>getCarsByModel(@PathVariable String model){
+        List<CarDTO> cars = carService.getCarsByModel(model);
+        if (cars != null)
+            return ResponseEntity.ok(cars);
+        return ResponseEntity.badRequest().body(null);
+    }
+
+    @GetMapping("/cars/fuels/{fuel}")
+    public ResponseEntity<List<CarDTO>>getCarsByFuel(@PathVariable String fuel){
+        List<CarDTO> cars = carService.getCarsByFuel(fuel);
+        if (cars != null)
+            return ResponseEntity.ok(cars);
+        return ResponseEntity.badRequest().body(null);
+    }
+
+    @GetMapping("/cars/transmissions/{transmission}")
+    public ResponseEntity<List<CarDTO>>getCarsByTransmission(@PathVariable String transmission){
+        List<CarDTO> cars = carService.getCarsByTransmission(transmission);
+        if (cars != null)
+            return ResponseEntity.ok(cars);
+        return ResponseEntity.badRequest().body(null);
+    }
+
+
 }
