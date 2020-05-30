@@ -371,7 +371,7 @@ export default {
         },
         registerCompany() {
             axios
-                .post("/admin/client-control/company", {
+                .post("/user/client-control/company", {
                     email: this.emailF,
                     password: this.password,
                     name: this.companyNameF,
@@ -397,7 +397,7 @@ export default {
         },
         registerAgent() {
             axios
-                .post("/admin/client-control/agent", {
+                .post("/user/client-control/agent", {
                     email: this.emailF,
                     password: this.password,
                     firstName: this.firstName,

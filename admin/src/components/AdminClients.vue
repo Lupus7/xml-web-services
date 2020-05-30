@@ -59,7 +59,7 @@ export default {
     },
     methods: {
         blockUser(user) {
-            let url = "/admin/client-control/block/" + user.email;
+            let url = "/user/client-control/block/" + user.email;
             axios.put(url).then(response => {
                 if (response.status === 200) {
                     this.$bvToast.toast(response.data, {
@@ -78,7 +78,7 @@ export default {
             });
         },
         unblockUser(user) {
-            let url = "/admin/client-control/activate/" + user.email;
+            let url = "/user/client-control/activate/" + user.email;
 
             axios.put(url).then(response => {
                 if (response.status === 200) {
@@ -98,7 +98,7 @@ export default {
             });
         },
         removeUser(user) {
-            let url = "/admin/client-control/" + user.email;
+            let url = "/user/client-control/" + user.email;
             axios.delete(url).then(response => {
                 if (response.status === 200) {
                     this.$bvToast.toast(response.data, {
@@ -118,7 +118,7 @@ export default {
             });
         },
         fill() {
-            axios.get("/admin/client-control").then(response => {
+            axios.get("/user/client-control").then(response => {
                 this.users = response.data;
             });
         }

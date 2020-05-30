@@ -177,7 +177,7 @@ export default {
     },
     methods: {
         removeModel(model) {
-            let url = "/admin/codebook/model/" + model.id;
+            let url = "/codebook/model/" + model.id;
 
             axios.delete(url).then(response => {
                 if (response.status === 200) {
@@ -199,7 +199,7 @@ export default {
 
         addNewModel() {
             axios
-                .post("/admin/codebook/model/", {
+                .post("/codebook/model/", {
                     name: this.modelF,
                     brand: this.brandF
                 })
@@ -226,7 +226,7 @@ export default {
             this.modelId = model.id;
         },
         editModelFinal() {
-            let url = "/admin/codebook/model/" + this.modelId;
+            let url = "/codebook/model/" + this.modelId;
 
             axios
                 .put(url, {
@@ -255,7 +255,7 @@ export default {
             this.brandF = "";
         },
         fill() {
-            axios.get("/admin/codebook/model").then(response => {
+            axios.get("/codebook/model").then(response => {
                 this.models = response.data;
             });
         }
@@ -263,7 +263,7 @@ export default {
     created() {
         this.fill();
 
-        axios.get("/admin/codebook/brand").then(response => {
+        axios.get("/codebook/brand").then(response => {
             this.brands = [];
             for (let b of response.data) {
                 this.brands.push(b.name);

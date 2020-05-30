@@ -170,7 +170,7 @@ export default {
     },
     methods: {
         removeTransmission(transm) {
-            let url = "/admin/codebook/transmission/" + transm.id;
+            let url = "/codebook/transmission/" + transm.id;
 
             axios.delete(url).then(response => {
                 if (response.status === 200) {
@@ -192,7 +192,7 @@ export default {
 
         addNewTransmission() {
             axios
-                .post("/admin/codebook/transmission", {
+                .post("/codebook/transmission", {
                     name: this.transF
                 })
                 .then(response => {
@@ -218,7 +218,7 @@ export default {
             this.transId = transm.id;
         },
         editTransmissionFinal() {
-            let url = "/admin/codebook/transmission/" + this.transId;
+            let url = "/codebook/transmission/" + this.transId;
 
             axios
                 .put(url, {
@@ -246,7 +246,7 @@ export default {
             this.transF = "";
         },
         fill() {
-            axios.get("/admin/codebook/transmission").then(response => {
+            axios.get("/codebook/transmission").then(response => {
                 this.transmissions = response.data;
             });
         }

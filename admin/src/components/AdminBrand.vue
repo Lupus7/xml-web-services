@@ -104,7 +104,7 @@ export default {
     methods:{
 
         removeBrand(brand){
-            let url = "/admin/codebook/brand/"+brand.id;
+            let url = "/codebook/brand/"+brand.id;
             axios.delete(url).then(response => {
                 if(response.status === 200){
                     this.$bvToast.toast(response.data, {
@@ -128,7 +128,7 @@ export default {
 
         addNewBrand(){
 
-            axios.post("/admin/codebook/brand",{ 
+            axios.post("/codebook/brand",{ 
                 "name":this.brandF, 
             }).then(response => { 
                 if(response.status === 200){
@@ -159,7 +159,7 @@ export default {
             this.brandId = brand.id;
         },
         editBrandFinal(){
-            let url = "/admin/codebook/brand/"+this.brandId;
+            let url = "/codebook/brand/"+this.brandId;
             axios.put(url,{ 
                 "name":this.brandEdit,
                 "id":this.brandId,
@@ -190,7 +190,7 @@ export default {
             this.brandF = "";
         },
         fill(){
-            axios.get('/admin/codebook/brand').then(response => { 
+            axios.get('/codebook/brand').then(response => { 
                 this.brands = response.data;           
             });
         }
