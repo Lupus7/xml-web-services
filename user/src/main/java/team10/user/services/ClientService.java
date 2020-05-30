@@ -1,10 +1,13 @@
 package team10.user.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import team10.user.models.Privilege;
 import team10.user.models.Role;
 import team10.user.models.User;
+import team10.user.models.dto.CarDTO;
 import team10.user.models.dto.ClientDTO;
 import team10.user.models.dto.NewAgentDTO;
 import team10.user.models.dto.NewCompanyDTO;
@@ -13,17 +16,16 @@ import team10.user.repositories.UserRepository;
 import team10.user.util.ClientMapper;
 import team10.user.util.UserMapper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class ClientService {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    RoleRepository roleRepository;
+    private RoleRepository roleRepository;
 
     public List<ClientDTO> getAll() {
         return userRepository.findAll()
@@ -57,7 +59,11 @@ public class ClientService {
         User user = userRepository.findByEmail(email);
         if(user == null)
             return false;
-        //commentRepository.findAllByUserId(user.getId()).forEach(comment -> commentRepository.delete(comment));
+        //TODO 1: close all bookings
+
+        //TODO 3: fix principal and auth stuff
+        //ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/cars/client", CarDTO[].class);
+
         userRepository.delete(user);
         return true;
     }
@@ -99,6 +105,7 @@ public class ClientService {
             user.setAuthorities(user.getAuthorities() + ";" + p.getName());
         }
 
+        //TODO 2: add new cart
         //user.getCart().setUser(user);
         //user.getCart().setAds(new ArrayList<>());
 

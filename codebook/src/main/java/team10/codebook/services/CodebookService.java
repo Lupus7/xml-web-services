@@ -1,11 +1,16 @@
 package team10.codebook.services;
 
+import org.hibernate.sql.Update;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import team10.codebook.models.*;
+import team10.codebook.models.dto.CarDTO;
 import team10.codebook.models.dto.CodebookItemDTO;
+import team10.codebook.models.dto.UpdateCarDTO;
 import team10.codebook.repositories.*;
 import team10.codebook.util.CodebookItemMapper;
 
@@ -47,6 +52,26 @@ public class CodebookService {
         Brand item = brandRepository.getOne(id);
         if (item == null)
             return false;
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/brands/" + item.getName(), CarDTO[].class);
+        if (cars.getBody() != null && cars.getBody().length > 0) {
+            for(CarDTO car : cars.getBody()) {
+                UpdateCarDTO updateCarDTO = new UpdateCarDTO();
+                updateCarDTO.setAllowedMileage(car.getAllowedMileage());
+                updateCarDTO.setBrand(codebookItemDTO.getName());
+                updateCarDTO.setCarClass(car.getCarClass());
+                updateCarDTO.setChildrenSeats(car.getChildrenSeats());
+                updateCarDTO.setColDamProtection(car.isColDamProtection());
+                updateCarDTO.setDescription(car.getDescription());
+                updateCarDTO.setFuel(car.getFuel());
+                updateCarDTO.setImages(car.getImages());
+                updateCarDTO.setModel(car.getModel());
+                updateCarDTO.setTotalMileage(car.getTotalMileage());
+                updateCarDTO.setTransmission(car.getTransmission());
+                new RestTemplate().put("http://localhost:8080/cars-ads/cars/" + car.getCarId(), updateCarDTO, Object.class);
+            }
+        }
+
         item.setName(codebookItemDTO.getName());
         brandRepository.save(item);
         return true;
@@ -54,7 +79,11 @@ public class CodebookService {
 
     public boolean deleteBrand(Long id) {
         Brand item = brandRepository.getOne(id);
-        if (item == null || !item.getModels().isEmpty()) //|| carRepository.findOneByBrandId(id) != null)
+        if (item == null || !item.getModels().isEmpty())
+            return false;
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/brands/" + item.getName(), CarDTO[].class);
+        if (cars.getBody() != null && cars.getBody().length > 0)
             return false;
 
         brandRepository.delete(item);
@@ -93,6 +122,26 @@ public class CodebookService {
         Model item = modelRepository.getOne(id);
         if (item == null)
             return false;
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/models/" + item.getName(), CarDTO[].class);
+        if (cars.getBody() != null && cars.getBody().length > 0) {
+            for(CarDTO car : cars.getBody()) {
+                UpdateCarDTO updateCarDTO = new UpdateCarDTO();
+                updateCarDTO.setAllowedMileage(car.getAllowedMileage());
+                updateCarDTO.setBrand(car.getBrand());
+                updateCarDTO.setCarClass(car.getCarClass());
+                updateCarDTO.setChildrenSeats(car.getChildrenSeats());
+                updateCarDTO.setColDamProtection(car.isColDamProtection());
+                updateCarDTO.setDescription(car.getDescription());
+                updateCarDTO.setFuel(car.getFuel());
+                updateCarDTO.setImages(car.getImages());
+                updateCarDTO.setModel(codebookItemDTO.getName());
+                updateCarDTO.setTotalMileage(car.getTotalMileage());
+                updateCarDTO.setTransmission(car.getTransmission());
+                new RestTemplate().put("http://localhost:8080/cars-ads/cars/" + car.getCarId(), updateCarDTO, Object.class);
+            }
+        }
+
         item.setName(codebookItemDTO.getName());
         modelRepository.save(item);
         return true;
@@ -100,7 +149,11 @@ public class CodebookService {
 
     public boolean deleteModel(Long id) {
         Model item = modelRepository.getOne(id);
-        if (item == null)// || carRepository.findOneByModelId(id) != null)
+        if (item == null)
+            return false;
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/models/" + item.getName(), CarDTO[].class);
+        if (cars.getBody() != null && cars.getBody().length > 0)
             return false;
 
         List<Brand> brands = brandRepository.findAll()
@@ -136,6 +189,26 @@ public class CodebookService {
         CarClass item = carClassRepository.getOne(id);
         if (item == null)
             return false;
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/class/" + item.getName(), CarDTO[].class);
+        if (cars.getBody() != null && cars.getBody().length > 0) {
+            for(CarDTO car : cars.getBody()) {
+                UpdateCarDTO updateCarDTO = new UpdateCarDTO();
+                updateCarDTO.setAllowedMileage(car.getAllowedMileage());
+                updateCarDTO.setBrand(car.getBrand());
+                updateCarDTO.setCarClass(codebookItemDTO.getName());
+                updateCarDTO.setChildrenSeats(car.getChildrenSeats());
+                updateCarDTO.setColDamProtection(car.isColDamProtection());
+                updateCarDTO.setDescription(car.getDescription());
+                updateCarDTO.setFuel(car.getFuel());
+                updateCarDTO.setImages(car.getImages());
+                updateCarDTO.setModel(car.getModel());
+                updateCarDTO.setTotalMileage(car.getTotalMileage());
+                updateCarDTO.setTransmission(car.getTransmission());
+                new RestTemplate().put("http://localhost:8080/cars-ads/cars/" + car.getCarId(), updateCarDTO, Object.class);
+            }
+        }
+
         item.setName(codebookItemDTO.getName());
         carClassRepository.save(item);
         return true;
@@ -143,7 +216,11 @@ public class CodebookService {
 
     public boolean deleteCarClass(Long id) {
         CarClass item = carClassRepository.getOne(id);
-        if (item == null)// || carRepository.findOneByCarClassId(id) != null)
+        if (item == null)
+            return false;
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/class/" + item.getName(), CarDTO[].class);
+        if (cars.getBody() != null && cars.getBody().length > 0)
             return false;
 
         carClassRepository.delete(item);
@@ -168,6 +245,26 @@ public class CodebookService {
         Fuel item = fuelRepository.getOne(id);
         if (item == null)
             return false;
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/fuels/" + item.getType(), CarDTO[].class);
+        if (cars.getBody() != null && cars.getBody().length > 0) {
+            for(CarDTO car : cars.getBody()) {
+                UpdateCarDTO updateCarDTO = new UpdateCarDTO();
+                updateCarDTO.setAllowedMileage(car.getAllowedMileage());
+                updateCarDTO.setBrand(car.getBrand());
+                updateCarDTO.setCarClass(car.getCarClass());
+                updateCarDTO.setChildrenSeats(car.getChildrenSeats());
+                updateCarDTO.setColDamProtection(car.isColDamProtection());
+                updateCarDTO.setDescription(car.getDescription());
+                updateCarDTO.setFuel(codebookItemDTO.getName());
+                updateCarDTO.setImages(car.getImages());
+                updateCarDTO.setModel(car.getModel());
+                updateCarDTO.setTotalMileage(car.getTotalMileage());
+                updateCarDTO.setTransmission(car.getTransmission());
+                new RestTemplate().put("http://localhost:8080/cars-ads/cars/" + car.getCarId(), updateCarDTO, Object.class);
+            }
+        }
+
         item.setType(codebookItemDTO.getName());
         fuelRepository.save(item);
         return true;
@@ -175,7 +272,11 @@ public class CodebookService {
 
     public boolean deleteFuel(Long id) {
         Fuel item = fuelRepository.getOne(id);
-        if (item == null)// || carRepository.findOneByFuelId(id) != null)
+        if (item == null)
+            return false;
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/fuels/" + item.getType(), CarDTO[].class);
+        if (cars.getBody() != null && cars.getBody().length > 0)
             return false;
 
         fuelRepository.delete(item);
@@ -200,6 +301,26 @@ public class CodebookService {
         Transmission item = transmissionRepository.getOne(id);
         if (item == null)
             return false;
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/transmissions/" + item.getType(), CarDTO[].class);
+        if (cars.getBody() != null && cars.getBody().length > 0) {
+            for(CarDTO car : cars.getBody()) {
+                UpdateCarDTO updateCarDTO = new UpdateCarDTO();
+                updateCarDTO.setAllowedMileage(car.getAllowedMileage());
+                updateCarDTO.setBrand(car.getBrand());
+                updateCarDTO.setCarClass(car.getCarClass());
+                updateCarDTO.setChildrenSeats(car.getChildrenSeats());
+                updateCarDTO.setColDamProtection(car.isColDamProtection());
+                updateCarDTO.setDescription(car.getDescription());
+                updateCarDTO.setFuel(car.getFuel());
+                updateCarDTO.setImages(car.getImages());
+                updateCarDTO.setModel(car.getModel());
+                updateCarDTO.setTotalMileage(car.getTotalMileage());
+                updateCarDTO.setTransmission(codebookItemDTO.getName());
+                new RestTemplate().put("http://localhost:8080/cars-ads/cars/" + car.getCarId(), updateCarDTO, Object.class);
+            }
+        }
+
         item.setType(codebookItemDTO.getName());
         transmissionRepository.save(item);
         return true;
@@ -207,7 +328,11 @@ public class CodebookService {
 
     public boolean deleteTransmission(Long id) {
         Transmission item = transmissionRepository.getOne(id);
-        if (item == null)// || carRepository.findOneByTransmissionId(id) != null)
+        if (item == null)
+            return false;
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/transmissions/" + item.getType(), CarDTO[].class);
+        if (cars.getBody() != null && cars.getBody().length > 0)
             return false;
 
         transmissionRepository.delete(item);
