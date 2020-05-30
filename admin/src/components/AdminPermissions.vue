@@ -51,7 +51,7 @@ export default {
         }
     },
     created() {
-        axios.get("/admin/privilege").then(response => {
+        axios.get("/user/privilege").then(response => {
             this.users = response.data;
         });
     }

@@ -128,7 +128,7 @@ export default {
     props: ["email"],
     methods: {
         addNewPermission() {
-            let url = "/admin/privilege/" + this.email;
+            let url = "/user/privilege/" + this.email;
             let perms = null;
             for (let p of this.permissionList) {
                 if (p.name === this.selected) {
@@ -170,7 +170,7 @@ export default {
                 });
         },
         removePermission(permission) {
-            let url = "/admin/privilege/" + this.email;
+            let url = "/user/privilege/" + this.email;
             console.log(permission);
             axios
                 .put(url, {
@@ -201,7 +201,7 @@ export default {
             this.selected = "";
         },
         fill() {
-            let url = "/admin/privilege/" + this.email;
+            let url = "/user/privilege/" + this.email;
             axios.get(url).then(response => {
                 this.userPermissions = response.data;
             });
@@ -209,7 +209,7 @@ export default {
 
         fillAvailable() {
             this.privileges = [];
-            let url = "/admin/privilege/available/" + this.email;
+            let url = "/user/privilege/available/" + this.email;
             axios.get(url).then(response => {
                 this.permissionList = response.data;
                 for (let p of this.permissionList) {

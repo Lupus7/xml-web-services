@@ -102,7 +102,7 @@ export default {
     methods:{
 
         removeClass(cclass){
-              let url = "/admin/codebook/class/"+cclass.id;
+              let url = "/codebook/class/"+cclass.id;
               axios.delete(url).then(response => {
                 if(response.status === 200){
 
@@ -127,7 +127,7 @@ export default {
 
         addNewClass(){
 
-            axios.post("/admin/codebook/class",{ 
+            axios.post("/codebook/class",{ 
                 "name":this.classF, 
             }).then(response => { 
                 if(response.status === 200){
@@ -158,7 +158,7 @@ export default {
 
         },
         editClassFinal(){
-            let url = "/admin/codebook/class/"+this.classId;
+            let url = "/codebook/class/"+this.classId;
             axios.put(url,{ 
                 "id":this.classId,
                 "name":this.classEdit 
@@ -190,7 +190,7 @@ export default {
             this.classF = "";
         },
         fill(){
-            axios.get('/admin/codebook/class').then(response => { 
+            axios.get('/codebook/class').then(response => { 
                 this.classes = response.data;           
             });
         }
