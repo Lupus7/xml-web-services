@@ -125,4 +125,50 @@ public class CarService {
 
         return carDTOS;
     }
+
+    public List<CarDTO> getCarsByBrand(String brand) {
+        List<CarDTO> carDTOS = new ArrayList<>();
+        List<Car> cars = carRepository.findAllByBrand(brand);
+        for (Car car : cars)
+            carDTOS.add(new CarDTO(car));
+
+        return carDTOS;
+
+    }
+
+    public List<CarDTO> getCarsByCarClass(String carClass) {
+        List<CarDTO> carDTOS = new ArrayList<>();
+        List<Car> cars = carRepository.findAllByCarClass(carClass);
+        for (Car car : cars)
+            carDTOS.add(new CarDTO(car));
+
+        return carDTOS;
+    }
+
+    public List<CarDTO> getCarsByModel(String model) {
+        List<CarDTO> carDTOS = new ArrayList<>();
+        List<Car> cars = carRepository.findAllByModel(model);
+        for (Car car : cars)
+            carDTOS.add(new CarDTO(car));
+
+        return carDTOS;
+    }
+
+    public List<CarDTO> getCarsByFuel(String fuel) {
+        List<CarDTO> carDTOS = new ArrayList<>();
+        List<Car> cars = carRepository.findAllByFuel(fuel);
+        for (Car car : cars)
+            carDTOS.add(new CarDTO(car));
+
+        return carDTOS;
+    }
+
+    public List<CarDTO> getCarsByTransmission(String transmission) {
+        List<CarDTO> carDTOS = new ArrayList<>();
+        List<Car> cars = carRepository.findAllByTransmission(transmission);
+        for (Car car : cars)
+            carDTOS.add(new CarDTO(car));
+
+        return carDTOS;
+    }
 }
