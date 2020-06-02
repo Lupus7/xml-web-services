@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class Ad {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "ad_id_seq")
     private Long id;
 
     @Column(unique = false, nullable = false)

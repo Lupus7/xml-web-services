@@ -1,5 +1,6 @@
 package CarsAdsApp.controller.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NewCarDTO {
@@ -14,12 +15,12 @@ public class NewCarDTO {
     private String carClass;
     private String fuel;
     private String transmission;
-    private List<String> images;
+    private List<String> images = new ArrayList<>();
 
     public NewCarDTO() {
     }
 
-    public NewCarDTO(double totalMileage, double allowedMilleage, int childrenSeats, String description, boolean colDamProtection, String owned, String brand, String model, String carClass, String fuel, String transmission) {
+    public NewCarDTO(double totalMileage, double allowedMilleage, int childrenSeats, String description, boolean colDamProtection, String owned, String brand, String model, String carClass, String fuel, String transmission, List<String> images) {
         this.totalMileage = totalMileage;
         this.allowedMilleage = allowedMilleage;
         this.childrenSeats = childrenSeats;
@@ -31,6 +32,7 @@ public class NewCarDTO {
         this.carClass = carClass;
         this.fuel = fuel;
         this.transmission = transmission;
+        this.images = images;
     }
 
     public double getTotalMileage() {

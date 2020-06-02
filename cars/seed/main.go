@@ -3,28 +3,27 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/jinzhu/gorm"
-	"github.com/joho/godotenv"
 	"os"
 	"strconv"
 	"time"
 	"xml-web-services/cars/model"
 	"xml-web-services/cars/store/postgres"
+
+	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/joho/godotenv"
 )
 
-
 //MODELS
-var astra = model.Model{Id: 1, Name: "Astra",BrandId:1}
-var X3 = model.Model{Id: 2, Name: "X3",BrandId:2}
-var B6 = model.Model{Id: 3, Name: "B6",BrandId:3}
-var stilo = model.Model{Id: 4, Name: "Stilo",BrandId:4}
+var astra = model.Model{Id: 1, Name: "Astra", BrandId: 1}
+var X3 = model.Model{Id: 2, Name: "X3", BrandId: 2}
+var B6 = model.Model{Id: 3, Name: "B6", BrandId: 3}
+var stilo = model.Model{Id: 4, Name: "Stilo", BrandId: 4}
 
 var modelsOpel = []model.Model{astra}
 var modelsBMW = []model.Model{X3}
 var modelsPassat = []model.Model{B6}
 var modelsFiat = []model.Model{stilo}
-
 
 //brands
 var opel = model.Brand{Id: 1, Name: "Opel"}
@@ -74,102 +73,103 @@ var image4 = &model.Image{
 }
 
 var opelCar = &model.Car{
-	Id: 1,
-	Owned:                 "Auto kuca",
-	Brand:                 "Opel",
-	Model:                 "Astra",
-	Fuel:                  "Diesel",
-	Transmission:          "Manual",
-	CarClass:              "Economic",
+	Id:           1,
+	Owner:        "Auto kuca",
+	Brand:        "Opel",
+	Model:        "Astra",
+	Fuel:         "Diesel",
+	Transmission: "Manual",
+	CarClass:     "Economic",
 	//Price:                 1000,
-	AllowedMileage:        0,
-	TotalMileage:        150 * 1000,
+	AllowedMileage:   0,
+	TotalMileage:     150 * 1000,
 	ColDamProtection: false,
-	ChildrenSeats:         4,
+	ChildrenSeats:    4,
 	//Rating:                9.5,
-	Description:           "Really cool auto, nice looking",
+	Description: "Really cool auto, nice looking",
 	//Images:                []string{imageString},
 }
 
 var passatCar = &model.Car{
-	Id: 2,
-	Owned:            "Neko lice",
-	Brand:                 "Passat",
-	Model:                 "B6",
-	Fuel:                  "Diesel",
-	Transmission:          "Manual",
-	CarClass:                 "Economic",
+	Id:           2,
+	Owner:        "Neko lice",
+	Brand:        "Passat",
+	Model:        "B6",
+	Fuel:         "Diesel",
+	Transmission: "Manual",
+	CarClass:     "Economic",
 	//Price:                 1500,
-	AllowedMileage:        2000,
-	TotalMileage:        180000,
+	AllowedMileage:   2000,
+	TotalMileage:     180000,
 	ColDamProtection: true,
-	ChildrenSeats:         4,
+	ChildrenSeats:    4,
 	//Rating:                9.2,
-	Description:           "Nice looking german car model",
+	Description: "Nice looking german car model",
 	//Images:                []string{imageString},
 }
 
 var bmwCar = &model.Car{
-	Id:3,
-	Owned:            "Auto plac",
-	Brand:                 "BMW",
-	Model:                 "X3",
-	Fuel:                  "Biodiesel",
-	Transmission:          "Automatic",
-	CarClass:                 "Sports",
+	Id:           3,
+	Owner:        "Auto plac",
+	Brand:        "BMW",
+	Model:        "X3",
+	Fuel:         "Biodiesel",
+	Transmission: "Automatic",
+	CarClass:     "Sports",
 	//Price:                 4000,
-	AllowedMileage:        5000,
-	TotalMileage:        120 * 1000,
+	AllowedMileage:   5000,
+	TotalMileage:     120 * 1000,
 	ColDamProtection: true,
-	ChildrenSeats:         4,
+	ChildrenSeats:    4,
 	//Rating:                8,
-	Description:           "The BMW X3 is a compact luxury crossover SUV manufactured by German automaker BMW",
+	Description: "The BMW X3 is a compact luxury crossover SUV manufactured by German automaker BMW",
 	//Images:                []string{imageString},
 }
 
 var fiatCar = &model.Car{
-	Id:4,
-	Owned: "username",
+	Id:    4,
+	Owner: "username",
 	//Brand:                 *fiat,
-	Brand:                 "Fiat",
-	Model:                 "Stilo",
-	Fuel:                  "Gasoline",
-	Transmission:          "Manual",
-	CarClass:                 "Old-Timer",
+	Brand:        "Fiat",
+	Model:        "Stilo",
+	Fuel:         "Gasoline",
+	Transmission: "Manual",
+	CarClass:     "Old-Timer",
 	//Price:                 100,
-	AllowedMileage:        0,
-	TotalMileage:        200 * 1000,
+	AllowedMileage:   0,
+	TotalMileage:     200 * 1000,
 	ColDamProtection: false,
-	ChildrenSeats:         4,
+	ChildrenSeats:    4,
 	//Rating:                7.4,
-	Description:           " Well built underrated car, very spacious in the Multiwagon form, Multijet engine powerful yet fairly economical",
+	Description: " Well built underrated car, very spacious in the Multiwagon form, Multijet engine powerful yet fairly economical",
 	//Images:                []string{imageString},
 }
 
 var cars = []*model.Car{opelCar, passatCar, bmwCar, fiatCar}
-var images = []*model.Image{image1,image2,image3,image4}
+var images = []*model.Image{image1, image2, image3, image4}
+
 //Adds
 var ads = []model.Ad{
 	{
-		CarID:       1,
+		CarID:     1,
 		StartDate: time.Date(2020, 4, 14, 12, 12, 12, 12, time.Local),
 		EndDate:   time.Date(2020, 4, 28, 12, 12, 12, 12, time.Local),
 		Place:     "Novi Sad",
 	},
 	{
-		CarID:       2,
+		CarID:     2,
 		StartDate: time.Date(2020, 4, 20, 12, 12, 12, 12, time.Local),
 		EndDate:   time.Date(2020, 5, 5, 12, 12, 12, 12, time.Local),
 		Place:     "Beograd",
 	},
 	{
-		CarID:       3,
+		CarID:     3,
 		StartDate: time.Date(2020, 4, 18, 12, 12, 12, 12, time.Local),
 		EndDate:   time.Date(2020, 4, 30, 12, 12, 12, 12, time.Local),
 		Place:     "Novi Sad",
 	},
 	{
-		CarID:       4,
+		CarID:     4,
 		StartDate: time.Date(2020, 4, 12, 12, 12, 12, 12, time.Local),
 		EndDate:   time.Date(2020, 5, 4, 12, 12, 12, 12, time.Local),
 		Place:     "Beograd",
@@ -177,13 +177,13 @@ var ads = []model.Ad{
 }
 
 func main() {
-	var develop = flag.Bool("dev",false, "Is this develop version?")
+	var develop = flag.Bool("dev", false, "Is this develop version?")
 	flag.Parse()
 
 	var store *postgres.Store
 	var err error
 
-	if *develop{
+	if *develop {
 		err := godotenv.Load()
 		if err != nil {
 			panic(err)
@@ -206,7 +206,7 @@ func main() {
 		}
 	}
 
-	if *develop==false{
+	if *develop == false {
 		store, err = postgres.Open(os.Getenv("DB_PATH"))
 		if err != nil {
 			panic(err)
@@ -234,7 +234,7 @@ func main() {
 		}
 		fmt.Println("DATABASE POPULATED")
 	}
-	if !empty{
+	if !empty {
 		fmt.Println("TABLES ARE NOT EMPTY, SKIPPING IT")
 	}
 
@@ -244,11 +244,9 @@ func main() {
 	//	panic(err)
 	//}
 
-
 	//set foreign key reference
 
 	//store.DB().Model(&model.Brand{}).AddForeignKey("model_id","models(id)","CASCADE","CASCADE")
-
 
 	//Check if successfully created
 	//firstCar := &model.Car{}
@@ -278,15 +276,13 @@ func populateDatabase(store *postgres.Store) error {
 		}
 	}
 	brands := []model.Brand{}
-	brands = append(brands, opel, passat,bmw, fiat)
+	brands = append(brands, opel, passat, bmw, fiat)
 	for _, brand := range brands {
 		err := store.DB().Create(&brand).Error
 		if err != nil {
 			return err
 		}
 	}
-
-
 
 	fuels := []model.Fuel{}
 	fuels = append(fuels, diesel, gasoline, petro, natural, biodiesel, ethanol)
@@ -329,9 +325,9 @@ func populateDatabase(store *postgres.Store) error {
 		}
 	}
 
-	for _,im := range images{
+	for _, im := range images {
 		err := store.DB().Create(&im).Error
-		if err != nil{
+		if err != nil {
 			panic(err)
 		}
 	}
@@ -339,7 +335,7 @@ func populateDatabase(store *postgres.Store) error {
 }
 
 func areTablesEmpty(db *gorm.DB) bool {
-	tables := []string{"car", "ad","brand","fuel","class","transmission","image"}
+	tables := []string{"car", "ad", "brand", "fuel", "class", "transmission", "image"}
 	for _, table := range tables {
 		var count int
 

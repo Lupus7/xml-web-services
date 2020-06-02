@@ -300,21 +300,7 @@ export default {
         },
         addNewCar() {
             event.preventDefault();
-            if(this.brandF==""){
-                this.brandF="BMW";
-            }
-            if(this.modelF==""){
-                this.modelF="X3";
-            }
-            if(this.fuelF==""){
-                this.fuelF="disel";
-            }
-            if(this.classF==""){
-                this.classF="economic";
-            }
-            if(this.transmissionF==""){
-                this.transmissionF="Manual";
-            }
+         
             axios
                 .post("/cars-ads/cars", {
                     brand: this.brandF,
@@ -327,6 +313,7 @@ export default {
                     colDamProtection: this.collision_damageF,
                     childrenSeats: this.seats_numberF,
                     description: this.descriptionF,
+                    images: this.images,
                 })
                 .then(response => {
                     this.resetForm();

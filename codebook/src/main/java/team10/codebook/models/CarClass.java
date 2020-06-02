@@ -7,7 +7,7 @@ import javax.persistence.*;
 public class CarClass {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "car_class_id_seq")
     private Long id;
 
     @Column(name = "name", unique = false, nullable = false)

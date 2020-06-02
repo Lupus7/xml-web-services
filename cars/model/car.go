@@ -29,21 +29,19 @@ import (
 //	Images                []Image      `gorm:"foreignkey:"CarId"`
 //}
 
-
-
 type Car struct {
-	Id               int64    `xml:"xml-web-services-cars id" gorm:"primary_key"`
-	TotalMileage     float64  `xml:"xml-web-services-cars totalMileage"`
-	AllowedMileage   float64  `xml:"xml-web-services-cars allowedMileage"`
-	ChildrenSeats    int      `xml:"xml-web-services-cars childrenSeats"`
-	Description      string   `xml:"xml-web-services-cars description"`
-	ColDamProtection bool     `xml:"xml-web-services-cars colDamProtection"`
-	Owned            string   `xml:"xml-web-services-cars owned"`
-	Brand            string   `xml:"xml-web-services-cars brand"`
-	Model            string   `xml:"xml-web-services-cars model"`
-	CarClass         string   `xml:"xml-web-services-cars carClass"`
-	Fuel             string   `xml:"xml-web-services-cars fuel"`
-	Transmission     string   `xml:"xml-web-services-cars transmission"`
+	Id               int64   `xml:"xml-web-services-cars id" gorm:"primary_key"`
+	TotalMileage     float64 `xml:"xml-web-services-cars totalMileage"`
+	AllowedMileage   float64 `xml:"xml-web-services-cars allowedMileage"`
+	ChildrenSeats    int     `xml:"xml-web-services-cars childrenSeats"`
+	Description      string  `xml:"xml-web-services-cars description"`
+	ColDamProtection bool    `xml:"xml-web-services-cars colDamProtection"`
+	Owner            string  `xml:"xml-web-services-cars owner"`
+	Brand            string  `xml:"xml-web-services-cars brand"`
+	Model            string  `xml:"xml-web-services-cars model"`
+	CarClass         string  `xml:"xml-web-services-cars carClass"`
+	Fuel             string  `xml:"xml-web-services-cars fuel"`
+	Transmission     string  `xml:"xml-web-services-cars transmission"`
 	//Bookings         []int64  `xml:"xml-web-services-cars bookings,omitempty" gorm:"-"`
 	//Images           []string `xml:"xml-web-services-cars images,omitempty" gorm:"-"`
 	//Ads              []Ad     `xml:"xml-web-services-cars ads,omitempty" gorm:"-"`

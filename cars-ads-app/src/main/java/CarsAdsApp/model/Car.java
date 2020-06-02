@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="childrenSeats" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="colDamProtection" type="{http://www.w3.org/2001/XMLSchema}boolean"/&gt;
- *         &lt;element name="owned" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="owner" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="brand" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="model" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="carClass" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
     "childrenSeats",
     "description",
     "colDamProtection",
-    "owned",
+    "owner",
     "brand",
     "model",
     "carClass",
@@ -62,28 +62,39 @@ public class Car {
 
     @XmlElement(namespace = "xml-web-services-cars")
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "car_id_seq")
     protected long id;
+    @Column()
     @XmlElement(namespace = "xml-web-services-cars")
     protected double totalMileage;
+    @Column()
     @XmlElement(namespace = "xml-web-services-cars")
     protected double allowedMileage;
+    @Column()
     @XmlElement(namespace = "xml-web-services-cars")
     protected int childrenSeats;
+    @Column()
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String description;
+    @Column()
     @XmlElement(namespace = "xml-web-services-cars")
     protected boolean colDamProtection;
+    @Column()
     @XmlElement(namespace = "xml-web-services-cars", required = true)
-    protected String owned;
+    protected String owner;
+    @Column()
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String brand;
+    @Column()
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String model;
+    @Column()
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String carClass;
+    @Column()
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String fuel;
+    @Column()
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String transmission;
 
@@ -192,27 +203,27 @@ public class Car {
     }
 
     /**
-     * Gets the value of the owned property.
+     * Gets the value of the owner property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getOwned() {
-        return owned;
+    public String getOwner() {
+        return owner;
     }
 
     /**
-     * Sets the value of the owned property.
+     * Sets the value of the owner property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setOwned(String value) {
-        this.owned = value;
+    public void setOwner(String value) {
+        this.owner = value;
     }
 
     /**
@@ -336,7 +347,7 @@ public class Car {
     }
 
     public void printCar(Car car){
-        System.out.println("Brand: " + car.getBrand() + " \nModel: " + car.getModel() + " \nClass:" +car.getCarClass() + " \nOwner: " +car.getOwned() + " \nDesc: " + car.getDescription() + " \nFuel: " + car.getFuel() + " \nTrans: " +car.getTransmission() + " \nCDP : " + car.isColDamProtection() + " \nSEATS: "+car.getChildrenSeats() + " \nallowedkm: "+car.getAllowedMileage() + " \ntotal km : " + car.getTotalMileage());
+        System.out.println("Brand: " + car.getBrand() + " \nModel: " + car.getModel() + " \nClass:" +car.getCarClass() + " \nOwner: " +car.getOwner() + " \nDesc: " + car.getDescription() + " \nFuel: " + car.getFuel() + " \nTrans: " +car.getTransmission() + " \nCDP : " + car.isColDamProtection() + " \nSEATS: "+car.getChildrenSeats() + " \nallowedkm: "+car.getAllowedMileage() + " \ntotal km : " + car.getTotalMileage());
     }
     /**
      * Gets the value of the bookings property.
@@ -361,5 +372,6 @@ public class Car {
      * 
      */
 
-
+    public Car() {
+    }
 }
