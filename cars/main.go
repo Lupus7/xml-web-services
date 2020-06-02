@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"github.com/joho/godotenv"
+	"github.com/labstack/echo/middleware"
+
 	//"github.com/labstack/echo/middleware"
 	"log"
 	"net/http"
@@ -78,13 +80,13 @@ func main() {
 	carHandler := handler.NewCarHandler(carService)
 
 	e := echo.New()
-	/*e.Use(middleware.CORS())
+	e.Use(middleware.CORS())
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
-	}))*/
+	}))
 
 	//   ADS
 	e.GET("/api/ads", carHandler.FindAll)

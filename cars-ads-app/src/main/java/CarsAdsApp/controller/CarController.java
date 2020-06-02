@@ -16,12 +16,15 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
+
 @RestController
+@RequestMapping("")
 public class CarController {
 
     @Autowired
     CarService carService;
 
+    @CrossOrigin(origins = "http://localhost:8081/")
     @PostMapping("/cars")
     public ResponseEntity<String> postCar(@RequestBody NewCarDTO newCarDto,Principal user){
         if(carService.CreateCar(newCarDto,user.getName()))

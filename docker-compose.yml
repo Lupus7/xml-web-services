@@ -73,20 +73,20 @@ services:
         networks:
             - static-network
 
-    rent-service:
-        image: rent-service
-        build:
-            context: ./carRent
-            dockerfile: Dockerfile
-        tty: true
-        depends_on:
-            - consul-server
-            - db 
-        restart: unless-stopped
-        environment:
-            DB_PATH: jdbc:postgresql://db:5432/
-        networks:
-            - static-network
+#    rent-service:
+#        image: rent-service
+#        build:
+#            context: ./carRent
+#            dockerfile: Dockerfile
+#        tty: true
+#        depends_on:
+#            - consul-server
+#            - db
+#        restart: unless-stopped
+#        environment:
+#            DB_PATH: jdbc:postgresql://db:5432/
+#        networks:
+#            - static-network
 
     cars-service:
         image: cars-service
@@ -106,35 +106,35 @@ services:
         networks:
             - static-network
     
-    user-service:
-        image: user-service
-        build:
-            context: ./user
-            dockerfile: Dockerfile
-        tty: true
-        depends_on:
-            - consul-server
-            - db 
-        restart: unless-stopped
-        environment:
-            DB_PATH: jdbc:postgresql://db:5432/
-        networks:
-            - static-network
+#    user-service:
+#        image: user-service
+#        build:
+#            context: ./user
+#            dockerfile: Dockerfile
+#        tty: true
+#        depends_on:
+#            - consul-server
+#            - db
+#        restart: unless-stopped
+#        environment:
+#            DB_PATH: jdbc:postgresql://db:5432/
+#        networks:
+#            - static-network
 
-    codebook-service:
-        image: codebook-service
-        build:
-            context: ./codebook
-            dockerfile: Dockerfile
-        tty: true
-        depends_on:
-            - consul-server
-            - db 
-        restart: unless-stopped
-        environment:
-            DB_PATH: jdbc:postgresql://db:5432/
-        networks:
-            - static-network
+#    codebook-service:
+#        image: codebook-service
+#        build:
+#            context: ./codebook
+#            dockerfile: Dockerfile
+#        tty: true
+#        depends_on:
+#            - consul-server
+#            - db
+#        restart: unless-stopped
+#        environment:
+#            DB_PATH: jdbc:postgresql://db:5432/
+#        networks:
+#            - static-network
             
     gateway:
         image: gateway
@@ -150,15 +150,15 @@ services:
         networks:
             - static-network
 
-    #client-front:
-    #    image: client-front
-    #    build:
-    #        context: ./client
-    #        dockerfile: Dockerfile
-    #    tty: true
-    #    ports:
-    #        - "8081:8081"
-    #    restart: unless-stopped
+#    client-front:
+#        image: client-front
+#        build:
+#            context: ./client
+#            dockerfile: Dockerfile
+#        tty: true
+#        ports:
+#            - "8081:8081"
+#        restart: unless-stopped
 
     #admin-front:
     #    image: admin-front
