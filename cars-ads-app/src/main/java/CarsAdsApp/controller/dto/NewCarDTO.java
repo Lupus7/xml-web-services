@@ -1,5 +1,7 @@
 package CarsAdsApp.controller.dto;
 
+import java.util.List;
+
 public class NewCarDTO {
     private double totalMileage;
     private double allowedMilleage;
@@ -12,6 +14,7 @@ public class NewCarDTO {
     private String carClass;
     private String fuel;
     private String transmission;
+    private List<String> images;
 
     public NewCarDTO() {
     }
@@ -116,5 +119,13 @@ public class NewCarDTO {
 
     public void setTransmission(String transmission) {
         this.transmission = transmission;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 }

@@ -2,13 +2,11 @@ package CarsAdsApp.service;
 
 import CarsAdsApp.controller.dto.NewCarDTO;
 import CarsAdsApp.controller.dto.UpdateCarDTO;
-import CarsAdsApp.model.Ad;
-import CarsAdsApp.model.Car;
-import CarsAdsApp.model.ObjectFactory;
-import CarsAdsApp.model.User;
+import CarsAdsApp.model.*;
 import CarsAdsApp.model.dto.CarDTO;
 import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.CarRepository;
+import CarsAdsApp.repository.ImageRepository;
 import CarsAdsApp.repository.UserRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +26,9 @@ public class CarService {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    ImageRepository imageRepository;
+
 
     //MEthod for creating new car in dataabse
     public boolean CreateCar(NewCarDTO newCarDto, String user) {
@@ -52,6 +53,13 @@ public class CarService {
 
         //Save car in database
         carRepository.save(car);
+        List<Car> sorted = carRepository.findTopByOrderByIdDesc();
+        Long lastInserted = sorted.get(0).getId();
+        //Now insert images in database
+        for(String image: newCarDto.getImages()){
+            Image newImage = new Image(image, lastInserted);
+            imageRepository.save(newImage);
+        }
 
         return true;
     }
