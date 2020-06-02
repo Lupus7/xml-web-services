@@ -31,11 +31,10 @@ public class CarService {
 
 
     //MEthod for creating new car in dataabse
-    public boolean CreateCar(NewCarDTO newCarDto, String user) {
+    public boolean CreateCar(NewCarDTO newCarDto) {
         if (newCarDto.getBrand() == null || newCarDto.getModel() == null || newCarDto.getFuel() == null || newCarDto.getCarClass() == null || newCarDto.getTransmission() == null) {
             return false;
         }
-        System.out.println("Des: " + newCarDto.getDescription());
         ObjectFactory factory = new ObjectFactory();
         Car car = factory.createCar();
         car.setAllowedMileage(newCarDto.getAllowedMilleage());
@@ -43,21 +42,18 @@ public class CarService {
         car.setChildrenSeats(newCarDto.getChildrenSeats());
         car.setDescription(newCarDto.getDescription());
         car.setColDamProtection(newCarDto.isColDamProtection());
-        car.setOwned(user);
+        car.setOwner("user");
         car.setBrand(newCarDto.getBrand());
         car.setModel(newCarDto.getModel());
         car.setCarClass(newCarDto.getCarClass());
         car.setFuel(newCarDto.getFuel());
         car.setTransmission(newCarDto.getTransmission());
-        car.printCar(car);
 
         //Save car in database
         carRepository.save(car);
-        List<Car> sorted = carRepository.findTopByOrderByIdDesc();
-        Long lastInserted = sorted.get(0).getId();
-        //Now insert images in database
+
         for(String image: newCarDto.getImages()){
-            Image newImage = new Image(image, lastInserted);
+            Image newImage = new Image(image, car.getId());
             imageRepository.save(newImage);
         }
 
@@ -121,13 +117,14 @@ public class CarService {
         return true;
     }
 
-    public List<CarDTO> getClientCars(String name) {
+    public List<CarDTO> getClientCars() {
         List<CarDTO> carDTOS = new ArrayList<>();
-        User user = userRepository.findByEmail(name);
+        User user = userRepository.findByEmail("user");
         if (user == null)
             return carDTOS;
 
-        List<Car> cars = carRepository.findAllByOwned(user.getEmail());
+        List<Car> cars = carRepository.findAllByOwner("user");
+
         for (Car car : cars)
             carDTOS.add(new CarDTO(car));
 

@@ -5,6 +5,7 @@ import CarsAdsApp.controller.dto.UpdateCarDTO;
 import CarsAdsApp.model.Car;
 import CarsAdsApp.model.dto.CarDTO;
 import CarsAdsApp.service.CarService;
+import ch.qos.logback.core.net.SyslogOutputStream;
 import javassist.NotFoundException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +19,14 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("")
 public class CarController {
 
     @Autowired
     CarService carService;
 
-    @CrossOrigin(origins = "http://localhost:8081/")
     @PostMapping("/cars")
-    public ResponseEntity<String> postCar(@RequestBody NewCarDTO newCarDto,Principal user){
-        if(carService.CreateCar(newCarDto,user.getName()))
+    public ResponseEntity<String> postCar(@RequestBody NewCarDTO newCarDto){
+        if(carService.CreateCar(newCarDto))
             return ResponseEntity.ok("Successfully created");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
@@ -65,11 +64,8 @@ public class CarController {
 
     // Clients cars
     @GetMapping("/cars/client")
-    public ResponseEntity<List<CarDTO>>getClientCars(Principal user){
-        List<CarDTO> cars = carService.getClientCars(user.getName());
-        if (cars != null)
-            return ResponseEntity.ok(cars);
-        return ResponseEntity.badRequest().body(null);
+    public ResponseEntity<List<CarDTO>>getClientCars(){
+        return ResponseEntity.ok(carService.getClientCars());
     }
 
     @GetMapping("/cars/brands/{brand}")

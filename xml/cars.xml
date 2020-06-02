@@ -10,7 +10,7 @@
             <xs:element name="childrenSeats" type="xs:int"/>
             <xs:element name="description" type="xs:string"/>
             <xs:element name="colDamProtection" type="xs:boolean"/>
-            <xs:element name="owned" type="xs:string"/>
+            <xs:element name="owner" type="xs:string"/>
             <xs:element name="brand" type="xs:string"/>
             <xs:element name="model" type="xs:string"/>
             <xs:element name="carClass" type="xs:string"/>

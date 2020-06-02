@@ -28,7 +28,7 @@ func (ch *CarHandler) FindAll(c echo.Context) error {
 	carsDto := []*dto.SearchResponse{}
 	for _, ad := range ads {
 		car, err := ch.CarService.Store.FindCarById(ad.CarID)
-		if err != nil{
+		if err != nil {
 			return err
 		}
 		carsDto = append(carsDto, toResponse(ad, car))
@@ -50,7 +50,7 @@ func (ch *CarHandler) SearchAds(c echo.Context) error {
 	carsResponse := []*dto.SearchResponse{}
 	for _, ad := range filtrated {
 		car, err := ch.CarService.Store.FindCarById(ad.CarID)
-		if err != nil{
+		if err != nil {
 			return err
 		}
 		carsResponse = append(carsResponse, toResponse(ad, car))
@@ -68,7 +68,7 @@ func (ch *CarHandler) GetAdById(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	car ,err := ch.CarService.Store.FindCarById(ad.CarID)
+	car, err := ch.CarService.Store.FindCarById(ad.CarID)
 	if err != nil {
 		return err
 	}
@@ -167,23 +167,23 @@ func toResponse(ad *model.Ad, car *model.Car) *dto.SearchResponse {
 	//}
 
 	return &dto.SearchResponse{
-		Id:              int(ad.Id),
-		Advertiser:      car.Owned,
-		Brand:           car.Brand,
-		Model:           car.Model,
-		Fuel:            car.Fuel,
-		Transmission:    car.Transmission,
-		Class:           car.CarClass,
+		Id:           int(ad.Id),
+		Advertiser:   car.Owner,
+		Brand:        car.Brand,
+		Model:        car.Model,
+		Fuel:         car.Fuel,
+		Transmission: car.Transmission,
+		Class:        car.CarClass,
 		//Price:           ad.Car.Price,
 		AllowedMileage:  allowedMileage,
 		TotalMileage:    float32(car.TotalMileage),
 		SeatsNumber:     car.ChildrenSeats,
 		CollisionDamage: collisionDamage,
 		//Rating:          ad.Car.Rating,
-		Description:     car.Description,
+		Description: car.Description,
 		//Images:          images,
-		Place:           ad.Place,
-		StartDate:       strings.Split(ad.StartDate.String(), " ")[0],
-		EndDate:         strings.Split(ad.EndDate.String(), " ")[0],
+		Place:     ad.Place,
+		StartDate: strings.Split(ad.StartDate.String(), " ")[0],
+		EndDate:   strings.Split(ad.EndDate.String(), " ")[0],
 	}
 }
