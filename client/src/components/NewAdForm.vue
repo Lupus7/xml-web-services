@@ -110,8 +110,8 @@ export default {
             event.preventDefault();
             axios
                 .post("/cars-ads/api/ad", {
-                   startDate:this.startDateF,
-                   endDate:this.endDateF,
+                   startDate:this.startDateF+ " 00:00",
+                   endDate:this.endDateF+ " 00:00",
                    place:this.placeF,
                    carId:this.carF
                 })

@@ -263,8 +263,8 @@ export default {
         editAd(ad) {
             this.getClientCars();
             this.placeEditF = ad.place;
-            this.startDateEditF = ad.startDate;
-            this.endDateEditF = ad.endDate;
+            this.startDateEditF = ad.startDate + " 00:00";
+            this.endDateEditF = ad.endDate + " 00:00";
             this.editID = ad.adId;
             for(let car of this.cars){
                 if(car.carId === ad.carId){

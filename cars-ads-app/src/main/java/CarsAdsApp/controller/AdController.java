@@ -22,11 +22,11 @@ public class AdController {
     // Kreiranje ad-a
     @PostMapping(value = "/api/ad", produces = "application/json", consumes = "application/json")
     //@PreAuthorize("hasAuthority('CREATE_AD')")
-    public ResponseEntity<String> createAd(@RequestBody AdDTO adDTO, Principal user) throws JSONException {
-
-        if (adService.createAd(adDTO, user.getName()) == 200)
+    public ResponseEntity<String> createAd(@RequestBody AdDTO adDTO) throws JSONException {
+        int response = adService.createAd(adDTO);
+        if (response == 200)
             return ResponseEntity.ok("Ad successfully created!");
-        else if (adService.createAd(adDTO, user.getName()) == 402)
+        else if (response == 402)
             return ResponseEntity.status(402).body("You have already created 3 ads!");
         else
             return ResponseEntity.status(400).body("Could not accept");
@@ -84,8 +84,8 @@ public class AdController {
 
     // Svi adovi clienta
     @GetMapping(value = "/api/ad/client")
-    public ResponseEntity<List<AdClientDTO>> getClientAds(Principal user){
-        List<AdClientDTO> ads = adService.getClientAds(user.getName());
+    public ResponseEntity<List<AdClientDTO>> getClientAds(){
+        List<AdClientDTO> ads = adService.getClientAds("user");
         return ResponseEntity.ok(ads);
     }
 

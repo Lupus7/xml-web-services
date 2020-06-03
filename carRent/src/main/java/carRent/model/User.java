@@ -43,7 +43,7 @@ public class User {
     @Column(name = "authorities", unique = false, nullable = false)
     private String authorities;
 
-    @Column(name = "cart", unique = true, nullable = false)
+    @Column(name = "cart", unique = true)
     private Long cart;
 
     @ElementCollection
