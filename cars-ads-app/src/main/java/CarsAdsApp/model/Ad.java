@@ -1,10 +1,8 @@
 package CarsAdsApp.model;
 
-import CarsAdsApp.model.dto.AdDTO;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 
 @Entity
 @Table(name = "ad")
@@ -41,16 +39,6 @@ public class Ad {
         this.endDate = endDate;
         this.place = place;
         this.carId = car;
-        this.ownerId = owner;
-        this.active = true;
-    }
-
-    public Ad(AdDTO adDTO, Long owner) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        this.startDate =  LocalDateTime.parse(adDTO.getStartDate(), formatter);
-        this.endDate = LocalDateTime.parse(adDTO.getEndDate(), formatter);
-        this.place = adDTO.getPlace();
-        this.carId = adDTO.getCarId();
         this.ownerId = owner;
         this.active = true;
     }

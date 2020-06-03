@@ -9,11 +9,11 @@ import java.util.List;
 public class Cart {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "cart_id_seq")
     private Long id;
 
-    @Column(name = "user", nullable = false)
-    private Long user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @ElementCollection
     @CollectionTable(
@@ -27,7 +27,7 @@ public class Cart {
     }
 
     public Cart(Long user) {
-        this.user = user;
+        this.userId = user;
         this.ads = new ArrayList<>();
     }
 
@@ -39,12 +39,12 @@ public class Cart {
         this.id = id;
     }
 
-    public Long getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(Long user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public List<Long> getAds() {

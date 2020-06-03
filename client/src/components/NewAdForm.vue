@@ -110,8 +110,8 @@ export default {
             event.preventDefault();
             axios
                 .post("/cars-ads/api/ad", {
-                   startDate:this.startDateF+ " 00:00",
-                   endDate:this.endDateF+ " 00:00",
+                   startDate:this.startDateF+ " 00:00:00",
+                   endDate:this.endDateF+ " 00:00:00",
                    place:this.placeF,
                    carId:this.carF
                 })
@@ -123,6 +123,7 @@ export default {
                             variant: "success",
                             solid: true
                         });
+                        this.getClientCars();
                     } else if(response.status === 402) {
                         this.$bvToast.toast(response.data, {
                             title: "New Car",

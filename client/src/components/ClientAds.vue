@@ -49,7 +49,7 @@
                     <b-card-sub-title class="mb-2">Transmission: {{ad.transmission}}</b-card-sub-title>
                     <b-card-sub-title class="mb-2">Fuel Type: {{ad.fuel}}</b-card-sub-title>
                     <b-card-sub-title class="mb-2">Children Seats: {{ad.childrenSeats}}</b-card-sub-title>
-                    <b-card-sub-title class="mb-2">Total Milleage: {{ad.totalMilleage}}</b-card-sub-title>
+                    <b-card-sub-title class="mb-2">Total Milleage: {{ad.totalMileage}}</b-card-sub-title>
                     <b-card-sub-title class="mb-2">Allowed Mileage: {{ad.allowedMileage}}</b-card-sub-title>
 
                     <hr />
@@ -145,18 +145,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <label>Select Car</label>
-                                        <b-form-select
-                                            v-model="carEditF"
-                                            :options="cars"
-                                            class="form-control"
-                                        />
-                                    </div>
-                                  
-                                </div>
-
+                           
                                
                             </div>
                         </b-form>
@@ -189,8 +178,6 @@ export default {
     data() {
         return {
             ads: [],
-            cars:[],
-            carEditF:"",
             startDateEditF:"",
             endDateEditF:"",
             placeEditF:"",
@@ -200,7 +187,7 @@ export default {
    
     methods: {
         getClientAds() {
-            axios.get("/cars-ads/ads/client").then(response => {
+            axios.get("/cars-ads/api/ad/client").then(response => {
                 this.ads = response.data;
             });
         },
@@ -219,13 +206,13 @@ export default {
             axios
                 .delete("/cars-ads/api/ad/deactivate/" + ad.adId)
                 .then(response => {
-                    this.getClientAds();
                     if (response.status === 200) {
                         this.$bvToast.toast(response.data, {
                             title: "Ad Deactivation",
                             variant: "success",
                             solid: true
                         });
+                        this.getClientAds();
                     } else {
                         this.$bvToast.toast(response.data, {
                             title: "Ad Deactivation",
@@ -238,13 +225,13 @@ export default {
         activateAd(ad) {
             event.preventDefault();
             axios.put("/cars-ads/api/ad/activate/" + ad.adId).then(response => {
-                this.getClientAds();
                 if (response.status === 200) {
                     this.$bvToast.toast(response.data, {
                         title: "Ad Activation",
                         variant: "success",
                         solid: true
                     });
+                    this.getClientAds();
                 } else if (response.status === 402) {
                     this.$bvToast.toast(response.data, {
                         title: "Ad Activation",
@@ -263,20 +250,13 @@ export default {
         editAd(ad) {
             this.getClientCars();
             this.placeEditF = ad.place;
-            this.startDateEditF = ad.startDate + " 00:00";
-            this.endDateEditF = ad.endDate + " 00:00";
+            this.startDateEditF = ad.startDate;
+            this.endDateEditF = ad.endDate;
             this.editID = ad.adId;
-            for(let car of this.cars){
-                if(car.carId === ad.carId){
-                    this.carEditF = car.carId
-                    break;
-
-                }
-            }
+          
         },
 
         resetEditForm() {
-            this.carEditF = "";
             this.startDateEditF = "";
             this.endDateEditF = "";
             this.placeEditF = "";
@@ -285,12 +265,23 @@ export default {
         },
         editAdFinal(){
             event.preventDefault();
+            console.log(this.startDateEditF)
+            if(this.startDateEditF.includes('T'))
+                this.startDateEditF = this.startDateEditF.replace('T'," ");
+            else
+                this.startDateEditF += " 00:00:00";
+            
+
+            if(this.endDateEditF.includes('T'))
+                this.endDateEditF = this.endDateEditF.replace('T'," ");
+            else
+                this.endDateEditF += " 00:00:00";
+
             axios
                 .put("/cars-ads/api/ad/"+this.editID, {
                    startDate:this.startDateEditF,
                    endDate:this.endDateEditF,
                    place:this.placeEditF,
-                   carId:this.carEditF
                 })
                 .then(response => {
                     this.resetEditForm();
@@ -300,6 +291,7 @@ export default {
                             variant: "success",
                             solid: true
                         });
+                        this.getClientAds();
                     } else {
                         this.$bvToast.toast(response.data, {
                             title: "Edit Ad",

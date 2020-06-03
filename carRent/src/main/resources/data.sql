@@ -7,8 +7,9 @@ alter sequence user_id_seq RESTART with 5;
 
 
 -- cart
-insert into cart(id, user) values (1, 1);
-insert into cart(id, user) values (2, 4);
+insert into cart(id, user_id) values (1, 1);
+insert into cart(id, user_id) values (2, 4);
+alter sequence cart_id_seq RESTART with 3;
 
 
 -- brands
@@ -104,26 +105,30 @@ insert into car(id, total_mileage, allowed_mileage, children_seats, description,
 insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
         values (3, 25060, 8000, 0, 'Car Description', true, 'user', 'Opel', 'Vectra', 'Gasoline', 'Automatic', 'Microcar');
 
-alter sequence car_id_seq RESTART with 4;
+insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
+        values (4, 5060, 6000, 2, 'Car Description', true, 'user1', 'Audi', 'Q3', 'Gasoline', 'Automatic', 'Microcar');
+
+alter sequence car_id_seq RESTART with 5;
 
 insert into user_cars(user_id, car_id) values (1, 1);
 insert into user_cars(user_id, car_id) values (1, 2);
 insert into user_cars(user_id, car_id) values (1, 3);
-
+insert into user_cars(user_id, car_id) values (4, 4);
 
 --insert into car_images values (1, 1);
 
 -- comments
-insert into comment(id, created, body, approved, car_id, user_id) values (1, '2020-01-25T21:34:55', 'nesto', false, 1, 4);
-insert into comment(id, created, body, approved, car_id, user_id) values (2, '2020-01-25T21:34:55', 'nesto drugo', false, 1, 4);
-
+--insert into comment(id, created, body, approved, car_id, user_id) values (1, '2020-01-25T21:34:55', 'nesto', false, 1, 4);
+--insert into comment(id, created, body, approved, car_id, user_id) values (2, '2020-01-25T21:34:55', 'nesto drugo', false, 1, 4);
 
 -- ads
-insert into ad(id, car_id, start_date, end_date, place, owner_id , active) values (1, 1, '2020-05-19', '2020-05-30', 'Novi Sad', 1, true);
-insert into ad(id, car_id, start_date, end_date, place, owner_id , active) values (2, 1, '2020-07-19', '2020-07-30', 'Beograd',1, true);
-insert into ad(id, car_id, start_date, end_date, place, owner_id , active) values (3, 2, '2020-09-19', '2020-09-30', 'Sabac', 1, true);
-insert into ad(id, car_id, start_date, end_date, place, owner_id , active) values (4, 3, '2020-09-19', '2020-09-30', 'Nis', 1, true);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (1, 1, '2020-05-19T00:00:00', '2020-05-30T00:00:00', 'Novi Sad', 1, true);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (2, 1, '2020-07-19T00:00:00', '2020-07-30T00:00:00', 'Beograd', 1, false);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (3, 2, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 1, false);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (4, 3, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Nis', 1, true);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (5, 4, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 4, true);
 
-alter sequence ad_id_seq RESTART with 5;
+
+alter sequence ad_id_seq RESTART with 6;
 
 

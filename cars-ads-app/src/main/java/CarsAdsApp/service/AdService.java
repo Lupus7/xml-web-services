@@ -43,8 +43,15 @@ public class AdService {
         if (ads.size() == 3)
             return 402;
 
+        if (adDTO == null)
+            return 400;
+        if (adDTO.getPlace() == null || adDTO.getStartDate() == null || adDTO.getEndDate() == null || adDTO.getCarId() == null)
+            return 400;
+        if (adDTO.getPlace().equals("") || adDTO.getStartDate().equals("") || adDTO.getEndDate().equals(""))
+            return 400;
 
-        Ad ad = new Ad(adDTO, user.getId());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Ad ad = new Ad(LocalDateTime.parse(adDTO.getStartDate(), formatter), LocalDateTime.parse(adDTO.getEndDate(), formatter), adDTO.getPlace(), adDTO.getCarId(), user.getId());
         adRepo.save(ad);
 
         return 200;
@@ -121,12 +128,14 @@ public class AdService {
         Optional<Ad> ad = adRepo.findById(id);
         if (!ad.isPresent() || ad.get().getOwnerId() != user.getId() || !ad.get().isActive())
             return false;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        if (adDTO.getStartDate() != null)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        if (adDTO.getStartDate() != null) {
             ad.get().setStartDate(LocalDateTime.parse(adDTO.getStartDate(), formatter));
+        }
 
-        if (adDTO.getEndDate() != null)
+        if (adDTO.getEndDate() != null) {
             ad.get().setEndDate(LocalDateTime.parse(adDTO.getEndDate(), formatter));
+        }
 
         if (adDTO.getPlace() != null)
             ad.get().setPlace(adDTO.getPlace());
