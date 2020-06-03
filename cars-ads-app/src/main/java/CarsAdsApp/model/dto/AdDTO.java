@@ -8,9 +8,9 @@ import java.time.LocalDateTime;
 
 public class AdDTO {
 
-    private LocalDateTime startDate;
+    private String startDate;
 
-    private LocalDateTime endDate;
+    private String endDate;
 
     private String place;
 
@@ -19,26 +19,26 @@ public class AdDTO {
     public AdDTO() {
     }
 
-    public AdDTO(LocalDateTime startDate, LocalDateTime endDate, String place, Long car) {
+    public AdDTO(String startDate, String endDate, String place, Long car) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.place = place;
         this.carId = car;
     }
 
-    public LocalDateTime getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDateTime getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 

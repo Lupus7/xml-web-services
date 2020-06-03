@@ -22,11 +22,11 @@ public class AdController {
     // Kreiranje ad-a
     @PostMapping(value = "/api/ad", produces = "application/json", consumes = "application/json")
     //@PreAuthorize("hasAuthority('CREATE_AD')")
-    public ResponseEntity<String> createAd(@RequestBody AdDTO adDTO, Principal user) throws JSONException {
-
-        if (adService.createAd(adDTO, user.getName()) == 200)
+    public ResponseEntity<String> createAd(@RequestBody AdDTO adDTO) throws JSONException {
+        int response = adService.createAd(adDTO);
+        if (response == 200)
             return ResponseEntity.ok("Ad successfully created!");
-        else if (adService.createAd(adDTO, user.getName()) == 402)
+        else if (response == 402)
             return ResponseEntity.status(402).body("You have already created 3 ads!");
         else
             return ResponseEntity.status(400).body("Could not accept");
@@ -44,13 +44,13 @@ public class AdController {
     }
 
     // Activate ad-a
-    @PutMapping(value = "/api/ad/activate/{id}", produces = "application/json", consumes = "application/json")
+    @PutMapping(value = "/api/ad/activate/{id}")
     //@PreAuthorize("hasAuthority('ACTIVATE_AD')")
-    public ResponseEntity<String> activateAd(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
-
-        if (adService.activateAd(id, user.getName()) == 200)
+    public ResponseEntity<String> activateAd(@PathVariable(value = "id") Long id) throws JSONException {
+        int response = adService.activateAd(id, "user");
+        if (response == 200)
             return ResponseEntity.ok("Ad successfully deactivated!");
-        else if (adService.activateAd(id, user.getName()) == 402)
+        else if (response == 402)
             return ResponseEntity.status(402).body("You have already 3 ads!");
         else
             return ResponseEntity.status(400).body("Could not accept");
@@ -58,11 +58,11 @@ public class AdController {
     }
 
     // Deactivate ad-a
-    @DeleteMapping(value = "/api/ad/deactivate/{id}", produces = "application/json", consumes = "application/json")
+    @DeleteMapping(value = "/api/ad/deactivate/{id}")
     //@PreAuthorize("hasAuthority('DEACTIVATE_AD')")
-    public ResponseEntity<String> deactivateAd(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
+    public ResponseEntity<String> deactivateAd(@PathVariable(value = "id") Long id) throws JSONException {
 
-        if (adService.deactivateAd(id, user.getName()))
+        if (adService.deactivateAd(id, "user"))
             return ResponseEntity.ok("Ad successfully deactivated!");
         else
             return ResponseEntity.status(400).body("Could not accept");
@@ -73,9 +73,9 @@ public class AdController {
     // Izmena ad-a
     @PutMapping(value = "/api/ad/{id}", produces = "application/json", consumes = "application/json")
     //@PreAuthorize("hasAuthority('EDIT_AD')")
-    public ResponseEntity<String> editAd(@PathVariable(value = "id") Long id, @RequestBody AdDTO adDTO, Principal user) throws JSONException {
+    public ResponseEntity<String> editAd(@PathVariable(value = "id") Long id, @RequestBody AdDTO adDTO) throws JSONException {
 
-        if (adService.editAd(id, adDTO, user.getName()))
+        if (adService.editAd(id, adDTO,"user"))
             return ResponseEntity.ok("Ad successfully edited!");
         else
             return ResponseEntity.status(400).body("Could not accept");
@@ -84,8 +84,8 @@ public class AdController {
 
     // Svi adovi clienta
     @GetMapping(value = "/api/ad/client")
-    public ResponseEntity<List<AdClientDTO>> getClientAds(Principal user){
-        List<AdClientDTO> ads = adService.getClientAds(user.getName());
+    public ResponseEntity<List<AdClientDTO>> getClientAds(){
+        List<AdClientDTO> ads = adService.getClientAds("user");
         return ResponseEntity.ok(ads);
     }
 

@@ -48,8 +48,8 @@
 
                     <hr />
 
-                    <b-card-sub-title class="mb-2">Total Milleage: {{car.totalMileage}}</b-card-sub-title>
-                    <b-card-sub-title class="mb-2">Allowed Mileage: {{car.allowedMileage}}</b-card-sub-title>
+                    <b-card-sub-title class="mb-2">Total Milleage: {{car.totalMileage}} </b-card-sub-title>
+                    <b-card-sub-title class="mb-2">Allowed Mileage: {{car.allowedMileage}} </b-card-sub-title>
 
                     <div class="modal-footer">
                         <div class="row">
@@ -290,14 +290,15 @@ export default {
         },
         removeCar(car){
             event.preventDefault();
-            axios.put("/cars-ads/cars/" + car.carId).then(response => {
-                this.getClientCars();
+            axios.delete("/cars-ads/cars/" + car.carId).then(response => {
                 if (response.status === 200) {
                     this.$bvToast.toast(response.data, {
                         title: "Delete Car",
                         variant: "success",
                         solid: true
                     });
+                    this.getClientCars();
+
                 } else {
                     this.$bvToast.toast(response.data, {
                         title: "Delete Car",
@@ -313,15 +314,19 @@ export default {
             this.images = car.images;
             this.descriptionF = car.description;
             this.brandF = car.brand;
-            this.modelF = car.model;
             this.fuelF = car.fuel;
             this.transmissionF = car.transmission;
             this.classF = car.carClass;
-            this.total_mileageF = car.totalMilleage;
-            this.planned_mileageF = car.allowedMilleage;
+            this.total_mileageF = car.totalMileage;
+            this.planned_mileageF = car.allowedMileage;
             this.collision_damageF = car.colDamProtection;
             this.seats_numberF = car.childrenSeats;
             this.editCarId = car.carId;
+
+            this.fillModels();
+            this.modelF = car.model;
+
+
 
         },
         getCarSpec() {
@@ -425,19 +430,21 @@ export default {
                     transmission: this.transmissionF,
                     carClass: this.classF,
                     totalMileage: this.total_mileageF,
-                    allowedMilleage: this.planned_mileageF,
+                    allowedMileage: this.planned_mileageF,
                     colDamProtection: this.collision_damageF,
                     childrenSeats: this.seats_numberF,
                     description: this.descriptionF,
                 })
                 .then(response => {
-                    this.resetForm();
                     if (response.status === 200) {
                         this.$bvToast.toast(response.data, {
                             title: "Edit Car",
                             variant: "success",
                             solid: true
                         });
+                        this.getClientCars();
+                        this.resetForm();
+
                     } else {
                         this.$bvToast.toast(response.data, {
                             title: "Edit Car",

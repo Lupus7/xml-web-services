@@ -1,9 +1,8 @@
 package CarsAdsApp.model;
 
-import CarsAdsApp.model.dto.AdDTO;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "ad")
@@ -40,15 +39,6 @@ public class Ad {
         this.endDate = endDate;
         this.place = place;
         this.carId = car;
-        this.ownerId = owner;
-        this.active = true;
-    }
-
-    public Ad(AdDTO adDTO, Long owner) {
-        this.startDate = adDTO.getStartDate();
-        this.endDate = adDTO.getEndDate();
-        this.place = adDTO.getPlace();
-        this.carId = adDTO.getCarId();
         this.ownerId = owner;
         this.active = true;
     }
