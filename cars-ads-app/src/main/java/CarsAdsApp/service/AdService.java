@@ -3,18 +3,17 @@ package CarsAdsApp.service;
 import CarsAdsApp.model.Ad;
 import CarsAdsApp.model.Car;
 import CarsAdsApp.model.Image;
-import CarsAdsApp.model.User;
 import CarsAdsApp.model.dto.AdClientDTO;
 import CarsAdsApp.model.dto.AdDTO;
 import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.CarRepository;
 import CarsAdsApp.repository.ImageRepository;
-import CarsAdsApp.repository.UserRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -26,9 +25,6 @@ import java.util.Optional;
 public class AdService {
 
     @Autowired
-    private UserRepository userRepo;
-
-    @Autowired
     private AdRepository adRepo;
 
     @Autowired
@@ -37,14 +33,15 @@ public class AdService {
     @Autowired
     private ImageRepository imageRepo;
 
-    public int createAd(AdDTO adDTO) {
+    public int createAd(AdDTO adDTO, String email) {
         // provera da li user sa name postoji, provera da li je ad userov
-        User user = userRepo.findByEmail("user");
-        if (user == null)
+        System.out.println(email);
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return 400;
 
         // provera za 3 ad-a
-        ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(user.getId(), true);
+        ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
         if (ads.size() == 3)
             return 402;
 
@@ -56,7 +53,7 @@ public class AdService {
             return 400;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        Ad ad = new Ad(LocalDateTime.parse(adDTO.getStartDate(), formatter), LocalDateTime.parse(adDTO.getEndDate(), formatter), adDTO.getPlace(), adDTO.getCarId(), user.getId());
+        Ad ad = new Ad(LocalDateTime.parse(adDTO.getStartDate(), formatter), LocalDateTime.parse(adDTO.getEndDate(), formatter), adDTO.getPlace(), adDTO.getCarId(), userId);
         adRepo.save(ad);
 
         return 200;
@@ -65,8 +62,8 @@ public class AdService {
     public boolean checkAds(JSONObject object, String email) throws JSONException {
 
         // provera da li user sa name postoji, provera da li je ad userov
-        User user = userRepo.findByEmail(email);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return false;
 
         if (object == null || object.get("array") == null)
@@ -77,7 +74,7 @@ public class AdService {
         for (int i = 0; i < array.length(); i++) {
             Long id = array.getLong(i);
             Optional<Ad> ad = adRepo.findById(id);
-            if (!ad.isPresent() || ad.get().getOwnerId() != user.getId())
+            if (!ad.isPresent() || ad.get().getOwnerId() != userId)
                 return false;
         }
 
@@ -85,18 +82,18 @@ public class AdService {
         return true;
     }
 
-    public int activateAd(Long id, String name) {
+    public int activateAd(Long id, String email) {
 
         // provera da li user sa name postoji, provera da li je ad userov
-        User user = userRepo.findByEmail(name);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return 400;
 
         Optional<Ad> ad = adRepo.findById(id);
-        if (!ad.isPresent() || ad.get().getOwnerId() != user.getId() || ad.get().isActive())
+        if (!ad.isPresent() || ad.get().getOwnerId() != userId || ad.get().isActive())
             return 400;
 
-        ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(user.getId(), true);
+        ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
         if (ads.size() == 3)
             return 402;
 
@@ -107,15 +104,15 @@ public class AdService {
         return 200;
     }
 
-    public boolean deactivateAd(Long id, String name) {
+    public boolean deactivateAd(Long id, String email) {
 
         // provera da li user sa name postoji, provera da li je ad userov
-        User user = userRepo.findByEmail(name);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return false;
 
         Optional<Ad> ad = adRepo.findById(id);
-        if (!ad.isPresent() || ad.get().getOwnerId() != user.getId() || !ad.get().isActive())
+        if (!ad.isPresent() || ad.get().getOwnerId() != userId || !ad.get().isActive())
             return false;
 
         ad.get().setActive(false);
@@ -124,14 +121,14 @@ public class AdService {
         return true;
     }
 
-    public boolean editAd(Long id, AdDTO adDTO, String name) {
+    public boolean editAd(Long id, AdDTO adDTO, String email) {
         // provera da li user sa name postoji, provera da li je ad userov
-        User user = userRepo.findByEmail(name);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return false;
 
         Optional<Ad> ad = adRepo.findById(id);
-        if (!ad.isPresent() || ad.get().getOwnerId() != user.getId() || !ad.get().isActive())
+        if (!ad.isPresent() || ad.get().getOwnerId() != userId || !ad.get().isActive())
             return false;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (adDTO.getStartDate() != null) {
@@ -156,15 +153,15 @@ public class AdService {
         return ads;
     }
 
-    public List<AdClientDTO> getClientAds(String name) {
+    public List<AdClientDTO> getClientAds(String email) {
 
-        User user = userRepo.findByEmail(name);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return new ArrayList<>();
 
         List<AdClientDTO> adClientDTOS = new ArrayList<>();
 
-        List<Ad> ads = adRepo.findAllByOwnerId(user.getId());
+        List<Ad> ads = adRepo.findAllByOwnerId(userId);
         for (Ad ad : ads) {
             Optional<Car> car = carRepo.findById(ad.getCarId());
             if (car.isPresent()) {

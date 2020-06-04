@@ -64,4 +64,13 @@ public class ClientController {
             return ResponseEntity.ok("Operation successful!");
         return ResponseEntity.badRequest().body(null);
     }
+
+    @GetMapping(value = "/user/{email}")
+    public Long getUserId(@PathVariable("email") String email) {
+        Long id  = clientService.getUserId(email);
+        if (id != null)
+            return id;
+        return null;
+    }
+
 }

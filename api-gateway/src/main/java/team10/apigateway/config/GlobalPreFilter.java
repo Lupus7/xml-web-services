@@ -27,6 +27,17 @@ public class GlobalPreFilter implements GlobalFilter {
         ServerHttpRequest mutatedRequest;
 
         try {
+
+            /*List<String> services = discoveryClient.getServices();
+            for (String service : services) {
+                if (exchange.getRequest().getRemoteAddress().getAddress().getHostAddress().equals(discoveryClient.getInstances(service).get(0).getHost())) {
+                    mutatedRequest = exchange.getRequest().mutate().header(JwtProperties.HEADER_INTERNAL, "NONE;MASTER").build();
+                    ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
+                    return chain.filter(mutatedExchange);
+                }
+            }*/
+
+
             String header = exchange.getRequest().getHeaders().get(JwtProperties.HEADER).get(0);
             String username = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
                     .build()

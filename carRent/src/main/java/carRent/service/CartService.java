@@ -1,10 +1,8 @@
 package carRent.service;
 
 import carRent.model.Cart;
-import carRent.model.User;
 import carRent.model.dto.AdDTO;
 import carRent.repository.CartRepository;
-import carRent.repository.UserRepository;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,17 +17,14 @@ public class CartService {
     @Autowired
     private CartRepository cartRepo;
 
-    @Autowired
-    private UserRepository userRepo;
-
-    public boolean addAdToCart(Long id, String name) throws JSONException {
+    public boolean addAdToCart(Long id, String email) throws JSONException {
         // provera da li user sa name postoji
 
-        User user = userRepo.findByEmail(name);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return false;
 
-        Optional<Cart> cart = cartRepo.findById(user.getCart());
+        Optional<Cart> cart = cartRepo.findByUserId(userId);
         if (!cart.isPresent())
             return false;
 
@@ -45,14 +40,14 @@ public class CartService {
         return true;
     }
 
-    public boolean deleteAdToCart(Long id, String name) throws JSONException {
+    public boolean deleteAdToCart(Long id, String email) throws JSONException {
         // provera da li user sa name postoji
 
-        User user = userRepo.findByEmail(name);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return false;
 
-        Optional<Cart> cart = cartRepo.findById(user.getCart());
+        Optional<Cart> cart = cartRepo.findByUserId(userId);
         if (!cart.isPresent())
             return false;
 
@@ -67,14 +62,14 @@ public class CartService {
         return true;
     }
 
-    public ArrayList<AdDTO> getAllAds(String name) {
+    public ArrayList<AdDTO> getAllAds(String email) {
         // provera da li user sa name postoji
         ArrayList<AdDTO> list = new ArrayList<>();
-        User user = userRepo.findByEmail(name);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return list;
 
-        Optional<Cart> cart = cartRepo.findById(user.getCart());
+        Optional<Cart> cart = cartRepo.findByUserId(userId);
         if (!cart.isPresent())
             return list;
 

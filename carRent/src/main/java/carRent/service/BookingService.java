@@ -3,13 +3,11 @@ package carRent.service;
 import carRent.model.Booking;
 import carRent.model.Bundle;
 import carRent.model.RequestState;
-import carRent.model.User;
 import carRent.model.dto.AdDTO;
 import carRent.model.dto.BookDTO;
 import carRent.model.dto.BookingDTO;
 import carRent.model.dto.BundleDTO;
 import carRent.repository.BookingRepository;
-import carRent.repository.UserRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,14 +27,11 @@ public class BookingService {
     @Autowired
     private BookingRepository bookingRepo;
 
-    @Autowired
-    private UserRepository userRepo;
-
-    public boolean createBookingRequest(BundleDTO bundleDTO, String name) throws JSONException {
+    public boolean createBookingRequest(BundleDTO bundleDTO, String email) throws JSONException {
 
         // provera da li user sa name postoji
-        User user = userRepo.findByEmail(name);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return false;
         Bundle bundle = new Bundle();
 
@@ -59,7 +54,7 @@ public class BookingService {
                 if (ad == null)
                     return false;
 
-                Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PENDING, bookDTO.getPlace(), LocalDateTime.now(), ad.getId(), user.getId());
+                Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PENDING, bookDTO.getPlace(), LocalDateTime.now(), ad.getId(), userId);
                 bundle.getBookings().add(booking);
 
                 bookingRepo.save(booking);
@@ -96,7 +91,7 @@ public class BookingService {
             if (ad == null)
                 return false;
 
-            Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PENDING, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), ad.getId(), user.getId());
+            Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PENDING, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), ad.getId(), userId);
             bundle.getBookings().add(booking);
             bookingRepo.save(booking);
 
@@ -120,17 +115,17 @@ public class BookingService {
         return true;
     }
 
-    public boolean reserveBookingRequest(BundleDTO bundleDTO, String name) throws JSONException {
+    public boolean reserveBookingRequest(BundleDTO bundleDTO, String email) throws JSONException {
         // provera da li user sa name postoji
-        User user = userRepo.findByEmail(name);
-        if (user == null || bundleDTO.getLoaner() == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null || bundleDTO.getLoaner() == null)
             return false;
 
         if (bundleDTO.getLoaner().equals(""))
             return false;
 
-        User loaner = userRepo.findByEmail(bundleDTO.getLoaner());
-        if (loaner == null)
+        Long loanerId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/" + bundleDTO.getLoaner(), Long.class);
+        if (loanerId == null)
             return false;
 
         Bundle bundle = new Bundle();
@@ -153,7 +148,7 @@ public class BookingService {
                 if (ad == null)
                     return false;
 
-                Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), ad.getId(), (long)-1);
+                Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), ad.getId(), (long) -1);
                 bundle.getBookings().add(booking);
                 bookingRepo.save(booking);
 
@@ -175,7 +170,7 @@ public class BookingService {
             if (ad == null)
                 return false;
 
-            Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PAID, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), ad.getId(), (long)-1);
+            Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PAID, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), ad.getId(), (long) -1);
             bundle.getBookings().add(booking);
             bookingRepo.save(booking);
 
@@ -194,11 +189,11 @@ public class BookingService {
         return true;
     }
 
-    public boolean acceptBookingRequest(Long id, String name) throws JSONException {
+    public boolean acceptBookingRequest(Long id, String email) throws JSONException {
 
         // provera da li user sa name postoji
-        User user = userRepo.findByEmail(name);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return false;
 
         Optional<Booking> booking = bookingRepo.findById(id);
@@ -231,15 +226,15 @@ public class BookingService {
         return true;
     }
 
-    public boolean cancelBookingRequest(Long id, String name) {
+    public boolean cancelBookingRequest(Long id, String email) {
 
         // provera da li user sa name postoji
-        User user = userRepo.findByEmail(name);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return false;
 
         Optional<Booking> booking = bookingRepo.findById(id);
-        if (!booking.isPresent() || booking.get().getState() != RequestState.RESERVED || user.getId() != booking.get().getLoaner())
+        if (!booking.isPresent() || booking.get().getState() != RequestState.RESERVED || userId != booking.get().getLoaner())
             return false;
 
         booking.get().setState(RequestState.CANCELED);
@@ -249,11 +244,11 @@ public class BookingService {
         return true;
     }
 
-    public boolean rejectBookingRequest(Long id, String name) throws JSONException {
+    public boolean rejectBookingRequest(Long id, String email) throws JSONException {
 
         // provera da li user sa name postoji, provera da li je ad userov
-        User user = userRepo.findByEmail(name);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return false;
 
         Optional<Booking> booking = bookingRepo.findById(id);
@@ -278,14 +273,14 @@ public class BookingService {
         return true;
     }
 
-    public ArrayList<BookingDTO> getAllBookingRequests(String name) {
+    public ArrayList<BookingDTO> getAllBookingRequests(String email) {
         // provera da li user sa name postoji
         ArrayList<BookingDTO> bookingDTOS = new ArrayList<>();
-        User user = userRepo.findByEmail(name);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return bookingDTOS;
 
-        ArrayList<Booking> bookings = bookingRepo.findAllByLoaner(user.getId());
+        ArrayList<Booking> bookings = bookingRepo.findAllByLoaner(userId);
         for (Booking booking : bookings) {
             BookingDTO dto = new BookingDTO(booking);
             bookingDTOS.add(dto);
@@ -296,10 +291,10 @@ public class BookingService {
     }
 
 
-    public boolean checkingBookingRequests(JSONObject jsonObject, String name) throws JSONException {
+    public boolean checkingBookingRequests(JSONObject jsonObject, String email) throws JSONException {
 
-        User user = userRepo.findByEmail(name);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return false;
 
         String adsIds = jsonObject.getString("array");
@@ -315,11 +310,11 @@ public class BookingService {
         return true;
     }
 
-    public boolean deleteCarsBookings(String id, String name) {
+    public boolean deleteCarsBookings(String id, String email) {
 
 
-        User user = userRepo.findByEmail(name);
-        if (user == null)
+        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        if (userId == null)
             return false;
 
         String[] str = id.split(";");

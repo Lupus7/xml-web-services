@@ -6,7 +6,6 @@ import CarsAdsApp.model.dto.CarDTO;
 import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.CarRepository;
 import CarsAdsApp.repository.ImageRepository;
-import CarsAdsApp.repository.UserRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +23,11 @@ public class CarService {
     AdRepository adRepository;
 
     @Autowired
-    UserRepository userRepository;
-    @Autowired
     ImageRepository imageRepository;
 
 
     //MEthod for creating new car in dataabse
-    public boolean CreateCar(CarDTO newCarDto) {
+    public boolean CreateCar(CarDTO newCarDto, String email) {
         if (newCarDto.getBrand() == null || newCarDto.getModel() == null || newCarDto.getFuel() == null || newCarDto.getCarClass() == null || newCarDto.getTransmission() == null) {
             return false;
         }
@@ -41,7 +38,7 @@ public class CarService {
         car.setChildrenSeats(newCarDto.getChildrenSeats());
         car.setDescription(newCarDto.getDescription());
         car.setColDamProtection(newCarDto.isColDamProtection());
-        car.setOwner("user");
+        car.setOwner(email);
         car.setBrand(newCarDto.getBrand());
         car.setModel(newCarDto.getModel());
         car.setCarClass(newCarDto.getCarClass());
@@ -116,13 +113,9 @@ public class CarService {
         return true;
     }
 
-    public List<CarDTO> getClientCars() {
+    public List<CarDTO> getClientCars(String email) {
         List<CarDTO> carDTOS = new ArrayList<>();
-        User user = userRepository.findByEmail("user");
-        if (user == null)
-            return carDTOS;
-
-        List<Car> cars = carRepository.findAllByOwner("user");
+        List<Car> cars = carRepository.findAllByOwner(email);
 
         for (Car car : cars){
             List<Image> images = imageRepository.findAllByCarId(car.getId());
