@@ -1,37 +1,41 @@
 package carRent.security;
 
-import carRent.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class UserPrincipal implements UserDetails {
-    private User user;
+    private List<String> header;
 
-    public UserPrincipal(User user) {
-        this.user = user;
+    public UserPrincipal(String header) {
+        this.header = Arrays.asList(header.split(";"));
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays
-                .stream(user.getAuthorities().split(";"))
+        List<String> authorities = new ArrayList<>(header);
+        authorities.remove(0);
+
+        return authorities
+                .stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return "";
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return header.get(0);
     }
 
     @Override
@@ -51,6 +55,6 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return !user.getBlocked() && user.getApproved();
+        return true;
     }
 }
