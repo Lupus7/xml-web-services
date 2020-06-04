@@ -1,6 +1,5 @@
 package CarsAdsApp.controller;
 
-import CarsAdsApp.controller.dto.NewCarDTO;
 import CarsAdsApp.controller.dto.UpdateCarDTO;
 import CarsAdsApp.model.Car;
 import CarsAdsApp.model.dto.CarDTO;
@@ -25,7 +24,7 @@ public class CarController {
     CarService carService;
 
     @PostMapping("/cars")
-    public ResponseEntity<String> postCar(@RequestBody NewCarDTO newCarDto){
+    public ResponseEntity<String> postCar(@RequestBody CarDTO newCarDto){
         if(carService.CreateCar(newCarDto))
             return ResponseEntity.ok("Successfully created");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

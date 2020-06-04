@@ -1,6 +1,5 @@
 package CarsAdsApp.service;
 
-import CarsAdsApp.controller.dto.NewCarDTO;
 import CarsAdsApp.controller.dto.UpdateCarDTO;
 import CarsAdsApp.model.*;
 import CarsAdsApp.model.dto.CarDTO;
@@ -31,13 +30,13 @@ public class CarService {
 
 
     //MEthod for creating new car in dataabse
-    public boolean CreateCar(NewCarDTO newCarDto) {
+    public boolean CreateCar(CarDTO newCarDto) {
         if (newCarDto.getBrand() == null || newCarDto.getModel() == null || newCarDto.getFuel() == null || newCarDto.getCarClass() == null || newCarDto.getTransmission() == null) {
             return false;
         }
         ObjectFactory factory = new ObjectFactory();
         Car car = factory.createCar();
-        car.setAllowedMileage(newCarDto.getAllowedMilleage());
+        car.setAllowedMileage(newCarDto.getAllowedMileage());
         car.setTotalMileage(newCarDto.getTotalMileage());
         car.setChildrenSeats(newCarDto.getChildrenSeats());
         car.setDescription(newCarDto.getDescription());
@@ -125,8 +124,15 @@ public class CarService {
 
         List<Car> cars = carRepository.findAllByOwner("user");
 
-        for (Car car : cars)
-            carDTOS.add(new CarDTO(car));
+        for (Car car : cars){
+            List<Image> images = imageRepository.findAllByCarId(car.getId());
+            CarDTO carDTO = new CarDTO(car);
+            for(Image image: images){
+                carDTO.getImages().add(image.getEncoded64Image());
+            }
+            carDTOS.add(carDTO);
+        }
+
 
         return carDTOS;
     }
