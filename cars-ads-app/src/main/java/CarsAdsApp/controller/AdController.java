@@ -94,4 +94,10 @@ public class AdController {
         List<Ad> ads = adService.getAll();
         return ResponseEntity.ok(ads);
     }
+
+    @GetMapping(value = "/api/ad/{id}")
+    public ResponseEntity<AdClientDTO> getAd(@PathVariable("id") Long id){
+        AdClientDTO ad = adService.getAdById(id);
+        return ResponseEntity.ok(ad);
+    }
 }

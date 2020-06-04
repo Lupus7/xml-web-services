@@ -29,7 +29,7 @@
                                 <b-carousel-slide 
                                     img-width="580"
                                     img-height="480"
-                                    img-src="https://picsum.photos/580/480/?image=52"
+                                    v-bind:img-src="image"
                                 ></b-carousel-slide>
                             </div>
                         </template>

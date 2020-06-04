@@ -11,7 +11,7 @@ public class Image {
     @Column(name = "encoded64_image")
     private String Encoded64Image;
     @Column(name = "car_id")
-    private Long CarId;
+    private Long carId;
 
     public Image(){
 
@@ -19,7 +19,7 @@ public class Image {
 
     public Image(String encoded64Image, Long carId) {
         Encoded64Image = encoded64Image;
-        CarId = carId;
+        this.carId = carId;
     }
 
     public Integer getId() {
@@ -39,10 +39,10 @@ public class Image {
     }
 
     public Long getCarId() {
-        return CarId;
+        return carId;
     }
 
     public void setCarId(Long carId) {
-        CarId = carId;
+        carId = carId;
     }
 }
