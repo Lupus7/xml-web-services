@@ -1,9 +1,5 @@
 package carRent.security;
 
-import carRent.model.User;
-import carRent.repository.UserRepository;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,45 +13,30 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
-    private UserRepository userRepository;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
-        this.userRepository = userRepository;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String header = request.getHeader(JwtProperties.HEADER);
-
-        if (header == null || !header.startsWith(JwtProperties.TOKEN_PREFIX)) {
+        String header = request.getHeader("Authorization");
+        if (header == null) {
             chain.doFilter(request, response);
             return;
         }
 
-        Authentication authentication = getUsernamePasswordAuthentication(request);
+        Authentication authentication = getUsernamePasswordAuthentication(header);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         chain.doFilter(request, response);
     }
 
-    private Authentication getUsernamePasswordAuthentication(HttpServletRequest request) {
-        String token = request.getHeader(JwtProperties.HEADER);
-
-        if (token != null) {
-            String username = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
-                    .build()
-                    .verify(token.replace(JwtProperties.TOKEN_PREFIX, ""))
-                    .getSubject();
-
-            System.out.println(username);
-            if (username != null) {
-                User user = userRepository.findByEmail(username);
-                UserPrincipal principal = new UserPrincipal(user);
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, principal.getAuthorities());
-                return authenticationToken;
-            }
-            return null;
+    private Authentication getUsernamePasswordAuthentication(String header) {
+        if (header != null) {
+            UserPrincipal principal = new UserPrincipal(header);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(principal.getUsername(), null, principal.getAuthorities());
+            return authenticationToken;
         }
         return null;
     }

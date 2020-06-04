@@ -151,7 +151,7 @@ export default {
         login() {
             if (this.email.length > 0 && this.password.length > 0) {
                 axios
-                    .post("/authentication/login", {
+                    .post("/user/login", {
                         username: this.email,
                         password: this.password
                     })

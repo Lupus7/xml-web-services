@@ -41,7 +41,7 @@ public class CartController {
 
     // Svi oglasi iz carta
     @GetMapping(value = "/api/cart", produces = "application/json", consumes = "application/json")
-    //@PreAuthorize("hasAuthority('READ_CART')")
+    @PreAuthorize("hasAuthority('READ_CART')")
     public ResponseEntity<ArrayList<AdDTO>> getCart(Principal user) throws JSONException {
 
         return ResponseEntity.ok((ArrayList<AdDTO>) cartService.getAllAds(user.getName()));
