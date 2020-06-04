@@ -2,11 +2,13 @@ package CarsAdsApp.model.dto;
 
 import CarsAdsApp.model.Ad;
 import CarsAdsApp.model.Car;
+import CarsAdsApp.model.Image;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AdClientDTO {
 
@@ -29,6 +31,11 @@ public class AdClientDTO {
     private boolean active;
 
     public AdClientDTO() {
+    }
+
+    public AdClientDTO(Ad ad, Car car, List<Image> images) {
+        this(ad, car);
+        this.images = images.stream().map(Image::getEncoded64Image).collect(Collectors.toList());
     }
 
     public AdClientDTO(Ad ad, Car car) {

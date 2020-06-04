@@ -2,11 +2,13 @@ package CarsAdsApp.service;
 
 import CarsAdsApp.model.Ad;
 import CarsAdsApp.model.Car;
+import CarsAdsApp.model.Image;
 import CarsAdsApp.model.User;
 import CarsAdsApp.model.dto.AdClientDTO;
 import CarsAdsApp.model.dto.AdDTO;
 import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.CarRepository;
+import CarsAdsApp.repository.ImageRepository;
 import CarsAdsApp.repository.UserRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +33,9 @@ public class AdService {
 
     @Autowired
     private CarRepository carRepo;
+
+    @Autowired
+    private ImageRepository imageRepo;
 
     public int createAd(AdDTO adDTO) {
         // provera da li user sa name postoji, provera da li je ad userov
@@ -163,11 +168,28 @@ public class AdService {
         for (Ad ad : ads) {
             Optional<Car> car = carRepo.findById(ad.getCarId());
             if (car.isPresent()) {
-                AdClientDTO adClientDTO = new AdClientDTO(ad, car.get());
+                List<Image> images = imageRepo.findAllByCarId(car.get().getId());
+                if (images == null)
+                    images = new ArrayList<>();
+                AdClientDTO adClientDTO = new AdClientDTO(ad, car.get(), images);
                 adClientDTOS.add(adClientDTO);
             }
         }
 
         return adClientDTOS;
+    }
+
+    public AdClientDTO getAdById(Long id) {
+        Optional<Ad> ad = adRepo.findById(id);
+        if (!ad.isPresent())
+            return null;
+        Optional<Car> car = carRepo.findById(ad.get().getCarId());
+        if (!car.isPresent())
+            return null;
+        List<Image> images = imageRepo.findAllByCarId(car.get().getId());
+        if (images == null)
+            return null;
+        // TODO: ADD ADVERTIZER
+        return new AdClientDTO(ad.get(), car.get(), images);
     }
 }

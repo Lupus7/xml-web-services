@@ -12,9 +12,9 @@
                     @sliding-start="onSlideStart"
                     @sliding-end="onSlideEnd"
                 >
-                    <span v-if="info.Images.length > 0">
+                    <span v-if="info.images.length > 0">
                         <b-carousel-slide
-                            v-for="(item, index) in info.Images"
+                            v-for="(item, index) in info.images"
                             :key="index"
                             v-bind:img-src="item"
                             img-alt="Image unavailable"
@@ -36,9 +36,11 @@
             <div class="col-6">
                 <div class="ad-title">
                     <h3 class="car-price float-left">
-                        {{ info.Brand }} {{ info.Model }}
+                        {{ info.brand }} {{ info.model }}
                     </h3>
-                    <h3 class="car-price float-right">{{ info.Price }} €</h3>
+                    <h3 class="car-price float-right">
+                        <!-- {{ info.price }}  -->0 €
+                    </h3>
                 </div>
                 <h4 class="ad-info">
                     <b-icon
@@ -46,7 +48,8 @@
                         aria-hidden="true"
                         variant="light"
                     ></b-icon>
-                    Advertizer: {{ info.Advertiser }}
+                    Advertizer: anonymus
+                    <!-- TODO: Advertizer: {{ info.advertiser }} -->
                 </h4>
                 <h4 class="ad-info">
                     <b-icon
@@ -54,13 +57,15 @@
                         aria-hidden="true"
                         variant="light"
                     ></b-icon>
-                    Place: {{ info.Place }}
+                    Place: {{ info.place }}
                 </h4>
                 <hr />
-                <h4 class="ad-info">Class: {{ info.Class }}</h4>
-                <h4 class="ad-info">Fuel: {{ info.Fuel }}</h4>
-                <h4 class="ad-info">Transmission: {{ info.Transmission }}</h4>
-                <h4 class="ad-info">Children seats: {{ info.SeatsNumber }}</h4>
+                <h4 class="ad-info">Class: {{ info.carClass }}</h4>
+                <h4 class="ad-info">Fuel: {{ info.fuel }}</h4>
+                <h4 class="ad-info">Transmission: {{ info.transmission }}</h4>
+                <h4 class="ad-info">
+                    Children seats: {{ info.childrenSeats }}
+                </h4>
                 <hr />
                 <h4>
                     <b-icon
@@ -68,7 +73,7 @@
                         aria-hidden="true"
                         variant="light"
                     />
-                    Start Date: {{ info.StartDate }}
+                    Start Date: {{ info.startDate }}
                 </h4>
                 <h4>
                     <b-icon
@@ -76,7 +81,7 @@
                         aria-hidden="true"
                         variant="light"
                     />
-                    End Date: {{ info.EndDate }}
+                    End Date: {{ info.endDate }}
                 </h4>
                 <hr />
                 <h6 v-if="show">Log in to rent this car...</h6>
@@ -115,17 +120,18 @@ export default {
     props: ["id"],
     methods: {
         fill() {
-            let url = "/cars/api/ads/" + this.id;
+            let url = "/cars-ads/api/ad/" + this.id;
             axios.get(url).then((response) => {
                 this.info = response.data;
             });
         },
         bookCar() {
-            axios.post("/rent/api/booking", { // TODO: add date selector for start and end date
-                adId: this.info.Id,
-                startDate: this.info.StartDate + " 00:00",
-                endDate: this.info.EndDate + " 00:00",
-                place: this.info.Place,
+            axios.post("/rent/api/booking", {
+                // TODO: add date selector for start and end date
+                adId: this.info.adId,
+                startDate: this.info.startDate + " 00:00",
+                endDate: this.info.endDate + " 00:00",
+                place: this.info.place,
             });
         },
         addToCart() {},
