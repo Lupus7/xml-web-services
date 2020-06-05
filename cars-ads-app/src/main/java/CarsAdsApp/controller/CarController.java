@@ -69,7 +69,7 @@ public class CarController {
 
     // Clients cars
     @GetMapping("/cars/client")
-    @PreAuthorize("hasAuthority('READ_CODEBOOK')")
+    @PreAuthorize("hasAuthority('READ_CLIENT_CARS')")
     public ResponseEntity<List<CarDTO>>getClientCars(Principal user){
         return ResponseEntity.ok(carService.getClientCars(user.getName()));
     }

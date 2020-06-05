@@ -10,7 +10,6 @@ import team10.codebook.services.CodebookService;
 import java.util.List;
 
 @RestController
-@RequestMapping("codebook")
 public class CodebookController {
     @Autowired
     CodebookService codebookService;

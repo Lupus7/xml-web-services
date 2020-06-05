@@ -71,7 +71,7 @@ public class BookingController {
     }
 
     // Odbijanje booking requesta kod brisanja car-a
-    @DeleteMapping(value = "/api/booking/checking/remove/{id", produces = "application/json", consumes = "application/json")
+    @DeleteMapping(value = "/api/booking/checking/remove/{id}", produces = "application/json", consumes = "application/json")
     public ResponseEntity<String> deleteCarsBookings(@PathVariable(value = "id") String id, Principal user) throws JSONException {
 
         if (bookingService.deleteCarsBookings(id, user.getName()))

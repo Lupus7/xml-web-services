@@ -18,7 +18,7 @@ public class CartController {
     CartService cartService;
 
     // Oglas se dodaje u cart
-    @PutMapping(value = "/api/cart/{id}", produces = "application/json", consumes = "application/json")
+    @PutMapping(value = "/api/cart/{id}", produces = "application/json")
     @PreAuthorize("hasAuthority('UPDATE_CART')")
     public ResponseEntity<String> addAdToCart(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
