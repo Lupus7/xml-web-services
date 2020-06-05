@@ -3,6 +3,7 @@ package carRent.service;
 import carRent.model.Cart;
 import carRent.model.dto.AdClientDTO;
 import carRent.repository.CartRepository;
+import com.netflix.ribbon.proxy.annotation.Http;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -31,6 +32,11 @@ public class CartService {
         String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
         String carsAdsServiceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", email + ";MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
         Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return false;
@@ -39,10 +45,10 @@ public class CartService {
         if (!cart.isPresent())
             return false;
 
-        Boolean check = new RestTemplate().getForObject("http://" + carsAdsServiceIp + ":8080/ad/check/" + id,
-                Boolean.class);
+        ResponseEntity<Boolean> check = new RestTemplate().exchange("http://" + carsAdsServiceIp + ":8080/ad/check/" + id,
+                HttpMethod.GET, entity, Boolean.class, new Object());
 
-        if (check == null || !check)
+        if (check == null || check.getBody() == null || !check.getBody())
             return false;
 
         cart.get().getAds().add(id);
@@ -57,6 +63,11 @@ public class CartService {
         String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
         String carsAdsServiceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", email + ";MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
         Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return false;
@@ -65,10 +76,10 @@ public class CartService {
         if (!cart.isPresent())
             return false;
 
-        Boolean check = new RestTemplate().getForObject("http://" + carsAdsServiceIp + ":8080/ad/check/" + id,
-                Boolean.class);
+        ResponseEntity<Boolean> check = new RestTemplate().exchange("http://" + carsAdsServiceIp + ":8080/ad/check/" + id,
+                HttpMethod.GET, entity, Boolean.class, new Object());
 
-        if (check == null || !check)
+        if (check == null || check.getBody() == null | !check.getBody())
             return false;
 
         cart.get().getAds().remove(id);

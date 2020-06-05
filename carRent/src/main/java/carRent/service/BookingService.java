@@ -2,16 +2,22 @@ package carRent.service;
 
 import carRent.model.Booking;
 import carRent.model.Bundle;
+import carRent.model.Cart;
 import carRent.model.RequestState;
 import carRent.model.dto.BookDTO;
 import carRent.model.dto.BookingDTO;
 import carRent.model.dto.BundleDTO;
 import carRent.repository.BookingRepository;
+import com.netflix.ribbon.proxy.annotation.Http;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,6 +36,9 @@ public class BookingService {
     @Autowired
     private DiscoveryClient discoveryClient;
 
+    @Autowired
+    private CartService cartService;
+
     public boolean createBookingRequest(BundleDTO bundleDTO, String email) throws JSONException {
 
         String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
@@ -41,6 +50,10 @@ public class BookingService {
             return false;
         Bundle bundle = new Bundle();
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
 
         if (bundleDTO.getBooks().size() > 1) {
             for (BookDTO bookDTO : bundleDTO.getBooks()) {
@@ -54,10 +67,10 @@ public class BookingService {
                 if (bookDTO.getStartDate().isAfter(bookDTO.getEndDate()))
                     return false;
 
-                Boolean check = new RestTemplate().getForObject("http://" + carsAdsServiceIp + ":8080/ad/check/" + bookDTO.getAdId(),
-                        Boolean.class);
+                ResponseEntity<Boolean> check = new RestTemplate().exchange("http://" + carsAdsServiceIp + ":8080/ad/check/" + bookDTO.getAdId(), HttpMethod.GET, entity,
+                        Boolean.class, new Object());
 
-                if (check == null || !check)
+                if (check == null || check.getBody() == null || !check.getBody())
                     return false;
 
                 Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PENDING, bookDTO.getPlace(), LocalDateTime.now(), bookDTO.getAdId(), userId);
@@ -91,10 +104,10 @@ public class BookingService {
             if (bundleDTO.getBooks().get(0).getStartDate().isAfter(bundleDTO.getBooks().get(0).getEndDate()))
                 return false;
 
-            Boolean check = new RestTemplate().getForObject("http://" + carsAdsServiceIp + ":8080/ad/check/" + bundleDTO.getBooks().get(0).getAdId(),
-                    Boolean.class);
+            ResponseEntity<Boolean> check = new RestTemplate().exchange("http://" + carsAdsServiceIp + ":8080/ad/check/" + bundleDTO.getBooks().get(0).getAdId(), HttpMethod.GET, entity,
+                    Boolean.class, new Object());
 
-            if (check == null || !check)
+            if (check == null || check.getBody() == null || !check.getBody())
                 return false;
 
             Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PENDING, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), bundleDTO.getBooks().get(0).getAdId(), userId);
@@ -118,6 +131,14 @@ public class BookingService {
 
         }
 
+        bundleDTO.getBooks().forEach(book -> {
+            try {
+                cartService.deleteAdToCart(book.getAdId(), email);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
+
         return true;
     }
 
@@ -137,6 +158,11 @@ public class BookingService {
         if (loanerId == null)
             return false;
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
         Bundle bundle = new Bundle();
         if (bundleDTO.getBooks().size() > 1) {
             for (BookDTO bookDTO : bundleDTO.getBooks()) {
@@ -151,10 +177,10 @@ public class BookingService {
                     return false;
 
 
-                Boolean check = new RestTemplate().getForObject("http://" + carsAdsServiceIp + ":8080/ad/check/" + bookDTO.getAdId(),
-                        Boolean.class);
+                ResponseEntity<Boolean> check = new RestTemplate().exchange("http://" + carsAdsServiceIp + ":8080/ad/check/" + bookDTO.getAdId(),
+                        HttpMethod.GET, entity, Boolean.class, new Object());
 
-                if (check == null || !check)
+                if (check == null || check.getBody() == null || !check.getBody())
                     return false;
 
                 Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), bookDTO.getAdId(), (long) -1);
@@ -173,10 +199,10 @@ public class BookingService {
             if (bundleDTO.getBooks().get(0).getStartDate().isAfter(bundleDTO.getBooks().get(0).getEndDate()))
                 return false;
 
-            Boolean check = new RestTemplate().getForObject("http://" + carsAdsServiceIp + ":8080/ad/check/" + bundleDTO.getBooks().get(0).getAdId(),
-                    Boolean.class);
+            ResponseEntity<Boolean> check = new RestTemplate().exchange("http://" + carsAdsServiceIp + ":8080/ad/check/" + bundleDTO.getBooks().get(0).getAdId(),
+                    HttpMethod.GET, entity, Boolean.class, new Object());
 
-            if (check == null || !check)
+            if (check == null || check.getBody() == null || !check.getBody())
                 return false;
 
             Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PAID, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), bundleDTO.getBooks().get(0).getAdId(), (long) -1);
@@ -277,7 +303,12 @@ public class BookingService {
         JSONObject object = new JSONObject();
         object.put("array", array);
 
-        Boolean check = new RestTemplate().postForObject("http://" + carsAdsServiceIp + ":8080/api/ad/check", object, Boolean.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+
+        HttpEntity<JSONObject> entity = new HttpEntity<>(object, headers);
+
+        Boolean check = new RestTemplate().postForObject("http://" + carsAdsServiceIp + ":8080/api/ad/check", entity, Boolean.class);
 
         if (check == null || !check)
             return false;

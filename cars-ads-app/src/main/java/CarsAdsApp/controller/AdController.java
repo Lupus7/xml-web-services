@@ -22,7 +22,7 @@ public class AdController {
 
     // Kreiranje ad-a
     @PostMapping(value = "/api/ad", produces = "application/json", consumes = "application/json")
-    //@PreAuthorize("hasAuthority('CREATE_AD')")
+    @PreAuthorize("hasAuthority('CREATE_AD')")
     public ResponseEntity<String> createAd(@RequestBody AdDTO adDTO, Principal user) throws JSONException {
         int response = adService.createAd(adDTO, user.getName());
         if (response == 200)
@@ -46,7 +46,7 @@ public class AdController {
 
     // Activate ad-a
     @PutMapping(value = "/api/ad/activate/{id}")
-    //@PreAuthorize("hasAuthority('ACTIVATE_AD')")
+    @PreAuthorize("hasAuthority('ACTIVATE_AD')")
     public ResponseEntity<String> activateAd(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
         int response = adService.activateAd(id, user.getName());
         if (response == 200)
@@ -60,7 +60,7 @@ public class AdController {
 
     // Deactivate ad-a
     @DeleteMapping(value = "/api/ad/deactivate/{id}")
-    //@PreAuthorize("hasAuthority('DEACTIVATE_AD')")
+    @PreAuthorize("hasAuthority('DEACTIVATE_AD')")
     public ResponseEntity<String> deactivateAd(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
         if (adService.deactivateAd(id, user.getName()))
@@ -73,7 +73,7 @@ public class AdController {
 
     // Izmena ad-a
     @PutMapping(value = "/api/ad/{id}", produces = "application/json", consumes = "application/json")
-    //@PreAuthorize("hasAuthority('EDIT_AD')")
+    @PreAuthorize("hasAuthority('EDIT_AD')")
     public ResponseEntity<String> editAd(@PathVariable(value = "id") Long id, @RequestBody AdDTO adDTO, Principal user) throws JSONException {
 
         if (adService.editAd(id, adDTO,user.getName()))
@@ -85,19 +85,21 @@ public class AdController {
 
     // Svi adovi clienta
     @GetMapping(value = "/api/ad/client")
+    @PreAuthorize("hasAuthority('READ_CLIENT_ADS')")
     public ResponseEntity<List<AdClientDTO>> getClientAds(Principal user){
         List<AdClientDTO> ads = adService.getClientAds(user.getName());
         return ResponseEntity.ok(ads);
     }
 
     @GetMapping(value = "/api/ad")
+    @PreAuthorize("hasAuthority('READ_ADS')")
     public ResponseEntity<List<Ad>> getAll(){
         List<Ad> ads = adService.getAll();
         return ResponseEntity.ok(ads);
     }
 
     @GetMapping(value = "/api/ad/{id}")
-    @PreAuthorize("hasAuthority('MASTER')")
+    @PreAuthorize("hasAuthority('READ_CLIENT_ADS') or hasAuthority('MASTER')")
     public ResponseEntity<AdClientDTO> getAd(@PathVariable("id") Long id){
         AdClientDTO ad = adService.getAdById(id);
         return ResponseEntity.ok(ad);

@@ -1,6 +1,7 @@
 package carRent.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,6 +16,7 @@ public class Bundle {
     private List<Booking> bookings;
 
     public Bundle() {
+        bookings = new ArrayList<>();
     }
 
     public Long getId() {

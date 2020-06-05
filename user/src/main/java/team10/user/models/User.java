@@ -40,16 +40,20 @@ public class User {
     @Column(name = "approved", unique = false, nullable = false)
     private Boolean approved;
 
-    @Column(name = "authorities", unique = false, nullable = false)
+    @Column(name = "authorities", unique = false, nullable = false, length = 100000)
     private String authorities;
 
-    @Column(name = "cart", unique = true, nullable = false)
+    @Column(name = "cart", unique = true, nullable = true)
     private Long cart;
 
     @ElementCollection
+    @CollectionTable(name = "user_bookings", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "booking_id")
     private List<Long> bookings;
 
     @ElementCollection
+    @CollectionTable(name = "user_cars", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "car_id")
     private List<Long> cars;
 
     public User() {

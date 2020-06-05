@@ -139,10 +139,15 @@ export default {
         bookCar() {
             axios.post("/rent/api/booking", {
                 // TODO: add date selector for start and end date
-                adId: this.info.adId,
-                startDate: this.info.startDate + " 00:00",
-                endDate: this.info.endDate + " 00:00",
-                place: this.info.place,
+                loaner: this.info.loaner,
+                books: [
+                    {
+                        adId: this.info.adId,
+                        startDate: this.info.startDate,
+                        endDate: this.info.endDate,
+                        place: this.info.place,
+                    },
+                ],
             });
         },
     },
