@@ -29,7 +29,6 @@ const router = new Router({
             beforeEnter: authetication
 
         },
-     
         {
             path: "/ad/:id",
             name: "Ad",
