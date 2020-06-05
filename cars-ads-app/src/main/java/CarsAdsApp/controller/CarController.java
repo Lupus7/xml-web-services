@@ -24,8 +24,8 @@ public class CarController {
     CarService carService;
 
     @PostMapping("/cars")
-    public ResponseEntity<String> postCar(@RequestBody CarDTO newCarDto){
-        if(carService.CreateCar(newCarDto))
+    public ResponseEntity<String> postCar(@RequestBody CarDTO newCarDto, Principal user){
+        if(carService.CreateCar(newCarDto, user.getName()))
             return ResponseEntity.ok("Successfully created");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
@@ -63,8 +63,8 @@ public class CarController {
 
     // Clients cars
     @GetMapping("/cars/client")
-    public ResponseEntity<List<CarDTO>>getClientCars(){
-        return ResponseEntity.ok(carService.getClientCars());
+    public ResponseEntity<List<CarDTO>>getClientCars(Principal user){
+        return ResponseEntity.ok(carService.getClientCars(user.getName()));
     }
 
     @GetMapping("/cars/brands/{brand}")

@@ -6,10 +6,10 @@ import CarsAdsApp.model.dto.CarDTO;
 import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.CarRepository;
 import CarsAdsApp.repository.ImageRepository;
-import CarsAdsApp.repository.UserRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,13 +24,14 @@ public class CarService {
     AdRepository adRepository;
 
     @Autowired
-    UserRepository userRepository;
-    @Autowired
     ImageRepository imageRepository;
+
+    @Autowired
+    DiscoveryClient discoveryClient;
 
 
     //MEthod for creating new car in dataabse
-    public boolean CreateCar(CarDTO newCarDto) {
+    public boolean CreateCar(CarDTO newCarDto, String email) {
         if (newCarDto.getBrand() == null || newCarDto.getModel() == null || newCarDto.getFuel() == null || newCarDto.getCarClass() == null || newCarDto.getTransmission() == null) {
             return false;
         }
@@ -41,7 +42,7 @@ public class CarService {
         car.setChildrenSeats(newCarDto.getChildrenSeats());
         car.setDescription(newCarDto.getDescription());
         car.setColDamProtection(newCarDto.isColDamProtection());
-        car.setOwner("user");
+        car.setOwner(email);
         car.setBrand(newCarDto.getBrand());
         car.setModel(newCarDto.getModel());
         car.setCarClass(newCarDto.getCarClass());
@@ -100,7 +101,9 @@ public class CarService {
 
         JSONObject object = new JSONObject();
         object.put("array", adsIds);
-        Boolean check = new RestTemplate().postForObject("http://localhost:8080/rent/api/booking/checking", object, Boolean.class);
+
+        String rentServiceIp = discoveryClient.getInstances("rent").get(0).getHost();
+        Boolean check = new RestTemplate().postForObject("http://" + rentServiceIp + ":8080/api/booking/checking", object, Boolean.class);
 
         if (!check)
             return false;
@@ -108,7 +111,7 @@ public class CarService {
         for (Ad ad : ads) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("id", adsIds);
-            new RestTemplate().delete("http://localhost:8080/rent/api/booking/checking/remove/{id}", params);
+            new RestTemplate().delete("http://" + rentServiceIp + ":8080/api/booking/checking/remove/{id}", params);
             adRepository.delete(ad);
         }
 
@@ -116,13 +119,9 @@ public class CarService {
         return true;
     }
 
-    public List<CarDTO> getClientCars() {
+    public List<CarDTO> getClientCars(String email) {
         List<CarDTO> carDTOS = new ArrayList<>();
-        User user = userRepository.findByEmail("user");
-        if (user == null)
-            return carDTOS;
-
-        List<Car> cars = carRepository.findAllByOwner("user");
+        List<Car> cars = carRepository.findAllByOwner(email);
 
         for (Car car : cars){
             List<Image> images = imageRepository.findAllByCarId(car.getId());

@@ -18,19 +18,18 @@
                         :interval=0
                         indicators
                         background="#ababab"
-                        img-width="580"
-                        img-height="480"
-                        style="text-shadow: 1px 1px 2px #333;"
-                        @sliding-start="onSlideStart"
-                        @sliding-end="onSlideEnd"
+                        v-bind:width="350"
+                        v-bind:img-height="300"
+                        style="text-shadow: 1px 1px 2px #333"
+                     
                     >
                         <template>
                             <div v-for="image in car.images" :key="image.id">
                                 <b-carousel-slide 
-                                    img-width="580"
-                                    img-height="480"
+                                    v-bind:width="350"
+                                    v-bind:height="300"
                                     v-bind:img-src="image"
-                                ></b-carousel-slide>
+                                > </b-carousel-slide>
                             </div>
                         </template>
 

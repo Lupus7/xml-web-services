@@ -309,7 +309,7 @@ export default {
                     transmission: this.transmissionF,
                     carClass: this.classF,
                     totalMileage: this.total_mileageF,
-                    allowedMilleage: this.planned_mileageF,
+                    allowedMileage: this.planned_mileageF,
                     colDamProtection: this.collision_damageF,
                     childrenSeats: this.seats_numberF,
                     description: this.descriptionF,

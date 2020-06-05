@@ -57,7 +57,7 @@ public class ClientService {
 
     public boolean delete(String email) {
         User user = userRepository.findByEmail(email);
-        if(user == null)
+        if (user == null)
             return false;
         //TODO 1: close all bookings
 
@@ -111,5 +111,13 @@ public class ClientService {
 
         //cartRepository.save(user.getCart());
         userRepository.save(user);
+    }
+
+    public Long getUserId(String email) {
+
+        User user = userRepository.findByEmail(email);
+        if (user != null)
+            return user.getId();
+        return null;
     }
 }

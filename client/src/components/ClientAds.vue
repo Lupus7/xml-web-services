@@ -21,8 +21,7 @@
                         img-width="580"
                         img-height="480"
                         style="text-shadow: 1px 1px 2px #333;"
-                        @sliding-start="onSlideStart"
-                        @sliding-end="onSlideEnd"
+                     
                     >
                         <template>
                             <div v-for="image in ad.images" :key="image.id">

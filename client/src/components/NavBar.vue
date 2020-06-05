@@ -43,6 +43,7 @@
                         </b-link>
                         
                         <b-link
+                            v-if="!this.show"
                             class="nav-link active"
                             type="button"
                             v-on:click="profile()"
