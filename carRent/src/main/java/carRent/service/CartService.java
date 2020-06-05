@@ -6,6 +6,10 @@ import carRent.repository.CartRepository;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -78,6 +82,11 @@ public class CartService {
         String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
         String carsAdsServiceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
         ArrayList<AdClientDTO> list = new ArrayList<>();
         Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
@@ -88,10 +97,10 @@ public class CartService {
             return list;
 
         for (Long id : cart.get().getAds()) {
-            AdClientDTO ad = new RestTemplate().getForObject("http://" + carsAdsServiceIp + ":8080/api/ad/" + id,
-                    AdClientDTO.class);
-            if (ad != null)
-                list.add(ad);
+            ResponseEntity<AdClientDTO> ad = new RestTemplate().exchange("http://" + carsAdsServiceIp + ":8080/api/ad/" + id,
+                    HttpMethod.GET, entity, AdClientDTO.class, new Object());
+            if (ad != null && ad.getBody() != null)
+                list.add(ad.getBody());
 
         }
 

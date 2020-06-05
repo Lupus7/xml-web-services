@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -96,6 +97,7 @@ public class AdController {
     }
 
     @GetMapping(value = "/api/ad/{id}")
+    @PreAuthorize("hasAuthority('MASTER')")
     public ResponseEntity<AdClientDTO> getAd(@PathVariable("id") Long id){
         AdClientDTO ad = adService.getAdById(id);
         return ResponseEntity.ok(ad);
