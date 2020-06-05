@@ -8,7 +8,7 @@ public class Image {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "image_id_seq")
     private Integer Id;
-    @Column(name = "encoded64_image")
+    @Column(name = "encoded64_image", length = 100000)
     private String Encoded64Image;
     @Column(name = "car_id")
     private Long carId;

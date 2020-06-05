@@ -1,7 +1,6 @@
 package carRent.controller;
 
 import carRent.model.dto.AdClientDTO;
-import carRent.model.dto.AdDTO;
 import carRent.service.CartService;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,7 @@ public class CartController {
 
     // Oglas se dodaje u cart
     @PutMapping(value = "/api/cart/{id}", produces = "application/json", consumes = "application/json")
-    //@PreAuthorize("hasAuthority('UPDATE_CART')")
+    @PreAuthorize("hasAuthority('UPDATE_CART')")
     public ResponseEntity<String> addAdToCart(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
         if (cartService.addAdToCart(id, user.getName()))
@@ -31,7 +30,7 @@ public class CartController {
 
     // Oglas se brise iz carta
     @DeleteMapping(value = "/api/cart/{id}", produces = "application/json", consumes = "application/json")
-    //@PreAuthorize("hasAuthority('DELETE_FROM_CART')")
+    @PreAuthorize("hasAuthority('DELETE_FROM_CART')")
     public ResponseEntity<String> deleteAdToCart(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
         if (cartService.deleteAdToCart(id, user.getName()))
