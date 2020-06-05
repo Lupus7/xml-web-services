@@ -93,6 +93,8 @@ func main() {
 	e.POST("/api/ads/", carHandler.SearchAds)
 	e.GET("/api/ads/:id", carHandler.GetAdById)
 
+	//CARS
+	e.GET("/api/cars", carHandler.FindAllCars)
 	//   SPECIFICATIONS
 	e.GET("/api/brands", carHandler.AllBrands)
 	e.GET("/api/models", carHandler.AllModels)

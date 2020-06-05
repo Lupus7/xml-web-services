@@ -11,7 +11,9 @@ type Ad struct {
 	StartDate time.Time `xml:"xml-web-services-cars startDate"`
 	EndDate   time.Time `xml:"xml-web-services-cars endDate"`
 	Place     string    `xml:"xml-web-services-cars place"`
-	CarID     int64     `xml:"xml-web-services-cars carID"`
+	CarId     int64     `xml:"xml-web-services-cars carId"`
+	OwnerId   int64     `xml:"xml-web-services-cars ownerId"`
+	Active    bool      `xml:"xml-web-services-cars active"`
 }
 
 func (t *Ad) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
@@ -46,13 +48,12 @@ type Car struct {
 	ChildrenSeats    int     `xml:"xml-web-services-cars childrenSeats"`
 	Description      string  `xml:"xml-web-services-cars description"`
 	ColDamProtection bool    `xml:"xml-web-services-cars colDamProtection"`
-	Owned            string  `xml:"xml-web-services-cars owned"`
+	Owner            string  `xml:"xml-web-services-cars owner"`
 	Brand            string  `xml:"xml-web-services-cars brand"`
 	Model            string  `xml:"xml-web-services-cars model"`
 	CarClass         string  `xml:"xml-web-services-cars carClass"`
 	Fuel             string  `xml:"xml-web-services-cars fuel"`
 	Transmission     string  `xml:"xml-web-services-cars transmission"`
-	Bookings         []int64 `xml:"xml-web-services-cars bookings,omitempty"`
 }
 
 type xsdDate time.Time
