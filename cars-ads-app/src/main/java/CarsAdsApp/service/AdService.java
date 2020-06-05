@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -33,10 +34,15 @@ public class AdService {
     @Autowired
     private ImageRepository imageRepo;
 
+    @Autowired
+    DiscoveryClient discoveryClient;
+
     public int createAd(AdDTO adDTO, String email) {
         // provera da li user sa name postoji, provera da li je ad userov
         System.out.println(email);
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        // TODO: FIND A BETTER SOLUTION PLS!
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/"+email, Long.class);
         if (userId == null)
             return 400;
 

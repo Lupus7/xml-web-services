@@ -66,11 +66,11 @@ public class ClientController {
     }
 
     @GetMapping(value = "/user/{email}")
-    public Long getUserId(@PathVariable("email") String email) {
+    public ResponseEntity<Long> getUserId(@PathVariable("email") String email) {
         Long id  = clientService.getUserId(email);
         if (id != null)
-            return id;
-        return null;
+            return ResponseEntity.ok(id);
+        return ResponseEntity.badRequest().body(null);
     }
 
 }
