@@ -99,7 +99,7 @@ public class AdController {
     }
 
     @GetMapping(value = "/api/ad/{id}")
-    @PreAuthorize("hasAuthority('READ_CLIENT_ADS')")
+    @PreAuthorize("hasAuthority('READ_CLIENT_ADS') or hasAuthority('MASTER')")
     public ResponseEntity<AdClientDTO> getAd(@PathVariable("id") Long id){
         AdClientDTO ad = adService.getAdById(id);
         return ResponseEntity.ok(ad);

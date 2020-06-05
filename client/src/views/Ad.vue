@@ -121,6 +121,7 @@ export default {
     methods: {
         fill() {
             let url = "/cars-ads/api/ad/" + this.id;
+
             axios.get(url).then((response) => {
                 this.info = response.data;
             });

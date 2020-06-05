@@ -92,7 +92,7 @@ public class BookingController {
     }
 
     // Get all client bookings
-    @GetMapping(value = "/api/booking", produces = "application/json", consumes = "application/json")
+    @GetMapping(value = "/api/booking", produces = "application/json")
     @PreAuthorize("hasAuthority('READ_BOOKINGS')")
     public ResponseEntity<ArrayList<BookingDTO>> getAllBookingRequests(Principal user) throws JSONException {
 

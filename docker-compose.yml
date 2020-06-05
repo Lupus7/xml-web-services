@@ -28,21 +28,6 @@ services:
         depends_on:
             - consul-server
 
-    # admin-service:
-    #     image: admin-service
-    #     build:
-    #         context: ./admin-app
-    #         dockerfile: Dockerfile
-    #     tty: true
-    #     depends_on:
-    #         - consul-server
-    #         - db
-    #     restart: unless-stopped
-    #     environment:
-    #         DB_PATH: jdbc:postgresql://db:5432/
-    #     networks:
-    #         - static-network
-
     cars-ads-service:
         image: cars-ads-service
         build:
@@ -106,20 +91,20 @@ services:
         networks:
             - static-network
 
-#    codebook-service:
-#        image: codebook-service
-#        build:
-#            context: ./codebook
-#            dockerfile: Dockerfile
-#        tty: true
-#        depends_on:
-#            - consul-server
-#            - db
-#        restart: unless-stopped
-#        environment:
-#            DB_PATH: jdbc:postgresql://db:5432/
-#        networks:
-#            - static-network
+    codebook-service:
+        image: codebook-service
+        build:
+            context: ./codebook
+            dockerfile: Dockerfile
+        tty: true
+        depends_on:
+            - consul-server
+            - db
+        restart: unless-stopped
+        environment:
+            DB_PATH: jdbc:postgresql://db:5432/
+        networks:
+            - static-network
             
     gateway:
         image: gateway
