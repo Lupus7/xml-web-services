@@ -100,4 +100,10 @@ public class AdController {
         AdClientDTO ad = adService.getAdById(id);
         return ResponseEntity.ok(ad);
     }
+
+    // Id Ad
+    @GetMapping(value = "/ad/check/{id}")
+    public ResponseEntity<Boolean> getAdById(@PathVariable("id") Long id){
+        return ResponseEntity.ok(adService.getCheckAd(id));
+    }
 }

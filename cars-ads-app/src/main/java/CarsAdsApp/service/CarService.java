@@ -9,6 +9,7 @@ import CarsAdsApp.repository.ImageRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,6 +25,9 @@ public class CarService {
 
     @Autowired
     ImageRepository imageRepository;
+
+    @Autowired
+    DiscoveryClient discoveryClient;
 
 
     //MEthod for creating new car in dataabse
@@ -97,7 +101,9 @@ public class CarService {
 
         JSONObject object = new JSONObject();
         object.put("array", adsIds);
-        Boolean check = new RestTemplate().postForObject("http://localhost:8080/rent/api/booking/checking", object, Boolean.class);
+
+        String rentServiceIp = discoveryClient.getInstances("rent").get(0).getHost();
+        Boolean check = new RestTemplate().postForObject("http://" + rentServiceIp + ":8080/api/booking/checking", object, Boolean.class);
 
         if (!check)
             return false;
@@ -105,7 +111,7 @@ public class CarService {
         for (Ad ad : ads) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("id", adsIds);
-            new RestTemplate().delete("http://localhost:8080/rent/api/booking/checking/remove/{id}", params);
+            new RestTemplate().delete("http://" + rentServiceIp + ":8080/api/booking/checking/remove/{id}", params);
             adRepository.delete(ad);
         }
 

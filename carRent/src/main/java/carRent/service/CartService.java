@@ -1,10 +1,11 @@
 package carRent.service;
 
 import carRent.model.Cart;
-import carRent.model.dto.AdDTO;
+import carRent.model.dto.AdClientDTO;
 import carRent.repository.CartRepository;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,10 +18,16 @@ public class CartService {
     @Autowired
     private CartRepository cartRepo;
 
+    @Autowired
+    private DiscoveryClient discoveryClient;
+
     public boolean addAdToCart(Long id, String email) throws JSONException {
         // provera da li user sa name postoji
 
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+        String carsAdsServiceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return false;
 
@@ -28,13 +35,13 @@ public class CartService {
         if (!cart.isPresent())
             return false;
 
-        AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + id,
-                AdDTO.class);
+        Boolean check = new RestTemplate().getForObject("http://" + carsAdsServiceIp + ":8080/ad/check/" + id,
+                Boolean.class);
 
-        if (ad == null)
+        if (check == null || !check)
             return false;
 
-        cart.get().getAds().add(ad.getId());
+        cart.get().getAds().add(id);
         cartRepo.save(cart.get());
 
         return true;
@@ -43,7 +50,10 @@ public class CartService {
     public boolean deleteAdToCart(Long id, String email) throws JSONException {
         // provera da li user sa name postoji
 
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+        String carsAdsServiceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return false;
 
@@ -51,21 +61,25 @@ public class CartService {
         if (!cart.isPresent())
             return false;
 
-        AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + id,
-                AdDTO.class);
-        if (ad == null)
+        Boolean check = new RestTemplate().getForObject("http://" + carsAdsServiceIp + ":8080/ad/check/" + id,
+                Boolean.class);
+
+        if (check == null || !check)
             return false;
 
-        cart.get().getAds().remove(ad.getId());
+        cart.get().getAds().remove(id);
         cartRepo.save(cart.get());
 
         return true;
     }
 
-    public ArrayList<AdDTO> getAllAds(String email) {
+    public ArrayList<AdClientDTO> getAllAds(String email) {
         // provera da li user sa name postoji
-        ArrayList<AdDTO> list = new ArrayList<>();
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+        String carsAdsServiceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        ArrayList<AdClientDTO> list = new ArrayList<>();
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return list;
 
@@ -74,10 +88,10 @@ public class CartService {
             return list;
 
         for (Long id : cart.get().getAds()) {
-            AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + id,
-                    AdDTO.class);
+            AdClientDTO ad = new RestTemplate().getForObject("http://" + carsAdsServiceIp + ":8080/api/ad/" + id,
+                    AdClientDTO.class);
             if (ad != null)
-                list.add(new AdDTO(ad.getId(), ad.getStartDate(), ad.getEndDate(), ad.getPlace(), ad.getCarId()));
+                list.add(ad);
 
         }
 

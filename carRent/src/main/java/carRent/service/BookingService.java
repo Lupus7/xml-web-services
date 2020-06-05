@@ -3,7 +3,6 @@ package carRent.service;
 import carRent.model.Booking;
 import carRent.model.Bundle;
 import carRent.model.RequestState;
-import carRent.model.dto.AdDTO;
 import carRent.model.dto.BookDTO;
 import carRent.model.dto.BookingDTO;
 import carRent.model.dto.BundleDTO;
@@ -12,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,10 +27,16 @@ public class BookingService {
     @Autowired
     private BookingRepository bookingRepo;
 
+    @Autowired
+    private DiscoveryClient discoveryClient;
+
     public boolean createBookingRequest(BundleDTO bundleDTO, String email) throws JSONException {
 
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+        String carsAdsServiceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
         // provera da li user sa name postoji
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return false;
         Bundle bundle = new Bundle();
@@ -48,13 +54,13 @@ public class BookingService {
                 if (bookDTO.getStartDate().isAfter(bookDTO.getEndDate()))
                     return false;
 
-                AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + bookDTO.getAdId(),
-                        AdDTO.class);
+                Boolean check = new RestTemplate().getForObject("http://" + carsAdsServiceIp + ":8080/ad/check/" + bookDTO.getAdId(),
+                        Boolean.class);
 
-                if (ad == null)
+                if (check == null || !check)
                     return false;
 
-                Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PENDING, bookDTO.getPlace(), LocalDateTime.now(), ad.getId(), userId);
+                Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PENDING, bookDTO.getPlace(), LocalDateTime.now(), bookDTO.getAdId(), userId);
                 bundle.getBookings().add(booking);
 
                 bookingRepo.save(booking);
@@ -85,13 +91,13 @@ public class BookingService {
             if (bundleDTO.getBooks().get(0).getStartDate().isAfter(bundleDTO.getBooks().get(0).getEndDate()))
                 return false;
 
-            AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + bundleDTO.getBooks().get(0).getAdId(),
-                    AdDTO.class);
+            Boolean check = new RestTemplate().getForObject("http://" + carsAdsServiceIp + ":8080/ad/check/" + bundleDTO.getBooks().get(0).getAdId(),
+                    Boolean.class);
 
-            if (ad == null)
+            if (check == null || !check)
                 return false;
 
-            Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PENDING, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), ad.getId(), userId);
+            Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PENDING, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), bundleDTO.getBooks().get(0).getAdId(), userId);
             bundle.getBookings().add(booking);
             bookingRepo.save(booking);
 
@@ -117,14 +123,17 @@ public class BookingService {
 
     public boolean reserveBookingRequest(BundleDTO bundleDTO, String email) throws JSONException {
         // provera da li user sa name postoji
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+        String carsAdsServiceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null || bundleDTO.getLoaner() == null)
             return false;
 
         if (bundleDTO.getLoaner().equals(""))
             return false;
 
-        Long loanerId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/" + bundleDTO.getLoaner(), Long.class);
+        Long loanerId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + bundleDTO.getLoaner(), Long.class);
         if (loanerId == null)
             return false;
 
@@ -142,13 +151,13 @@ public class BookingService {
                     return false;
 
 
-                AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + bookDTO.getAdId(),
-                        AdDTO.class);
+                Boolean check = new RestTemplate().getForObject("http://" + carsAdsServiceIp + ":8080/ad/check/" + bookDTO.getAdId(),
+                        Boolean.class);
 
-                if (ad == null)
+                if (check == null || !check)
                     return false;
 
-                Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), ad.getId(), (long) -1);
+                Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), bookDTO.getAdId(), (long) -1);
                 bundle.getBookings().add(booking);
                 bookingRepo.save(booking);
 
@@ -164,13 +173,13 @@ public class BookingService {
             if (bundleDTO.getBooks().get(0).getStartDate().isAfter(bundleDTO.getBooks().get(0).getEndDate()))
                 return false;
 
-            AdDTO ad = new RestTemplate().getForObject("http://localhost:8080/cars/api/ads/" + bundleDTO.getBooks().get(0).getAdId(),
-                    AdDTO.class);
+            Boolean check = new RestTemplate().getForObject("http://" + carsAdsServiceIp + ":8080/ad/check/" + bundleDTO.getBooks().get(0).getAdId(),
+                    Boolean.class);
 
-            if (ad == null)
+            if (check == null || !check)
                 return false;
 
-            Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PAID, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), ad.getId(), (long) -1);
+            Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PAID, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), bundleDTO.getBooks().get(0).getAdId(), (long) -1);
             bundle.getBookings().add(booking);
             bookingRepo.save(booking);
 
@@ -190,9 +199,11 @@ public class BookingService {
     }
 
     public boolean acceptBookingRequest(Long id, String email) throws JSONException {
-
         // provera da li user sa name postoji
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+        String carsAdsServiceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return false;
 
@@ -205,7 +216,7 @@ public class BookingService {
 
         Map<String, Long> params = new HashMap<String, Long>();
         params.put("id", booking.get().getAd());
-        new RestTemplate().delete("http://localhost:8080/cars-ads/api/ad/deactivate/{id}", params);
+        new RestTemplate().delete("http://" + carsAdsServiceIp + ":8080/api/ad/deactivate/{id}", params);
 
 
         new java.util.Timer().schedule(
@@ -228,8 +239,10 @@ public class BookingService {
 
     public boolean cancelBookingRequest(Long id, String email) {
 
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+
         // provera da li user sa name postoji
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return false;
 
@@ -246,8 +259,11 @@ public class BookingService {
 
     public boolean rejectBookingRequest(Long id, String email) throws JSONException {
 
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+        String carsAdsServiceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
         // provera da li user sa name postoji, provera da li je ad userov
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return false;
 
@@ -261,7 +277,7 @@ public class BookingService {
         JSONObject object = new JSONObject();
         object.put("array", array);
 
-        Boolean check = new RestTemplate().postForObject("http://localhost:8080/cars-ads/api/ad/check", object, Boolean.class);
+        Boolean check = new RestTemplate().postForObject("http://" + carsAdsServiceIp + ":8080/api/ad/check", object, Boolean.class);
 
         if (check == null || !check)
             return false;
@@ -275,8 +291,10 @@ public class BookingService {
 
     public ArrayList<BookingDTO> getAllBookingRequests(String email) {
         // provera da li user sa name postoji
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+
         ArrayList<BookingDTO> bookingDTOS = new ArrayList<>();
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return bookingDTOS;
 
@@ -293,7 +311,9 @@ public class BookingService {
 
     public boolean checkingBookingRequests(JSONObject jsonObject, String email) throws JSONException {
 
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return false;
 
@@ -312,8 +332,9 @@ public class BookingService {
 
     public boolean deleteCarsBookings(String id, String email) {
 
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
 
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return false;
 

@@ -39,10 +39,9 @@ public class AdService {
 
     public int createAd(AdDTO adDTO, String email) {
         // provera da li user sa name postoji, provera da li je ad userov
-        System.out.println(email);
         // TODO: FIND A BETTER SOLUTION PLS!
         String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/"+email, Long.class);
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return 400;
 
@@ -68,7 +67,8 @@ public class AdService {
     public boolean checkAds(JSONObject object, String email) throws JSONException {
 
         // provera da li user sa name postoji, provera da li je ad userov
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return false;
 
@@ -91,7 +91,8 @@ public class AdService {
     public int activateAd(Long id, String email) {
 
         // provera da li user sa name postoji, provera da li je ad userov
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return 400;
 
@@ -113,7 +114,8 @@ public class AdService {
     public boolean deactivateAd(Long id, String email) {
 
         // provera da li user sa name postoji, provera da li je ad userov
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return false;
 
@@ -129,7 +131,8 @@ public class AdService {
 
     public boolean editAd(Long id, AdDTO adDTO, String email) {
         // provera da li user sa name postoji, provera da li je ad userov
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return false;
 
@@ -161,7 +164,8 @@ public class AdService {
 
     public List<AdClientDTO> getClientAds(String email) {
 
-        Long userId = new RestTemplate().getForObject("http://localhost:8080/user/client-control/user/"+email, Long.class);
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
         if (userId == null)
             return new ArrayList<>();
 
@@ -194,5 +198,12 @@ public class AdService {
             return null;
         // TODO: ADD ADVERTIZER
         return new AdClientDTO(ad.get(), car.get(), images);
+    }
+
+    public Boolean getCheckAd(Long id) {
+        Optional<Ad> ad = adRepo.findById(id);
+        if (!ad.isPresent())
+            return false;
+        return true;
     }
 }
