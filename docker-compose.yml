@@ -43,20 +43,20 @@ services:
     #     networks:
     #         - static-network
 
-    cars-ads-service:
-        image: cars-ads-service
-        build:
-            context: ./cars-ads-app
-            dockerfile: Dockerfile
-        tty: true
-        depends_on:
-            - consul-server
-            - db
-        restart: unless-stopped
-        environment:
-            DB_PATH: jdbc:postgresql://db:5432/
-        networks:
-            - static-network
+#    cars-ads-service:
+#        image: cars-ads-service
+#        build:
+#            context: ./cars-ads-app
+#            dockerfile: Dockerfile
+#        tty: true
+#        depends_on:
+#            - consul-server
+#            - db
+#        restart: unless-stopped
+#        environment:
+#            DB_PATH: jdbc:postgresql://db:5432/
+#        networks:
+#            - static-network
 
     rent-service:
         image: rent-service

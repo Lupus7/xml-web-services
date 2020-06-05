@@ -89,6 +89,15 @@ func (s *Store) DB() *gorm.DB {
 	return s.db
 }
 
+func(s *Store)FindImagesByCarId(id int64)([]*model.Image,error){
+	images := []*model.Image{}
+	err := s.db.Find(&images,"car_id = ?", id).Error
+	if err != nil {
+		return nil, err
+	}
+	return images,nil
+}
+
 func (store *Store) CreateBrand(brand *model.Brand) error {
 	return store.db.Create(&brand).Error
 }

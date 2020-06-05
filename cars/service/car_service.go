@@ -25,6 +25,14 @@ func (cs *CarService) FindAdById(id int) (*model.Ad, error) {
 	return cs.Store.FindAdById(id)
 }
 
+func(cs *CarService)FindAllCars()([]*model.Car,error){
+	return cs.Store.FindAllCars()
+}
+
+func(cs *CarService)FindImagesByCarId(carId int64)([]*model.Image,error){
+	return cs.Store.FindImagesByCarId(carId)
+}
+
 func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	fmt.Printf("%v", *request)
 	var ads []*model.Ad
@@ -40,7 +48,7 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 			fmt.Println(err.Error())
 			return nil, err
 		}
-
+		fmt.Println("Start date : ", startDate.String(), "  End date: ", endDate.String())
 		ads, err = cs.Store.FindAllAdsBetweenDates(startDate, endDate)
 		if err != nil {
 			return nil, err
@@ -59,7 +67,7 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	if request.Brand != "" {
 		//search by brand
 		for i := len(ads) - 1; i >= 0; i-- {
-			car, err := cs.Store.FindCarById(ads[i].CarID)
+			car, err := cs.Store.FindCarById(ads[i].CarId)
 			if err != nil {
 				return nil, err
 			}
@@ -72,7 +80,7 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	if request.Model != "" {
 		//search by model
 		for i := len(ads) - 1; i >= 0; i-- {
-			car, err := cs.Store.FindCarById(ads[i].CarID)
+			car, err := cs.Store.FindCarById(ads[i].CarId)
 			if err != nil {
 				return nil, err
 			}
@@ -85,7 +93,7 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	if request.Fuel != "" {
 		//search by fuel
 		for i := len(ads) - 1; i >= 0; i-- {
-			car, err := cs.Store.FindCarById(ads[i].CarID)
+			car, err := cs.Store.FindCarById(ads[i].CarId)
 			if err != nil {
 				return nil, err
 			}
@@ -98,7 +106,7 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	if request.Transmission != "" {
 		//search by transmission type
 		for i := len(ads) - 1; i >= 0; i-- {
-			car, err := cs.Store.FindCarById(ads[i].CarID)
+			car, err := cs.Store.FindCarById(ads[i].CarId)
 			if err != nil {
 				return nil, err
 			}
@@ -111,7 +119,7 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	if request.Class != "" {
 		//search by class
 		for i := len(ads) - 1; i >= 0; i-- {
-			car, err := cs.Store.FindCarById(ads[i].CarID)
+			car, err := cs.Store.FindCarById(ads[i].CarId)
 			if err != nil {
 				return nil, err
 			}
@@ -143,7 +151,7 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	if request.TotalMileAge != 0 {
 		//search by total mileage
 		for i := len(ads) - 1; i >= 0; i-- {
-			car, err := cs.Store.FindCarById(ads[i].CarID)
+			car, err := cs.Store.FindCarById(ads[i].CarId)
 			if err != nil {
 				return nil, err
 			}
@@ -155,7 +163,7 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 
 	//filtratind by CollisinDamage
 	for i := len(ads) - 1; i >= 0; i-- {
-		car, err := cs.Store.FindCarById(ads[i].CarID)
+		car, err := cs.Store.FindCarById(ads[i].CarId)
 		if err != nil {
 			return nil, err
 		}
@@ -168,7 +176,7 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	if request.SeatsNumber != 0 {
 		//search by seats number
 		for i := len(ads) - 1; i >= 0; i-- {
-			car, err := cs.Store.FindCarById(ads[i].CarID)
+			car, err := cs.Store.FindCarById(ads[i].CarId)
 			if err != nil {
 				return nil, err
 			}
@@ -180,7 +188,7 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 
 	if request.PlannedMileAge != 0 {
 		for i := len(ads) - 1; i >= 0; i-- {
-			car, err := cs.Store.FindCarById(ads[i].CarID)
+			car, err := cs.Store.FindCarById(ads[i].CarId)
 			if err != nil {
 				return nil, err
 			}

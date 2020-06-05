@@ -27,11 +27,12 @@ func (ch *CarHandler) FindAll(c echo.Context) error {
 	}
 	carsDto := []*dto.SearchResponse{}
 	for _, ad := range ads {
-		car, err := ch.CarService.Store.FindCarById(ad.CarID)
+		car, err := ch.CarService.Store.FindCarById(ad.CarId)
 		if err != nil {
 			return err
 		}
-		carsDto = append(carsDto, toResponse(ad, car))
+		images, err := ch.CarService.FindImagesByCarId(car.Id)
+		carsDto = append(carsDto, toResponse(ad, car, images))
 	}
 
 	return c.JSON(http.StatusOK, carsDto)
@@ -49,11 +50,12 @@ func (ch *CarHandler) SearchAds(c echo.Context) error {
 	}
 	carsResponse := []*dto.SearchResponse{}
 	for _, ad := range filtrated {
-		car, err := ch.CarService.Store.FindCarById(ad.CarID)
+		car, err := ch.CarService.Store.FindCarById(ad.CarId)
 		if err != nil {
 			return err
 		}
-		carsResponse = append(carsResponse, toResponse(ad, car))
+		images, err := ch.CarService.FindImagesByCarId(car.Id)
+		carsResponse = append(carsResponse, toResponse(ad, car, images))
 	}
 	return c.JSON(http.StatusOK, carsResponse)
 }
@@ -68,11 +70,12 @@ func (ch *CarHandler) GetAdById(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	car, err := ch.CarService.Store.FindCarById(ad.CarID)
+	car, err := ch.CarService.Store.FindCarById(ad.CarId)
 	if err != nil {
 		return err
 	}
-	adResponse := toResponse(ad, car)
+	images, err := ch.CarService.FindImagesByCarId(car.Id)
+	adResponse := toResponse(ad, car, images)
 	return c.JSON(http.StatusOK, adResponse)
 }
 
@@ -150,7 +153,15 @@ func (ch *CarHandler) AllClasses(c echo.Context) error {
 	return c.JSON(http.StatusOK, classNames)
 }
 
-func toResponse(ad *model.Ad, car *model.Car) *dto.SearchResponse {
+func(ch *CarHandler)FindAllCars(c echo.Context)error{
+	cars, err := ch.CarService.FindAllCars()
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, cars)
+}
+
+func toResponse(ad *model.Ad, car *model.Car, images []*model.Image) *dto.SearchResponse {
 	collisionDamage := "not allowed"
 	if car.ColDamProtection {
 		collisionDamage = "allowed"
@@ -158,6 +169,12 @@ func toResponse(ad *model.Ad, car *model.Car) *dto.SearchResponse {
 	allowedMileage := "UNLIMITED"
 	if car.AllowedMileage == 0 {
 		allowedMileage = fmt.Sprintf("%f", car.AllowedMileage)
+	}
+	carImages := []string{}
+	if len(images)!=0{
+		for _,im := range images {
+			carImages = append(carImages, im.Encoded64Image)
+		}
 	}
 	//images := []string{}
 	//if len(car.) != 0 {
@@ -181,7 +198,7 @@ func toResponse(ad *model.Ad, car *model.Car) *dto.SearchResponse {
 		CollisionDamage: collisionDamage,
 		//Rating:          ad.Car.Rating,
 		Description: car.Description,
-		//Images:          images,
+		Images:          carImages,
 		Place:     ad.Place,
 		StartDate: strings.Split(ad.StartDate.String(), " ")[0],
 		EndDate:   strings.Split(ad.EndDate.String(), " ")[0],
