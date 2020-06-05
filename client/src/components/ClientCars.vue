@@ -58,7 +58,7 @@
                                 </b-button>
                             </div>
                             <div class="col">
-                                <b-button @click="deleteCar(car)" type="button" class="btn btn-danger" style="width:120%">
+                                <b-button @click="removeCar(car)" type="button" class="btn btn-danger" style="width:120%">
                                     <b-icon icon="x" aria-hidden="true"></b-icon> Delete
                                 </b-button>
                             </div>
