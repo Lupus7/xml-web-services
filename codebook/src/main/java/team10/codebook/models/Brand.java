@@ -9,7 +9,7 @@ import java.util.List;
 public class Brand {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "brand_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "brand_id_seq")
     private Long id;
 
     @Column(name = "name", unique = false, nullable = false)

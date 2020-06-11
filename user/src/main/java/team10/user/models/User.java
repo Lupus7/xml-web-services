@@ -40,7 +40,7 @@ public class User {
     @Column(name = "approved", unique = false, nullable = false)
     private Boolean approved;
 
-    @Column(name = "authorities", unique = false, nullable = false, length = 100000)
+    @Column(name = "authorities", unique = false, nullable = false, columnDefinition="text")
     private String authorities;
 
     @Column(name = "cart", unique = true, nullable = true)

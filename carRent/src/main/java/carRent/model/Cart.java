@@ -9,7 +9,7 @@ import java.util.List;
 public class Cart {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "cart_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cart_id_seq")
     private Long id;
 
     @Column(name = "user_id", nullable = false)
