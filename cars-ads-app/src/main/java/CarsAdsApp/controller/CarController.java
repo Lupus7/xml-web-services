@@ -69,13 +69,13 @@ public class CarController {
 
     // Clients cars
     @GetMapping("/cars/client")
-    @PreAuthorize("hasAuthority('READ_CLIENT_CARS')")
+    //@PreAuthorize("hasAuthority('READ_CLIENT_CARS')")
     public ResponseEntity<List<CarDTO>>getClientCars(Principal user){
         return ResponseEntity.ok(carService.getClientCars(user.getName()));
     }
 
     @GetMapping("/cars/brands/{brand}")
-    @PreAuthorize("hasAuthority('READ_CODEBOOK')")
+    //@PreAuthorize("hasAuthority('READ_CODEBOOK')")
     public ResponseEntity<List<CarDTO>>getCarsByBrand(@PathVariable String brand){
         List<CarDTO> cars = carService.getCarsByBrand(brand);
         if (cars != null)
@@ -84,7 +84,7 @@ public class CarController {
     }
 
     @GetMapping("/cars/class/{carClass}")
-    @PreAuthorize("hasAuthority('READ_CODEBOOK')")
+    //@PreAuthorize("hasAuthority('READ_CODEBOOK')")
     public ResponseEntity<List<CarDTO>>getCarsByCarClass(@PathVariable String carClass){
         List<CarDTO> cars = carService.getCarsByCarClass(carClass);
         if (cars != null)
@@ -93,7 +93,7 @@ public class CarController {
     }
 
     @GetMapping("/cars/models/{model}")
-    @PreAuthorize("hasAuthority('READ_CODEBOOK')")
+    //@PreAuthorize("hasAuthority('READ_CODEBOOK')")
     public ResponseEntity<List<CarDTO>>getCarsByModel(@PathVariable String model){
         List<CarDTO> cars = carService.getCarsByModel(model);
         if (cars != null)
@@ -102,7 +102,7 @@ public class CarController {
     }
 
     @GetMapping("/cars/fuels/{fuel}")
-    @PreAuthorize("hasAuthority('READ_CODEBOOK')")
+    //@PreAuthorize("hasAuthority('READ_CODEBOOK')")
     public ResponseEntity<List<CarDTO>>getCarsByFuel(@PathVariable String fuel){
         List<CarDTO> cars = carService.getCarsByFuel(fuel);
         if (cars != null)
@@ -111,7 +111,7 @@ public class CarController {
     }
 
     @GetMapping("/cars/transmissions/{transmission}")
-    @PreAuthorize("hasAuthority('READ_CODEBOOK')")
+    //@PreAuthorize("hasAuthority('READ_CODEBOOK')")
     public ResponseEntity<List<CarDTO>>getCarsByTransmission(@PathVariable String transmission){
         List<CarDTO> cars = carService.getCarsByTransmission(transmission);
         if (cars != null)
