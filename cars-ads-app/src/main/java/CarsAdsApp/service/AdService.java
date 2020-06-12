@@ -46,9 +46,10 @@ public class AdService {
             return 400;
 
         // provera za 3 ad-a
+        boolean active = true;
         ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
         if (ads.size() == 3)
-            return 402;
+           active = false;
 
         if (adDTO == null)
             return 400;
@@ -58,7 +59,7 @@ public class AdService {
             return 400;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        Ad ad = new Ad(LocalDateTime.parse(adDTO.getStartDate(), formatter), LocalDateTime.parse(adDTO.getEndDate(), formatter), adDTO.getPlace(), adDTO.getCarId(), userId);
+        Ad ad = new Ad(LocalDateTime.parse(adDTO.getStartDate(), formatter), LocalDateTime.parse(adDTO.getEndDate(), formatter), adDTO.getPlace(), adDTO.getCarId(), userId, active);
         adRepo.save(ad);
 
         return 200;
@@ -205,5 +206,12 @@ public class AdService {
         if (!ad.isPresent())
             return false;
         return true;
+    }
+
+    public Long getOwnerId(Long id) {
+        Optional<Ad> ad = adRepo.findById(id);
+        if (ad.isPresent())
+            return ad.get().getOwnerId();
+        return null;
     }
 }

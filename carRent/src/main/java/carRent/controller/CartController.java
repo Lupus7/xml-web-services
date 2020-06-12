@@ -17,6 +17,17 @@ public class CartController {
     @Autowired
     CartService cartService;
 
+    // Pravljenje carta
+    @PostMapping(value = "/api/cart", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<String> createCart(Principal user) throws JSONException {
+
+        if (cartService.createCart(user.getName()))
+            return ResponseEntity.ok("Cart created!");
+        else
+            return ResponseEntity.status(400).body("Could not accept");
+    }
+
+
     // Oglas se dodaje u cart
     @PutMapping(value = "/api/cart/{id}", produces = "application/json")
     @PreAuthorize("hasAuthority('UPDATE_CART')")
@@ -45,6 +56,14 @@ public class CartController {
     public ResponseEntity<ArrayList<AdClientDTO>> getCart(Principal user) throws JSONException {
 
         return ResponseEntity.ok((ArrayList<AdClientDTO>) cartService.getAllAds(user.getName()));
+    }
+
+    // Jedan oglas iz karta
+    @GetMapping(value = "/api/cart/{id}", produces = "application/json")
+    @PreAuthorize("hasAuthority('READ_CART')")
+    public ResponseEntity<AdClientDTO> getAdFromCart(@PathVariable("id") Long id, Principal user) throws JSONException {
+
+        return ResponseEntity.ok((AdClientDTO) cartService.getAdFromCart(id,user.getName()));
     }
 
 
