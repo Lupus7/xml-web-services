@@ -43,6 +43,15 @@ public class Ad {
         this.active = true;
     }
 
+    public Ad(LocalDateTime startDate, LocalDateTime endDate, String place, Long car, Long owner, boolean active) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.place = place;
+        this.carId = car;
+        this.ownerId = owner;
+        this.active = active;
+    }
+
     public Long getId() {
         return id;
     }

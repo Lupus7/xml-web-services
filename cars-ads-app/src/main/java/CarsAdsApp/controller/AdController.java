@@ -27,8 +27,6 @@ public class AdController {
         int response = adService.createAd(adDTO, user.getName());
         if (response == 200)
             return ResponseEntity.ok("Ad successfully created!");
-        else if (response == 402)
-            return ResponseEntity.status(402).body("You have already created 3 ads!");
         else
             return ResponseEntity.status(400).body("Could not accept");
 
@@ -109,5 +107,12 @@ public class AdController {
     @GetMapping(value = "/ad/check/{id}")
     public ResponseEntity<Boolean> getAdById(@PathVariable("id") Long id){
         return ResponseEntity.ok(adService.getCheckAd(id));
+    }
+
+    // Id Ownera
+    @GetMapping(value = "/ad/owner/{id}")
+    @PreAuthorize("hasAuthority('MASTER')")
+    public ResponseEntity<Long> getOwnerById(@PathVariable("id") Long id){
+        return ResponseEntity.ok(adService.getOwnerId(id));
     }
 }
