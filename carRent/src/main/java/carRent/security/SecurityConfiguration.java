@@ -19,7 +19,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilter(new JwtAuthorizationFilter(authenticationManager()))
                 .authorizeRequests()
-                .antMatchers("/health").permitAll() // health available to all
+                .antMatchers("/health").permitAll()
+                //.anyRequest().hasAuthority("MASTER")
                 .anyRequest().authenticated(); // everything else available only to authenticated users
     }
 }

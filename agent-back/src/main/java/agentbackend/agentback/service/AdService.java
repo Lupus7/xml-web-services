@@ -1,18 +1,20 @@
-package CarsAdsApp.service;
+package agentbackend.agentback.service;
 
-import CarsAdsApp.model.Ad;
-import CarsAdsApp.model.Car;
-import CarsAdsApp.model.Image;
-import CarsAdsApp.model.dto.AdClientDTO;
-import CarsAdsApp.model.dto.AdDTO;
-import CarsAdsApp.repository.AdRepository;
-import CarsAdsApp.repository.CarRepository;
-import CarsAdsApp.repository.ImageRepository;
+
+import agentbackend.agentback.controller.dto.AdClientDTO;
+import agentbackend.agentback.controller.dto.AdDTO;
+import agentbackend.agentback.model.Ad;
+import agentbackend.agentback.model.Car;
+import agentbackend.agentback.model.Image;
+import agentbackend.agentback.model.User;
+import agentbackend.agentback.repository.AdRepository;
+import agentbackend.agentback.repository.CarRepository;
+import agentbackend.agentback.repository.ImageRepository;
+import agentbackend.agentback.repository.UserRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,21 +37,25 @@ public class AdService {
     private ImageRepository imageRepo;
 
     @Autowired
-    DiscoveryClient discoveryClient;
+    private UserRepository userRepository;
 
     public int createAd(AdDTO adDTO, String email) {
         // provera da li user sa name postoji, provera da li je ad userov
         // TODO: FIND A BETTER SOLUTION PLS!
-        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null)
-            return 400;
+//        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+//        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
+//        if (userId == null)
+//            return 400;
 
         // provera za 3 ad-a
-        boolean active = true;
+        Long userId = 0L;
+        User user = userRepository.findByEmail(email);
+        if (user != null){
+            userId = user.getId();
+        }
         ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
         if (ads.size() == 3)
-           active = false;
+            return 402;
 
         if (adDTO == null)
             return 400;
@@ -59,7 +65,7 @@ public class AdService {
             return 400;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        Ad ad = new Ad(LocalDateTime.parse(adDTO.getStartDate(), formatter), LocalDateTime.parse(adDTO.getEndDate(), formatter), adDTO.getPlace(), adDTO.getCarId(), userId, active);
+        Ad ad = new Ad(LocalDateTime.parse(adDTO.getStartDate(), formatter), LocalDateTime.parse(adDTO.getEndDate(), formatter), adDTO.getPlace(), adDTO.getCarId(), userId);
         adRepo.save(ad);
 
         return 200;
@@ -68,11 +74,15 @@ public class AdService {
     public boolean checkAds(JSONObject object, String email) throws JSONException {
 
         // provera da li user sa name postoji, provera da li je ad userov
-        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null)
-            return false;
-
+//        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+//        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
+//        if (userId == null)
+//            return false;
+        Long userId = 0L;
+        User user = userRepository.findByEmail(email);
+        if (user != null){
+            userId = user.getId();
+        }
         if (object == null || object.get("array") == null)
             return false;
 
@@ -92,11 +102,15 @@ public class AdService {
     public int activateAd(Long id, String email) {
 
         // provera da li user sa name postoji, provera da li je ad userov
-        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null)
-            return 400;
-
+//        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+//        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
+//        if (userId == null)
+//            return 400;
+        Long userId = 0L;
+        User user = userRepository.findByEmail(email);
+        if (user != null){
+            userId = user.getId();
+        }
         Optional<Ad> ad = adRepo.findById(id);
         if (!ad.isPresent() || ad.get().getOwnerId() != userId || ad.get().isActive())
             return 400;
@@ -115,11 +129,15 @@ public class AdService {
     public boolean deactivateAd(Long id, String email) {
 
         // provera da li user sa name postoji, provera da li je ad userov
-        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null)
-            return false;
-
+//        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+//        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
+//        if (userId == null)
+//            return false;
+        Long userId = 0L;
+        User user = userRepository.findByEmail(email);
+        if (user != null){
+            userId = user.getId();
+        }
         Optional<Ad> ad = adRepo.findById(id);
         if (!ad.isPresent() || ad.get().getOwnerId() != userId || !ad.get().isActive())
             return false;
@@ -132,11 +150,15 @@ public class AdService {
 
     public boolean editAd(Long id, AdDTO adDTO, String email) {
         // provera da li user sa name postoji, provera da li je ad userov
-        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null)
-            return false;
-
+//        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+//        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
+//        if (userId == null)
+//            return false;
+        Long userId = 0L;
+        User user = userRepository.findByEmail(email);
+        if (user != null){
+            userId = user.getId();
+        }
         Optional<Ad> ad = adRepo.findById(id);
         if (!ad.isPresent() || ad.get().getOwnerId() != userId || !ad.get().isActive())
             return false;
@@ -165,11 +187,15 @@ public class AdService {
 
     public List<AdClientDTO> getClientAds(String email) {
 
-        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null)
-            return new ArrayList<>();
-
+//        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+//        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
+//        if (userId == null)
+//            return new ArrayList<>();
+        Long userId = 0L;
+        User user = userRepository.findByEmail(email);
+        if (user != null){
+            userId = user.getId();
+        }
         List<AdClientDTO> adClientDTOS = new ArrayList<>();
 
         List<Ad> ads = adRepo.findAllByOwnerId(userId);
@@ -206,12 +232,5 @@ public class AdService {
         if (!ad.isPresent())
             return false;
         return true;
-    }
-
-    public Long getOwnerId(Long id) {
-        Optional<Ad> ad = adRepo.findById(id);
-        if (ad.isPresent())
-            return ad.get().getOwnerId();
-        return null;
     }
 }

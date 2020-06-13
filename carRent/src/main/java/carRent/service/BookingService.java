@@ -2,13 +2,12 @@ package carRent.service;
 
 import carRent.model.Booking;
 import carRent.model.Bundle;
-import carRent.model.Cart;
 import carRent.model.RequestState;
 import carRent.model.dto.BookDTO;
 import carRent.model.dto.BookingDTO;
 import carRent.model.dto.BundleDTO;
 import carRent.repository.BookingRepository;
-import com.netflix.ribbon.proxy.annotation.Http;
+import carRent.repository.BundleRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,21 +38,24 @@ public class BookingService {
     @Autowired
     private CartService cartService;
 
+    @Autowired
+    private BundleRepository bundleRepository;
+
     public boolean createBookingRequest(BundleDTO bundleDTO, String email) throws JSONException {
 
         String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
         String carsAdsServiceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
-
-        // provera da li user sa name postoji
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null)
-            return false;
-        Bundle bundle = new Bundle();
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "NONE;MASTER");
-
         HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<Long> userIdRes = new RestTemplate().exchange("http://" + userServiceIp + ":8080/client-control/user/" + email, HttpMethod.GET, entity, Long.class, new Object());
+        if (userIdRes == null || userIdRes.getBody() == null)
+            return false;
+
+        Long userId = userIdRes.getBody();
+
+        Bundle bundle = new Bundle();
 
         if (bundleDTO.getBooks().size() > 1) {
             for (BookDTO bookDTO : bundleDTO.getBooks()) {
@@ -67,16 +69,26 @@ public class BookingService {
                 if (bookDTO.getStartDate().isAfter(bookDTO.getEndDate()))
                     return false;
 
+
                 ResponseEntity<Boolean> check = new RestTemplate().exchange("http://" + carsAdsServiceIp + ":8080/ad/check/" + bookDTO.getAdId(), HttpMethod.GET, entity,
                         Boolean.class, new Object());
 
                 if (check == null || check.getBody() == null || !check.getBody())
                     return false;
 
+                // provera da client nmz sam svoje da rezervise
+                ResponseEntity<Long> ownerId = new RestTemplate().exchange("http://" + carsAdsServiceIp + ":8080/ad/owner/" + bookDTO.getAdId(), HttpMethod.GET, entity,
+                        Long.class, new Object());
+
+
+                if (ownerId == null || ownerId.getBody() == null || ownerId.getBody().longValue() == userId)
+                    return false;
+
                 Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PENDING, bookDTO.getPlace(), LocalDateTime.now(), bookDTO.getAdId(), userId);
                 bundle.getBookings().add(booking);
 
                 bookingRepo.save(booking);
+
 
                 new java.util.Timer().schedule(
                         new java.util.TimerTask() {
@@ -94,6 +106,7 @@ public class BookingService {
 
 
             }
+            bundleRepository.save(bundle);
         } else {
             if (bundleDTO.getBooks().get(0) == null || bundleDTO.getBooks().get(0).getAdId() == null || bundleDTO.getBooks().get(0).getEndDate() == null || bundleDTO.getBooks().get(0).getStartDate() == null || bundleDTO.getBooks().get(0).getPlace() == null)
                 return false;
@@ -110,8 +123,14 @@ public class BookingService {
             if (check == null || check.getBody() == null || !check.getBody())
                 return false;
 
+            // provera da client nmz sam svoje da rezervise
+            ResponseEntity<Long> ownerId = new RestTemplate().exchange("http://" + carsAdsServiceIp + ":8080/ad/owner/" + bundleDTO.getBooks().get(0).getAdId(), HttpMethod.GET, entity,
+                    Long.class, new Object());
+
+            if (ownerId == null || ownerId.getBody() == null || ownerId.getBody().longValue() == userId)
+                return false;
+
             Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PENDING, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), bundleDTO.getBooks().get(0).getAdId(), userId);
-            bundle.getBookings().add(booking);
             bookingRepo.save(booking);
 
 
@@ -131,6 +150,7 @@ public class BookingService {
 
         }
 
+
         bundleDTO.getBooks().forEach(book -> {
             try {
                 cartService.deleteAdToCart(book.getAdId(), email);
@@ -147,21 +167,23 @@ public class BookingService {
         String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
         String carsAdsServiceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
 
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null || bundleDTO.getLoaner() == null)
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<Long> userIdRes = new RestTemplate().exchange("http://" + userServiceIp + ":8080/client-control/user/" + email, HttpMethod.GET, entity, Long.class, new Object());
+        if (userIdRes == null || userIdRes.getBody() == null)
             return false;
+
+        Long userId = userIdRes.getBody();
 
         if (bundleDTO.getLoaner().equals(""))
             return false;
 
-        Long loanerId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + bundleDTO.getLoaner(), Long.class);
-        if (loanerId == null)
+        ResponseEntity<Long> loanerIdRes = new RestTemplate().exchange("http://" + userServiceIp + ":8080/client-control/user/" + bundleDTO.getLoaner(), HttpMethod.GET, entity, Long.class, new Object());
+        if (loanerIdRes == null || loanerIdRes.getBody() == null)
             return false;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "NONE;MASTER");
-
-        HttpEntity entity = new HttpEntity(headers);
+        Long loanerId = loanerIdRes.getBody();
 
         Bundle bundle = new Bundle();
         if (bundleDTO.getBooks().size() > 1) {
@@ -176,11 +198,17 @@ public class BookingService {
                 if (bookDTO.getStartDate().isAfter(bookDTO.getEndDate()))
                     return false;
 
-
                 ResponseEntity<Boolean> check = new RestTemplate().exchange("http://" + carsAdsServiceIp + ":8080/ad/check/" + bookDTO.getAdId(),
                         HttpMethod.GET, entity, Boolean.class, new Object());
 
                 if (check == null || check.getBody() == null || !check.getBody())
+                    return false;
+
+                // provera da client nmz sam svoje da rezervise
+                ResponseEntity<Long> ownerId = new RestTemplate().exchange("http://" + carsAdsServiceIp + ":8080/ad/owner/" + bookDTO.getAdId(), HttpMethod.GET, entity,
+                        Long.class, new Object());
+
+                if (ownerId == null || ownerId.getBody() == null || ownerId.getBody().longValue() == userId)
                     return false;
 
                 Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), bookDTO.getAdId(), (long) -1);
@@ -188,6 +216,8 @@ public class BookingService {
                 bookingRepo.save(booking);
 
             }
+
+            bundleRepository.save(bundle);
         } else {
 
             if (bundleDTO.getBooks().get(0) == null || bundleDTO.getBooks().get(0).getAdId() == null || bundleDTO.getBooks().get(0).getEndDate() == null || bundleDTO.getBooks().get(0).getStartDate() == null || bundleDTO.getBooks().get(0).getPlace() == null)
@@ -203,6 +233,13 @@ public class BookingService {
                     HttpMethod.GET, entity, Boolean.class, new Object());
 
             if (check == null || check.getBody() == null || !check.getBody())
+                return false;
+
+            // provera da client nmz sam svoje da rezervise
+            ResponseEntity<Long> ownerId = new RestTemplate().exchange("http://" + carsAdsServiceIp + ":8080/ad/owner/" + bundleDTO.getBooks().get(0).getAdId(), HttpMethod.GET, entity,
+                    Long.class, new Object());
+
+            if (ownerId == null || ownerId.getBody() == null || ownerId.getBody().longValue() == userId)
                 return false;
 
             Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PAID, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), bundleDTO.getBooks().get(0).getAdId(), (long) -1);
@@ -229,9 +266,15 @@ public class BookingService {
         String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
         String carsAdsServiceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
 
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null)
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<Long> userIdRes = new RestTemplate().exchange("http://" + userServiceIp + ":8080/client-control/user/" + email, HttpMethod.GET, entity, Long.class, new Object());
+        if (userIdRes == null || userIdRes.getBody() == null)
             return false;
+
+        Long userId = userIdRes.getBody();
 
         Optional<Booking> booking = bookingRepo.findById(id);
         if (!booking.isPresent())
@@ -268,9 +311,15 @@ public class BookingService {
         String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
 
         // provera da li user sa name postoji
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null)
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<Long> userIdRes = new RestTemplate().exchange("http://" + userServiceIp + ":8080/client-control/user/" + email, HttpMethod.GET, entity, Long.class, new Object());
+        if (userIdRes == null || userIdRes.getBody() == null)
             return false;
+
+        Long userId = userIdRes.getBody();
 
         Optional<Booking> booking = bookingRepo.findById(id);
         if (!booking.isPresent() || booking.get().getState() != RequestState.RESERVED || userId != booking.get().getLoaner())
@@ -289,9 +338,15 @@ public class BookingService {
         String carsAdsServiceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
 
         // provera da li user sa name postoji, provera da li je ad userov
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null)
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<Long> userIdRes = new RestTemplate().exchange("http://" + userServiceIp + ":8080/client-control/user/" + email, HttpMethod.GET, entity, Long.class, new Object());
+        if (userIdRes == null || userIdRes.getBody() == null)
             return false;
+
+        Long userId = userIdRes.getBody();
 
         Optional<Booking> booking = bookingRepo.findById(id);
         if (!booking.isPresent() || booking.get().getState() != RequestState.PENDING)
@@ -303,10 +358,10 @@ public class BookingService {
         JSONObject object = new JSONObject();
         object.put("array", array);
 
-        HttpHeaders headers = new HttpHeaders();
+        headers = new HttpHeaders();
         headers.set("Authorization", "NONE;MASTER");
 
-        HttpEntity<JSONObject> entity = new HttpEntity<>(object, headers);
+        entity = new HttpEntity<>(object, headers);
 
         Boolean check = new RestTemplate().postForObject("http://" + carsAdsServiceIp + ":8080/api/ad/check", entity, Boolean.class);
 
@@ -325,9 +380,15 @@ public class BookingService {
         String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
 
         ArrayList<BookingDTO> bookingDTOS = new ArrayList<>();
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null)
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<Long> userIdRes = new RestTemplate().exchange("http://" + userServiceIp + ":8080/client-control/user/" + email, HttpMethod.GET, entity, Long.class, new Object());
+        if (userIdRes == null || userIdRes.getBody() == null)
             return bookingDTOS;
+
+        Long userId = userIdRes.getBody();
 
         ArrayList<Booking> bookings = bookingRepo.findAllByLoaner(userId);
         for (Booking booking : bookings) {
@@ -344,8 +405,12 @@ public class BookingService {
 
         String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
 
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null)
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<Long> userIdRes = new RestTemplate().exchange("http://" + userServiceIp + ":8080/client-control/user/" + email, HttpMethod.GET, entity, Long.class, new Object());
+        if (userIdRes == null || userIdRes.getBody() == null)
             return false;
 
         String adsIds = jsonObject.getString("array");
@@ -365,8 +430,12 @@ public class BookingService {
 
         String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
 
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null)
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<Long> userIdRes = new RestTemplate().exchange("http://" + userServiceIp + ":8080/client-control/user/" + email, HttpMethod.GET, entity, Long.class, new Object());
+        if (userIdRes == null || userIdRes.getBody() == null)
             return false;
 
         String[] str = id.split(";");
@@ -379,5 +448,23 @@ public class BookingService {
 
 
         return true;
+    }
+
+    public BookingDTO getBooking(Long id, String email) {
+        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<Long> userIdRes = new RestTemplate().exchange("http://" + userServiceIp + ":8080/client-control/user/" + email, HttpMethod.GET, entity, Long.class, new Object());
+        if (userIdRes == null || userIdRes.getBody() == null)
+            return new BookingDTO();
+
+        Optional<Booking> booking = bookingRepo.findById(id);
+        if (booking.isPresent())
+            return new BookingDTO(booking.get());
+
+        return new BookingDTO();
     }
 }
