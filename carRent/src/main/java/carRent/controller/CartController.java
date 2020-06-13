@@ -3,6 +3,7 @@ package carRent.controller;
 import carRent.model.dto.AdClientDTO;
 import carRent.service.CartService;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,8 +19,9 @@ public class CartController {
     CartService cartService;
 
     // Pravljenje carta
-    @PostMapping(value = "/api/cart", produces = "application/json", consumes = "application/json")
-    public ResponseEntity<String> createCart(Principal user) throws JSONException {
+    @PostMapping(value = "/api/cart")
+    @PreAuthorize("hasAuthority('MASTER')")
+    public ResponseEntity<String> createCart(@RequestBody JSONObject temp, Principal user) throws JSONException {
 
         if (cartService.createCart(user.getName()))
             return ResponseEntity.ok("Cart created!");
@@ -40,7 +42,7 @@ public class CartController {
     }
 
     // Oglas se brise iz carta
-    @DeleteMapping(value = "/api/cart/{id}", produces = "application/json", consumes = "application/json")
+    @DeleteMapping(value = "/api/cart/{id}")
     @PreAuthorize("hasAuthority('DELETE_FROM_CART')")
     public ResponseEntity<String> deleteAdToCart(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 

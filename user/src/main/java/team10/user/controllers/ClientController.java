@@ -1,5 +1,7 @@
 package team10.user.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +45,7 @@ public class ClientController {
 
     @DeleteMapping("/{email}")
     //@PreAuthorize("hasAuthority('DELETE_CLIENT')")
-    public ResponseEntity<String> deleteClient(@PathVariable("email") String email) {
+    public ResponseEntity<String> deleteClient(@PathVariable("email") String email) throws JSONException, JsonProcessingException {
         if (clientService.delete(email))
             return ResponseEntity.ok("Operation successful!");
         return ResponseEntity.badRequest().body("Invalid request");

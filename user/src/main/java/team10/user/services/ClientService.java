@@ -1,7 +1,14 @@
 package team10.user.services;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import team10.user.models.Privilege;
@@ -26,6 +33,9 @@ public class ClientService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private DiscoveryClient discoveryClient;
 
     public List<ClientDTO> getAll() {
         return userRepository.findAll()
@@ -59,10 +69,22 @@ public class ClientService {
         User user = userRepository.findByEmail(email);
         if (user == null)
             return false;
-        //TODO 1: close all bookings
 
-        //TODO 3: fix principal and auth stuff
-        //ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/cars/client", CarDTO[].class);
+        String serviceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", email + ";MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/client", HttpMethod.GET, entity, CarDTO[].class, new Object());
+
+        if (cars.getStatusCode().isError())
+            return false;
+
+        for (CarDTO car : cars.getBody()) {
+            new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/" + car.getCarId(), HttpMethod.DELETE, entity, Object.class, new Object());
+        }
 
         userRepository.delete(user);
         return true;
@@ -77,10 +99,14 @@ public class ClientService {
         if (user != null)
             return false;
 
-        user = UserMapper.toEntity(newCompanyDTO);
-        finalizeRegistration(user);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(newCompanyDTO.getPassword());
+        //System.out.println(encodedPassword);
+        newCompanyDTO.setPassword(encodedPassword);
 
-        return true;
+        user = UserMapper.toEntity(newCompanyDTO);
+
+        return finalizeRegistration(user);
     }
 
     public boolean registerAgent(NewAgentDTO newAgentDTO) {
@@ -92,25 +118,41 @@ public class ClientService {
         if (user != null)
             return false;
 
-        user = UserMapper.toEntity(newAgentDTO);
-        finalizeRegistration(user);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(newAgentDTO.getPassword());
+        //System.out.println(encodedPassword);
+        newAgentDTO.setPassword(encodedPassword);
 
-        return true;
+        user = UserMapper.toEntity(newAgentDTO);
+
+        return finalizeRegistration(user);
     }
 
-    private void finalizeRegistration(User user) {
+    private boolean finalizeRegistration(User user) {
         Role role = roleRepository.findByName(user.getRoles().get(0));
+
+        if (role == null)
+            return false;
 
         for (Privilege p : role.getPrivileges()) {
             user.setAuthorities(user.getAuthorities() + ";" + p.getName());
         }
 
-        //TODO 2: add new cart
-        //user.getCart().setUser(user);
-        //user.getCart().setAds(new ArrayList<>());
+        // TODO 1: FIX AFTER ADDING FEIGN CLIENT
+//        String serviceIp = discoveryClient.getInstances("rent").get(0).getHost();
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.set("Authorization", user.getEmail() + ";MASTER");
+//
+//        HttpEntity entity = new HttpEntity<>(new JSONObject(), headers);
+//
+//        ResponseEntity<String> response = new RestTemplate().exchange("http://" + serviceIp + ":8080/api/cart", HttpMethod.POST, entity, String.class, new Object());
+//
+//        if (response == null || response.getStatusCode().isError())
+//            return false;
 
-        //cartRepository.save(user.getCart());
         userRepository.save(user);
+        return true;
     }
 
     public Long getUserId(String email) {

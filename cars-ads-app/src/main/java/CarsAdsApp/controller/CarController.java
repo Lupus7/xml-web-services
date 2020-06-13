@@ -50,16 +50,16 @@ public class CarController {
         return ResponseEntity.ok(car.get());
     }
 
-    @PutMapping(value = "cars/{id}", produces = "application/json", consumes = "application/json")
-    @PreAuthorize("hasAuthority('EDIT_CAR')")
-    public ResponseEntity<String> updateCar(@RequestBody UpdateCarDTO updateCarDTO, @PathVariable Long id) {
-        if (carService.update(updateCarDTO, id))
+    @PutMapping(value = "cars/{id}")
+    @PreAuthorize("hasAuthority('EDIT_CAR')  or hasAuthority('MASTER')")
+    public ResponseEntity<String>updateCar(@RequestBody UpdateCarDTO updateCarDTO, @PathVariable Long id){
+        if(carService.update(updateCarDTO, id))
             return ResponseEntity.ok("Successfully updated");
         return ResponseEntity.badRequest().body("Oops..try again");
     }
 
     @DeleteMapping(value = "cars/{id}", produces = "application/json")
-    @PreAuthorize("hasAuthority('DELETE_CAR')")
+    @PreAuthorize("hasAuthority('DELETE_CAR') or hasAuthority('MASTER')")    
     public ResponseEntity<String> deleteCar(@PathVariable Long id, Principal user) throws JSONException {
         if (carService.delete(id, user.getName()))
             return ResponseEntity.ok("Successfully deleted car from database");
@@ -74,8 +74,8 @@ public class CarController {
     }
 
     @GetMapping("/cars/brands/{brand}")
-    //@PreAuthorize("hasAuthority('READ_CODEBOOK')")
-    public ResponseEntity<List<CarDTO>> getCarsByBrand(@PathVariable String brand) {
+    @PreAuthorize("hasAuthority('READ_CODEBOOK') or hasAuthority('MASTER')")
+    public ResponseEntity<List<CarDTO>>getCarsByBrand(@PathVariable String brand){
         List<CarDTO> cars = carService.getCarsByBrand(brand);
         if (cars != null)
             return ResponseEntity.ok(cars);
@@ -83,8 +83,8 @@ public class CarController {
     }
 
     @GetMapping("/cars/class/{carClass}")
-    //@PreAuthorize("hasAuthority('READ_CODEBOOK')")
-    public ResponseEntity<List<CarDTO>> getCarsByCarClass(@PathVariable String carClass) {
+    @PreAuthorize("hasAuthority('READ_CODEBOOK') or hasAuthority('MASTER')")
+    public ResponseEntity<List<CarDTO>>getCarsByCarClass(@PathVariable String carClass){
         List<CarDTO> cars = carService.getCarsByCarClass(carClass);
         if (cars != null)
             return ResponseEntity.ok(cars);
@@ -92,8 +92,8 @@ public class CarController {
     }
 
     @GetMapping("/cars/models/{model}")
-    //@PreAuthorize("hasAuthority('READ_CODEBOOK')")
-    public ResponseEntity<List<CarDTO>> getCarsByModel(@PathVariable String model) {
+    @PreAuthorize("hasAuthority('READ_CODEBOOK') or hasAuthority('MASTER')")
+    public ResponseEntity<List<CarDTO>>getCarsByModel(@PathVariable String model){
         List<CarDTO> cars = carService.getCarsByModel(model);
         if (cars != null)
             return ResponseEntity.ok(cars);
@@ -101,8 +101,8 @@ public class CarController {
     }
 
     @GetMapping("/cars/fuels/{fuel}")
-    //@PreAuthorize("hasAuthority('READ_CODEBOOK')")
-    public ResponseEntity<List<CarDTO>> getCarsByFuel(@PathVariable String fuel) {
+    @PreAuthorize("hasAuthority('READ_CODEBOOK') or hasAuthority('MASTER')")
+    public ResponseEntity<List<CarDTO>>getCarsByFuel(@PathVariable String fuel){
         List<CarDTO> cars = carService.getCarsByFuel(fuel);
         if (cars != null)
             return ResponseEntity.ok(cars);
@@ -110,8 +110,8 @@ public class CarController {
     }
 
     @GetMapping("/cars/transmissions/{transmission}")
-    //@PreAuthorize("hasAuthority('READ_CODEBOOK')")
-    public ResponseEntity<List<CarDTO>> getCarsByTransmission(@PathVariable String transmission) {
+    @PreAuthorize("hasAuthority('READ_CODEBOOK') or hasAuthority('MASTER')")
+    public ResponseEntity<List<CarDTO>>getCarsByTransmission(@PathVariable String transmission){
         List<CarDTO> cars = carService.getCarsByTransmission(transmission);
         if (cars != null)
             return ResponseEntity.ok(cars);

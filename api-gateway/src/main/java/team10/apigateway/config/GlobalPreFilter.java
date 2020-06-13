@@ -13,6 +13,8 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import team10.apigateway.model.dto.UserAuthInfo;
 
+import java.util.List;
+
 @Component
 public class GlobalPreFilter implements GlobalFilter {
 
@@ -27,16 +29,18 @@ public class GlobalPreFilter implements GlobalFilter {
         ServerHttpRequest mutatedRequest;
 
         try {
+            List<String> headers = exchange.getRequest().getHeaders().get(JwtProperties.HEADER_INTERNAL);
 
-            /*List<String> services = discoveryClient.getServices();
-            for (String service : services) {
-                if (exchange.getRequest().getRemoteAddress().getAddress().getHostAddress().equals(discoveryClient.getInstances(service).get(0).getHost())) {
-                    mutatedRequest = exchange.getRequest().mutate().header(JwtProperties.HEADER_INTERNAL, "NONE;MASTER").build();
-                    ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
-                    return chain.filter(mutatedExchange);
+            if (headers != null && !headers.isEmpty() && headers.get(0).contains("MASTER")) {
+                List<String> services = discoveryClient.getServices();
+                for (String service : services) {
+                    if (exchange.getRequest().getRemoteAddress().getAddress().getHostAddress().equals(discoveryClient.getInstances(service).get(0).getHost())) {
+                        mutatedRequest = exchange.getRequest().mutate().header(JwtProperties.HEADER_INTERNAL, "NONE;MASTER").build();
+                        ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
+                        return chain.filter(mutatedExchange);
+                    }
                 }
-            }*/
-
+            }
 
             String header = exchange.getRequest().getHeaders().get(JwtProperties.HEADER).get(0);
             String username = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))

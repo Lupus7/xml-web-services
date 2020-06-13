@@ -75,6 +75,7 @@ public class CarService {
     }
 
     public boolean update(UpdateCarDTO updateCarDTO, Long id) {
+        System.out.println("------> " + updateCarDTO.getBrand());
         Optional<Car> car = carRepository.findById(id);
         if (car.isPresent()) {
             car.get().setTotalMileage(updateCarDTO.getTotalMileage());
