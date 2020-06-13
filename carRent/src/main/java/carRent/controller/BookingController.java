@@ -4,7 +4,6 @@ import carRent.model.dto.BookingDTO;
 import carRent.model.dto.BundleDTO;
 import carRent.service.BookingService;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -64,15 +63,15 @@ public class BookingController {
     }
 
     // Booking check
-    @PostMapping(value = "/api/booking/checking", produces = "application/json", consumes = "application/json")
-    public ResponseEntity<Boolean> checkingBookingRequests(@RequestBody JSONObject jsonObject, Principal user) throws JSONException {
+    @PostMapping(value = "/api/booking/checking")
+    public ResponseEntity<Boolean> checkingBookingRequests(@RequestBody String jsonObject, Principal user)  {
         return ResponseEntity.ok(bookingService.checkingBookingRequests(jsonObject, user.getName()));
 
     }
 
     // Odbijanje booking requesta kod brisanja car-a
-    @DeleteMapping(value = "/api/booking/checking/remove/{id}", produces = "application/json", consumes = "application/json")
-    public ResponseEntity<String> deleteCarsBookings(@PathVariable(value = "id") String id, Principal user) throws JSONException {
+    @PostMapping(value = "/api/booking/checking/remove")
+    public ResponseEntity<String> deleteCarsBookings(@RequestBody String id, Principal user){
 
         if (bookingService.deleteCarsBookings(id, user.getName()))
             return ResponseEntity.ok("Booking request canceled!");

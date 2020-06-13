@@ -8,6 +8,8 @@ import carRent.model.dto.BookingDTO;
 import carRent.model.dto.BundleDTO;
 import carRent.repository.BookingRepository;
 import carRent.repository.BundleRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -401,7 +403,7 @@ public class BookingService {
     }
 
 
-    public boolean checkingBookingRequests(JSONObject jsonObject, String email) throws JSONException {
+    public boolean checkingBookingRequests(String jsonObject, String email) {
 
         String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
 
@@ -413,10 +415,12 @@ public class BookingService {
         if (userIdRes == null || userIdRes.getBody() == null)
             return false;
 
-        String adsIds = jsonObject.getString("array");
+        System.out.println("ISPIS:"+jsonObject);
+
+        String adsIds = jsonObject;
         String[] str = adsIds.split(";");
         for (String s : str) {
-            for (Booking b : bookingRepo.findAllByAd(Long.parseLong("s"))) {
+            for (Booking b : bookingRepo.findAllByAd(Long.parseLong(s))) {
                 if (!b.getState().equals(RequestState.CANCELED) && !b.getState().equals(RequestState.PENDING))
                     return false;
             }
@@ -440,7 +444,7 @@ public class BookingService {
 
         String[] str = id.split(";");
         for (String s : str) {
-            for (Booking b : bookingRepo.findAllByAd(Long.parseLong("s"))) {
+            for (Booking b : bookingRepo.findAllByAd(Long.parseLong(s))) {
                 b.setState(RequestState.CANCELED);
                 bookingRepo.save(b);
             }
