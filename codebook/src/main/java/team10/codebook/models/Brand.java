@@ -9,7 +9,8 @@ import java.util.List;
 public class Brand {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "brand_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "brand_id_seq_gen")
+    @SequenceGenerator(name="brand_id_seq_gen", sequenceName = "brand_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "name", unique = false, nullable = false)
@@ -20,6 +21,7 @@ public class Brand {
 
 
     public Brand() {
+        this.models = new ArrayList<>();
     }
 
     public Brand(String name) {

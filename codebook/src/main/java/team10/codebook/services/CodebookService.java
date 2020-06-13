@@ -4,6 +4,10 @@ import org.hibernate.sql.Update;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -34,6 +38,9 @@ public class CodebookService {
     @Autowired
     TransmissionRepository transmissionRepository;
 
+    @Autowired
+    DiscoveryClient discoveryClient;
+
     public List<CodebookItemDTO> getAllBrands() {
         return brandRepository.findAll()
                 .stream()
@@ -42,9 +49,9 @@ public class CodebookService {
     }
 
     public boolean addBrand(CodebookItemDTO codebookItemDTO) {
-        Brand item = new Brand();
-        item.setName(codebookItemDTO.getName());
+        Brand item = new Brand(codebookItemDTO.getName());
         brandRepository.save(item);
+        System.out.println(item.getId());
         return true;
     }
 
@@ -53,7 +60,14 @@ public class CodebookService {
         if (item == null)
             return false;
 
-        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/brands/" + item.getName(), CarDTO[].class);
+        String serviceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/brands/" + item.getName(), HttpMethod.GET, entity, CarDTO[].class, new Object());
         if (cars.getBody() != null && cars.getBody().length > 0) {
             for(CarDTO car : cars.getBody()) {
                 UpdateCarDTO updateCarDTO = new UpdateCarDTO();
@@ -68,10 +82,13 @@ public class CodebookService {
                 updateCarDTO.setModel(car.getModel());
                 updateCarDTO.setTotalMileage(car.getTotalMileage());
                 updateCarDTO.setTransmission(car.getTransmission());
-                new RestTemplate().put("http://localhost:8080/cars-ads/cars/" + car.getCarId(), updateCarDTO, Object.class);
+
+                entity = new HttpEntity<>(updateCarDTO, headers);
+                new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/" + car.getCarId(), HttpMethod.PUT, entity, String.class, new Object());
             }
         }
-
+        else
+            System.out.println("nema brate");
         item.setName(codebookItemDTO.getName());
         brandRepository.save(item);
         return true;
@@ -82,7 +99,14 @@ public class CodebookService {
         if (item == null || !item.getModels().isEmpty())
             return false;
 
-        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/brands/" + item.getName(), CarDTO[].class);
+        String serviceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/brands/" + item.getName(), HttpMethod.GET, entity, CarDTO[].class, new Object());
         if (cars.getBody() != null && cars.getBody().length > 0)
             return false;
 
@@ -123,7 +147,14 @@ public class CodebookService {
         if (item == null)
             return false;
 
-        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/models/" + item.getName(), CarDTO[].class);
+        String serviceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/models/" + item.getName(), HttpMethod.GET, entity, CarDTO[].class, new Object());
         if (cars.getBody() != null && cars.getBody().length > 0) {
             for(CarDTO car : cars.getBody()) {
                 UpdateCarDTO updateCarDTO = new UpdateCarDTO();
@@ -138,7 +169,9 @@ public class CodebookService {
                 updateCarDTO.setModel(codebookItemDTO.getName());
                 updateCarDTO.setTotalMileage(car.getTotalMileage());
                 updateCarDTO.setTransmission(car.getTransmission());
-                new RestTemplate().put("http://localhost:8080/cars-ads/cars/" + car.getCarId(), updateCarDTO, Object.class);
+
+                entity = new HttpEntity<>(updateCarDTO, headers);
+                new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/" + car.getCarId(), HttpMethod.PUT, entity, String.class, new Object());
             }
         }
 
@@ -152,7 +185,14 @@ public class CodebookService {
         if (item == null)
             return false;
 
-        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/models/" + item.getName(), CarDTO[].class);
+        String serviceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/models/" + item.getName(), HttpMethod.GET, entity, CarDTO[].class, new Object());
         if (cars.getBody() != null && cars.getBody().length > 0)
             return false;
 
@@ -190,7 +230,14 @@ public class CodebookService {
         if (item == null)
             return false;
 
-        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/class/" + item.getName(), CarDTO[].class);
+        String serviceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/class/" + item.getName(), HttpMethod.GET, entity, CarDTO[].class, new Object());
         if (cars.getBody() != null && cars.getBody().length > 0) {
             for(CarDTO car : cars.getBody()) {
                 UpdateCarDTO updateCarDTO = new UpdateCarDTO();
@@ -205,7 +252,9 @@ public class CodebookService {
                 updateCarDTO.setModel(car.getModel());
                 updateCarDTO.setTotalMileage(car.getTotalMileage());
                 updateCarDTO.setTransmission(car.getTransmission());
-                new RestTemplate().put("http://localhost:8080/cars-ads/cars/" + car.getCarId(), updateCarDTO, Object.class);
+
+                entity = new HttpEntity<>(updateCarDTO, headers);
+                new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/" + car.getCarId(), HttpMethod.PUT, entity, String.class, new Object());
             }
         }
 
@@ -219,7 +268,14 @@ public class CodebookService {
         if (item == null)
             return false;
 
-        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/class/" + item.getName(), CarDTO[].class);
+        String serviceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/class/" + item.getName(), HttpMethod.GET, entity, CarDTO[].class, new Object());
         if (cars.getBody() != null && cars.getBody().length > 0)
             return false;
 
@@ -246,7 +302,14 @@ public class CodebookService {
         if (item == null)
             return false;
 
-        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/fuels/" + item.getType(), CarDTO[].class);
+        String serviceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/fuels/" + item.getType(), HttpMethod.GET, entity, CarDTO[].class, new Object());
         if (cars.getBody() != null && cars.getBody().length > 0) {
             for(CarDTO car : cars.getBody()) {
                 UpdateCarDTO updateCarDTO = new UpdateCarDTO();
@@ -261,7 +324,9 @@ public class CodebookService {
                 updateCarDTO.setModel(car.getModel());
                 updateCarDTO.setTotalMileage(car.getTotalMileage());
                 updateCarDTO.setTransmission(car.getTransmission());
-                new RestTemplate().put("http://localhost:8080/cars-ads/cars/" + car.getCarId(), updateCarDTO, Object.class);
+
+                entity = new HttpEntity<>(updateCarDTO, headers);
+                new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/" + car.getCarId(), HttpMethod.PUT, entity, String.class, new Object());
             }
         }
 
@@ -275,7 +340,14 @@ public class CodebookService {
         if (item == null)
             return false;
 
-        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/fuels/" + item.getType(), CarDTO[].class);
+        String serviceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/fuels/" + item.getType(), HttpMethod.GET, entity, CarDTO[].class, new Object());
         if (cars.getBody() != null && cars.getBody().length > 0)
             return false;
 
@@ -302,7 +374,14 @@ public class CodebookService {
         if (item == null)
             return false;
 
-        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/transmissions/" + item.getType(), CarDTO[].class);
+        String serviceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/transmissions/" + item.getType(), HttpMethod.GET, entity, CarDTO[].class, new Object());
         if (cars.getBody() != null && cars.getBody().length > 0) {
             for(CarDTO car : cars.getBody()) {
                 UpdateCarDTO updateCarDTO = new UpdateCarDTO();
@@ -317,7 +396,9 @@ public class CodebookService {
                 updateCarDTO.setModel(car.getModel());
                 updateCarDTO.setTotalMileage(car.getTotalMileage());
                 updateCarDTO.setTransmission(codebookItemDTO.getName());
-                new RestTemplate().put("http://localhost:8080/cars-ads/cars/" + car.getCarId(), updateCarDTO, Object.class);
+
+                entity = new HttpEntity<>(updateCarDTO, headers);
+                new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/" + car.getCarId(), HttpMethod.PUT, entity, String.class, new Object());
             }
         }
 
@@ -331,7 +412,14 @@ public class CodebookService {
         if (item == null)
             return false;
 
-        ResponseEntity<CarDTO[]> cars = new RestTemplate().getForEntity("http://localhost:8080/cars-ads/transmissions/" + item.getType(), CarDTO[].class);
+        String serviceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "NONE;MASTER");
+
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<CarDTO[]> cars = new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/transmissions/" + item.getType(), HttpMethod.GET, entity, CarDTO[].class, new Object());
         if (cars.getBody() != null && cars.getBody().length > 0)
             return false;
 
