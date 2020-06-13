@@ -10,9 +10,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.Principal;
 import java.util.*;
 
 @Service
@@ -87,7 +92,15 @@ public class CarService {
         return false;
     }
 
-    public boolean delete(Long id) throws JSONException {
+    public boolean delete(Long id, String email) throws JSONException {
+
+        String rentServiceIp = discoveryClient.getInstances("rent").get(0).getHost();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", email+";MASTER");
+        headers.set("Content-Type", "application/json");
+        HttpEntity<String> entity;
+        HttpEntity entity1;
+
         Optional<Car> car = carRepository.findById(id);
         if (!car.isPresent()) {
             return false;
@@ -99,19 +112,14 @@ public class CarService {
             adsIds += ad.getId() + ";";
         }
 
-        JSONObject object = new JSONObject();
-        object.put("array", adsIds);
+        entity = new HttpEntity<>(adsIds, headers);
+        ResponseEntity<Boolean> check = new RestTemplate().exchange("http://" + rentServiceIp + ":8080/api/booking/checking", HttpMethod.POST, entity, Boolean.class, new Object());
 
-        String rentServiceIp = discoveryClient.getInstances("rent").get(0).getHost();
-        Boolean check = new RestTemplate().postForObject("http://" + rentServiceIp + ":8080/api/booking/checking", object, Boolean.class);
-
-        if (!check)
+        if (check==null || !check.getBody())
             return false;
 
         for (Ad ad : ads) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("id", adsIds);
-            new RestTemplate().delete("http://" + rentServiceIp + ":8080/api/booking/checking/remove/{id}", params);
+            new RestTemplate().exchange("http://" + rentServiceIp + ":8080/api/booking/checking/remove", HttpMethod.POST, entity, String.class, new Object());
             adRepository.delete(ad);
         }
 

@@ -68,7 +68,7 @@
                             All Bookings
                         </b-dropdown-item>
                     </b-nav-item-dropdown>
-                    <b-nav-item @click="showClientCart()">
+                    <b-nav-item @click="showClientCart()" right>
                         <b-icon
                             icon="cart-fill"
                             aria-hidden="true"
