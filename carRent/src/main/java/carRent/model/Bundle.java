@@ -9,7 +9,8 @@ import java.util.List;
 public class Bundle {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bundle_id_seq_gen")
+    @SequenceGenerator(name="bundle_id_seq_gen", sequenceName = "bundle_id_seq", allocationSize = 1)
     Long id;
 
     @OneToMany()

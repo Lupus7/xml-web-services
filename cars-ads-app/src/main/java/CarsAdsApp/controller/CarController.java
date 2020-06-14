@@ -59,9 +59,9 @@ public class CarController {
     }
 
     @DeleteMapping(value = "cars/{id}", produces = "application/json")
-    @PreAuthorize("hasAuthority('DELETE_CAR') or hasAuthority('MASTER')")    
+    @PreAuthorize("hasAuthority('DELETE_CAR') or hasAuthority('MASTER')")
     public ResponseEntity<String> deleteCar(@PathVariable Long id, Principal user) throws JSONException {
-        if (carService.delete(id, user.getName()))
+        if (carService.delete(id, user))
             return ResponseEntity.ok("Successfully deleted car from database");
         return ResponseEntity.badRequest().body("Oops.. try again");
     }
