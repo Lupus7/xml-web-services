@@ -106,4 +106,11 @@ public class BookingController {
         return ResponseEntity.ok((BookingDTO) bookingService.getBooking(id, user.getName()));
 
     }
+
+    @GetMapping(value = "/api/booking/{id}/ad", produces = "application/json")
+    @PreAuthorize("hasAuthority('READ_BOOKINGS')")
+    public ResponseEntity<Long> getBookingsAd(@PathVariable("id") Long id, Principal user) throws JSONException {
+        BookingDTO bookingDto = (BookingDTO) bookingService.getBooking(id, user.getName());
+        return ResponseEntity.ok(bookingDto.getAd());
+    }
 }

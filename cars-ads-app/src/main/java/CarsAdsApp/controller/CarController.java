@@ -1,7 +1,9 @@
 package CarsAdsApp.controller;
 
+import CarsAdsApp.controller.dto.ImageDTO;
 import CarsAdsApp.controller.dto.UpdateCarDTO;
 import CarsAdsApp.model.Car;
+import CarsAdsApp.model.Image;
 import CarsAdsApp.model.dto.CarDTO;
 import CarsAdsApp.service.CarService;
 import ch.qos.logback.core.net.SyslogOutputStream;
@@ -116,6 +118,16 @@ public class CarController {
         if (cars != null)
             return ResponseEntity.ok(cars);
         return ResponseEntity.badRequest().body(null);
+    }
+
+    //Update images for specific car
+    @PutMapping("/cars/{id}/images")
+    @PreAuthorize("hasAuthority('EDIT_CAR') or hasAuthority('MASTER')")
+    public ResponseEntity<String> updateCarImages(@RequestBody ImageDTO imagedto, @PathVariable Long id){
+        Boolean updated = carService.updateImages(imagedto, id);
+        if(updated)
+            return ResponseEntity.ok("Successfully updated images");
+        return ResponseEntity.badRequest().build();
     }
 
 

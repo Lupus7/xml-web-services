@@ -1,5 +1,6 @@
 package CarsAdsApp.service;
 
+import CarsAdsApp.controller.dto.ImageDTO;
 import CarsAdsApp.controller.dto.UpdateCarDTO;
 import CarsAdsApp.model.*;
 import CarsAdsApp.model.dto.CarDTO;
@@ -189,5 +190,21 @@ public class CarService {
             carDTOS.add(new CarDTO(car));
 
         return carDTOS;
+    }
+
+    public Boolean updateImages(ImageDTO imagedto, Long id) {
+        //first find all images for specific car
+        ArrayList<Image> carsImgs = (ArrayList<Image>) imageRepository.findAllByCarId(id);
+        //delete all of them, then update
+        for(Image image: carsImgs){
+            imageRepository.delete(image);
+        }
+        for(String imageEnc64: imagedto.getImages()){
+            Image image = new Image();
+            image.setEncoded64Image(imageEnc64);
+            image.setCarId(id);
+            imageRepository.save(image);
+        }
+        return true;
     }
 }
