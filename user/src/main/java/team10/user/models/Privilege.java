@@ -7,8 +7,6 @@ import java.util.Collection;
 @Table(name = "privilege")
 public class Privilege {
     @Id
-    @SequenceGenerator(name = "privilege_id_seq", sequenceName = "privilege_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "privilege_id_seq")
     private Long id;
 
     @Column(name = "name", unique = true, nullable = false)

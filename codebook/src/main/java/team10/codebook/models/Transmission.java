@@ -7,7 +7,8 @@ import javax.persistence.*;
 public class Transmission {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transmission_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transmission_id_seq_gen")
+    @SequenceGenerator(name="transmission_id_seq_gen", sequenceName = "transmission_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "name", unique = false, nullable = false)

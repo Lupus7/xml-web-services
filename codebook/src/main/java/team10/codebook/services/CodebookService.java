@@ -118,6 +118,7 @@ public class CodebookService {
 
         Model item = new Model();
         item.setName((String) obj.get("name"));
+        item.setBrand(brand);
         brand.getModels().add(item);
 
         brandRepository.save(brand);
