@@ -1,16 +1,10 @@
 package team10.user.services;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import team10.user.models.Privilege;
 import team10.user.models.Role;
 import team10.user.models.User;
@@ -18,6 +12,8 @@ import team10.user.models.dto.CarDTO;
 import team10.user.models.dto.ClientDTO;
 import team10.user.models.dto.NewAgentDTO;
 import team10.user.models.dto.NewCompanyDTO;
+import team10.user.proxy.CarsAdsProxy;
+import team10.user.proxy.RentProxy;
 import team10.user.repositories.RoleRepository;
 import team10.user.repositories.UserRepository;
 import team10.user.util.ClientMapper;
@@ -35,7 +31,10 @@ public class ClientService {
     private RoleRepository roleRepository;
 
     @Autowired
-    private DiscoveryClient discoveryClient;
+    private CarsAdsProxy carsAdsProxy;
+
+    @Autowired
+    private RentProxy rentProxy;
 
     public List<ClientDTO> getAll() {
         return userRepository.findAll()
@@ -70,20 +69,13 @@ public class ClientService {
         if (user == null)
             return false;
 
-        String serviceIp = discoveryClient.getInstances("cars-ads").get(0).getHost();
+        ResponseEntity<List<CarDTO>> cars = carsAdsProxy.getClientCars(email + ";MASTER");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", email + ";MASTER");
-
-        HttpEntity entity = new HttpEntity(headers);
-
-        ResponseEntity<CarDTO[]> cars = new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/client", HttpMethod.GET, entity, CarDTO[].class, new Object());
-
-        if (cars.getStatusCode().isError())
+        if (cars.getStatusCode().isError() || cars.getBody() == null)
             return false;
 
         for (CarDTO car : cars.getBody()) {
-            new RestTemplate().exchange("http://" + serviceIp + ":8080/cars/" + car.getCarId(), HttpMethod.DELETE, entity, Object.class, new Object());
+            carsAdsProxy.deleteCar(car.getCarId(), email + ";MASTER");
         }
 
         userRepository.delete(user);
@@ -138,17 +130,10 @@ public class ClientService {
             user.setAuthorities(user.getAuthorities() + ";" + p.getName());
         }
 
-        // TODO 1: FIX AFTER ADDING FEIGN CLIENT
-//        String serviceIp = discoveryClient.getInstances("rent").get(0).getHost();
+        // TODO: 400 no body error
+//        ResponseEntity<String> responseEntity = rentProxy.createCart(user.getEmail() + ";MASTER", "0");
 //
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.set("Authorization", user.getEmail() + ";MASTER");
-//
-//        HttpEntity entity = new HttpEntity<>(new JSONObject(), headers);
-//
-//        ResponseEntity<String> response = new RestTemplate().exchange("http://" + serviceIp + ":8080/api/cart", HttpMethod.POST, entity, String.class, new Object());
-//
-//        if (response == null || response.getStatusCode().isError())
+//        if (responseEntity.getStatusCode().isError())
 //            return false;
 
         userRepository.save(user);

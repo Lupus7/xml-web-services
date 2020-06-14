@@ -19,10 +19,9 @@ public class CartController {
     CartService cartService;
 
     // Pravljenje carta
-    @PostMapping(value = "/api/cart")
+    @PostMapping("/api/cart")
     @PreAuthorize("hasAuthority('MASTER')")
-    public ResponseEntity<String> createCart(@RequestBody JSONObject temp, Principal user) throws JSONException {
-
+    public ResponseEntity<String> createCart(Principal user) throws JSONException {
         if (cartService.createCart(user.getName()))
             return ResponseEntity.ok("Cart created!");
         else
