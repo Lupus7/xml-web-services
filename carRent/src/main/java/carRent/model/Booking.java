@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 public class Booking {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "booking_id_seq_gen")
+    @SequenceGenerator(name="booking_id_seq_gen", sequenceName = "booking_id_seq", allocationSize = 1)
     Long id;
 
     @Column(unique = false, nullable = false)

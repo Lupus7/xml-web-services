@@ -62,7 +62,8 @@ public class Car {
 
     @XmlElement(namespace = "xml-web-services-cars")
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "car_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "car_id_seq_gen")
+    @SequenceGenerator(name="car_id_seq_gen", sequenceName = "car_id_seq", allocationSize = 1)
     protected long id;
     @Column()
     @XmlElement(namespace = "xml-web-services-cars")

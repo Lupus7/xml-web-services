@@ -34,7 +34,7 @@ public class AdController {
 
     // Provera da li je ad userov
     @PostMapping(value = "/api/ad/check", produces = "application/json", consumes = "application/json")
-    public Boolean createAd(@RequestBody JSONObject object, Principal user) throws JSONException {
+    public Boolean checking(@RequestBody JSONObject object, Principal user) throws JSONException {
 
         if (adService.checkAds(object, user.getName()))
             return true;
@@ -45,7 +45,7 @@ public class AdController {
     // Activate ad-a
     @PutMapping(value = "/api/ad/activate/{id}")
     @PreAuthorize("hasAuthority('ACTIVATE_AD')")
-    public ResponseEntity<String> activateAd(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
+    public ResponseEntity<String> activateAd(@PathVariable(value = "id") Long id, Principal user) {
         int response = adService.activateAd(id, user.getName());
         if (response == 200)
             return ResponseEntity.ok("Ad successfully deactivated!");
@@ -59,7 +59,7 @@ public class AdController {
     // Deactivate ad-a
     @DeleteMapping(value = "/api/ad/deactivate/{id}")
     @PreAuthorize("hasAuthority('DEACTIVATE_AD')")
-    public ResponseEntity<String> deactivateAd(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
+    public ResponseEntity<String> deactivateAd(@PathVariable(value = "id") Long id, Principal user) {
 
         if (adService.deactivateAd(id, user.getName()))
             return ResponseEntity.ok("Ad successfully deactivated!");
@@ -72,7 +72,7 @@ public class AdController {
     // Izmena ad-a
     @PutMapping(value = "/api/ad/{id}", produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasAuthority('EDIT_AD')")
-    public ResponseEntity<String> editAd(@PathVariable(value = "id") Long id, @RequestBody AdDTO adDTO, Principal user) throws JSONException {
+    public ResponseEntity<String> editAd(@PathVariable(value = "id") Long id, @RequestBody AdDTO adDTO, Principal user){
 
         if (adService.editAd(id, adDTO,user.getName()))
             return ResponseEntity.ok("Ad successfully edited!");

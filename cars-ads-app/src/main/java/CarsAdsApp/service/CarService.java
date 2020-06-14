@@ -3,6 +3,8 @@ package CarsAdsApp.service;
 import CarsAdsApp.controller.dto.UpdateCarDTO;
 import CarsAdsApp.model.*;
 import CarsAdsApp.model.dto.CarDTO;
+import CarsAdsApp.proxy.RentProxy;
+import CarsAdsApp.proxy.UserProxy;
 import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.CarRepository;
 import CarsAdsApp.repository.ImageRepository;
@@ -32,10 +34,8 @@ public class CarService {
     ImageRepository imageRepository;
 
     @Autowired
-    DiscoveryClient discoveryClient;
+    RentProxy rentProxy;
 
-
-    //MEthod for creating new car in dataabse
     public boolean CreateCar(CarDTO newCarDto, String email) {
         if (newCarDto.getBrand() == null || newCarDto.getModel() == null || newCarDto.getFuel() == null || newCarDto.getCarClass() == null || newCarDto.getTransmission() == null) {
             return false;
@@ -54,10 +54,9 @@ public class CarService {
         car.setFuel(newCarDto.getFuel());
         car.setTransmission(newCarDto.getTransmission());
 
-        //Save car in database
         carRepository.save(car);
 
-        for(String image: newCarDto.getImages()){
+        for (String image : newCarDto.getImages()) {
             Image newImage = new Image(image, car.getId());
             imageRepository.save(newImage);
         }
@@ -65,7 +64,6 @@ public class CarService {
         return true;
     }
 
-    //Method for retrieving all cars from database
     public List<Car> getAll() {
         return carRepository.findAll();
     }
@@ -75,32 +73,35 @@ public class CarService {
     }
 
     public boolean update(UpdateCarDTO updateCarDTO, Long id) {
-        System.out.println("------> " + updateCarDTO.getBrand());
+
         Optional<Car> car = carRepository.findById(id);
         if (car.isPresent()) {
             car.get().setTotalMileage(updateCarDTO.getTotalMileage());
-            car.get().setDescription(updateCarDTO.getDescription());
+            car.get().setChildrenSeats(updateCarDTO.getChildrenSeats());
             car.get().setAllowedMileage(updateCarDTO.getAllowedMileage());
             car.get().setColDamProtection(updateCarDTO.isColDamProtection());
-            car.get().setBrand(updateCarDTO.getBrand());
-            car.get().setModel(updateCarDTO.getModel());
-            car.get().setCarClass(updateCarDTO.getCarClass());
-            car.get().setFuel(updateCarDTO.getFuel());
-            car.get().setTransmission(updateCarDTO.getTransmission());
+
+            if (updateCarDTO.getDescription() != null && !updateCarDTO.getDescription().equals(""))
+                car.get().setDescription(updateCarDTO.getDescription());
+            if (updateCarDTO.getBrand() != null && !updateCarDTO.getBrand().equals(""))
+                car.get().setBrand(updateCarDTO.getBrand());
+            if (updateCarDTO.getModel() != null && !updateCarDTO.getModel().equals(""))
+                car.get().setModel(updateCarDTO.getModel());
+            if (updateCarDTO.getCarClass() != null && !updateCarDTO.getCarClass().equals(""))
+                car.get().setCarClass(updateCarDTO.getCarClass());
+            if (updateCarDTO.getFuel() != null && !updateCarDTO.getFuel().equals(""))
+                car.get().setFuel(updateCarDTO.getFuel());
+            if (updateCarDTO.getTransmission() != null && !updateCarDTO.getTransmission().equals(""))
+                car.get().setTransmission(updateCarDTO.getTransmission());
+
             carRepository.save(car.get());
             return true;
         }
         return false;
     }
 
-    public boolean delete(Long id, String email) throws JSONException {
+    public boolean delete(Long id, Principal user) {
 
-        String rentServiceIp = discoveryClient.getInstances("rent").get(0).getHost();
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", email+";MASTER");
-        headers.set("Content-Type", "application/json");
-        HttpEntity<String> entity;
-        HttpEntity entity1;
 
         Optional<Car> car = carRepository.findById(id);
         if (!car.isPresent()) {
@@ -113,14 +114,13 @@ public class CarService {
             adsIds += ad.getId() + ";";
         }
 
-        entity = new HttpEntity<>(adsIds, headers);
-        ResponseEntity<Boolean> check = new RestTemplate().exchange("http://" + rentServiceIp + ":8080/api/booking/checking", HttpMethod.POST, entity, Boolean.class, new Object());
+        ResponseEntity<Boolean> check = rentProxy.checkingBookingRequests(adsIds, user.getName() + ";MASTER");
 
-        if (check==null || !check.getBody())
+        if (check == null || !check.getBody())
             return false;
 
         for (Ad ad : ads) {
-            new RestTemplate().exchange("http://" + rentServiceIp + ":8080/api/booking/checking/remove", HttpMethod.POST, entity, String.class, new Object());
+            rentProxy.deleteCarsBookings(adsIds, user.getName() + ";MASTER");
             adRepository.delete(ad);
         }
 
@@ -132,10 +132,10 @@ public class CarService {
         List<CarDTO> carDTOS = new ArrayList<>();
         List<Car> cars = carRepository.findAllByOwner(email);
 
-        for (Car car : cars){
+        for (Car car : cars) {
             List<Image> images = imageRepository.findAllByCarId(car.getId());
             CarDTO carDTO = new CarDTO(car);
-            for(Image image: images){
+            for (Image image : images) {
                 carDTO.getImages().add(image.getEncoded64Image());
             }
             carDTOS.add(carDTO);
