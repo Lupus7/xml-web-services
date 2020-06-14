@@ -7,7 +7,8 @@ import javax.persistence.*;
 public class Model {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "model_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "model_id_seq_gen")
+    @SequenceGenerator(name="model_id_seq_gen", sequenceName = "model_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "name", unique = false, nullable = false)

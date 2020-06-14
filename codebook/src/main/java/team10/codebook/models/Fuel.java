@@ -7,7 +7,8 @@ import javax.persistence.*;
 public class Fuel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fuel_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fuel_id_seq_gen")
+    @SequenceGenerator(name="fuel_id_seq_gen", sequenceName = "fuel_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "name", unique = false, nullable = false)
