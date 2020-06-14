@@ -56,15 +56,20 @@ public class Message {
     @XmlElement(namespace = "xml-web-services-community")
     protected long booking;
 
+    protected String sender;
+    protected String reveicer;
+
     public Message() {
     }
 
 
-    public Message(long id, String body, Date date, long booking) {
+    public Message(long id, String body, Date date, long booking,String sender, String reveicer) {
         this.id = id;
         this.body = body;
         this.date = date;
         this.booking = booking;
+        this.sender = sender;
+        this.reveicer = reveicer;
     }
 
     /**
@@ -147,4 +152,19 @@ public class Message {
         this.booking = value;
     }
 
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getReveicer() {
+        return reveicer;
+    }
+
+    public void setReveicer(String reveicer) {
+        this.reveicer = reveicer;
+    }
 }
