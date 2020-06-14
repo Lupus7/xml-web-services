@@ -45,7 +45,7 @@ public class ClientController {
 
     @DeleteMapping("/{email}")
     //@PreAuthorize("hasAuthority('DELETE_CLIENT')")
-    public ResponseEntity<String> deleteClient(@PathVariable("email") String email) throws JSONException, JsonProcessingException {
+    public ResponseEntity<String> deleteClient(@PathVariable("email") String email) {
         if (clientService.delete(email))
             return ResponseEntity.ok("Operation successful!");
         return ResponseEntity.badRequest().body("Invalid request");

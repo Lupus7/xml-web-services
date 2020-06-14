@@ -35,9 +35,7 @@ public class GlobalPreFilter implements GlobalFilter {
                 List<String> services = discoveryClient.getServices();
                 for (String service : services) {
                     if (exchange.getRequest().getRemoteAddress().getAddress().getHostAddress().equals(discoveryClient.getInstances(service).get(0).getHost())) {
-                        mutatedRequest = exchange.getRequest().mutate().header(JwtProperties.HEADER_INTERNAL, "NONE;MASTER").build();
-                        ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
-                        return chain.filter(mutatedExchange);
+                        return chain.filter(exchange);
                     }
                 }
             }
