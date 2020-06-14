@@ -5,6 +5,7 @@ import CarsAdsApp.model.Car;
 import CarsAdsApp.model.Image;
 import CarsAdsApp.model.dto.AdClientDTO;
 import CarsAdsApp.model.dto.AdDTO;
+import CarsAdsApp.proxy.UserProxy;
 import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.CarRepository;
 import CarsAdsApp.repository.ImageRepository;
@@ -13,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -37,19 +39,25 @@ public class AdService {
     @Autowired
     DiscoveryClient discoveryClient;
 
+    @Autowired
+    UserProxy userProxy;
+
     public int createAd(AdDTO adDTO, String email) {
         // provera da li user sa name postoji, provera da li je ad userov
         // TODO: FIND A BETTER SOLUTION PLS!
         String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
-        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-        if (userId == null)
+        //Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        if (userIdResponse == null || userIdResponse.getBody() == null)
             return 400;
+
+        Long userId = userIdResponse.getBody();
 
         // provera za 3 ad-a
         boolean active = true;
         ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
         if (ads.size() == 3)
-           active = false;
+            active = false;
 
         if (adDTO == null)
             return 400;
