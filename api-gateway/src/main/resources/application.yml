@@ -47,3 +47,9 @@ spring:
             - Path=/codebook/**
           filters:
             - 'RewritePath=/codebook/(?<path>.*), /$\{path}'
+        - id: community
+          uri: 'lb://community'
+          predicates:
+            - Path=/community/**
+          filters:
+            - 'RewritePath=/community/(?<path>.*), /$\{path}'

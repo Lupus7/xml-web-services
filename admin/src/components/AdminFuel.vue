@@ -161,6 +161,7 @@ export default {
     },
     methods: {
         removeFuel(fuel) {
+            event.preventDefault();
             let url = "/codebook/fuel/" + fuel.id;
             axios.delete(url).then(response => {
                 if (response.status === 200) {
@@ -181,6 +182,7 @@ export default {
         },
 
         addNewFuel() {
+            event.preventDefault();
             axios
                 .post("/codebook/fuel", {
                     name: this.fuelF
@@ -208,6 +210,7 @@ export default {
             this.fuelId = fuel.id;
         },
         editFuelFinal() {
+            event.preventDefault();
             let url = "/codebook/fuel/" + this.fuelId;
 
             axios

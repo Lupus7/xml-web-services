@@ -309,7 +309,7 @@ export default {
 
         },
         editCar(car){
-
+            event.preventDefault();
             this.images = car.images;
             this.descriptionF = car.description;
             this.brandF = car.brand;

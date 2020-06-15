@@ -21,8 +21,8 @@ public class MessageController {
     MessageService messageService;
 
     @PostMapping("/messages")
-    public ResponseEntity<String> createMessage(@RequestBody MessageDto messageDto){
-        if(messageService.createNew(messageDto)){
+    public ResponseEntity<String> createMessage(@RequestBody MessageDto messageDto, Principal user){
+        if(messageService.createNew(messageDto,user)){
             return ResponseEntity.ok("Successfully created");
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
