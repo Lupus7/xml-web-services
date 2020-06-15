@@ -28,3 +28,7 @@ insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values
 insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (5, 4, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 4, true);
 
 alter sequence ad_id_seq RESTART with 6;
+
+insert into users(id, cart, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (1, 1, true, false, 'user', 'Joseph', 'Joestar', '1', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
+
+alter sequence user_id_seq RESTART with 3;
