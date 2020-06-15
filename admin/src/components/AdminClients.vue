@@ -59,6 +59,7 @@ export default {
     },
     methods: {
         blockUser(user) {
+            event.preventDefault();
             let url = "/user/client-control/block/" + user.email;
             axios.put(url).then(response => {
                 if (response.status === 200) {
@@ -78,6 +79,7 @@ export default {
             });
         },
         unblockUser(user) {
+            event.preventDefault();
             let url = "/user/client-control/activate/" + user.email;
 
             axios.put(url).then(response => {
@@ -98,6 +100,7 @@ export default {
             });
         },
         removeUser(user) {
+            event.preventDefault();
             let url = "/user/client-control/" + user.email;
             axios.delete(url).then(response => {
                 if (response.status === 200) {

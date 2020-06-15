@@ -370,6 +370,7 @@ export default {
             this.clientsBool = true;
         },
         registerCompany() {
+            event.preventDefault();
             axios
                 .post("/user/client-control/company", {
                     email: this.emailF,
@@ -396,6 +397,7 @@ export default {
                 });
         },
         registerAgent() {
+            event.preventDefault();
             axios
                 .post("/user/client-control/agent", {
                     email: this.emailF,

@@ -4,17 +4,7 @@
             <div class="container">
                 <b-navbar-nav style="margin-left:0.9rem">
                     <b-nav-item-dropdown text="My Ads">
-                        <b-dropdown-item
-                            data-toggle="modal"
-                            data-target="#newad"
-                        >
-                            <b-icon
-                                icon="plus-circle-fill"
-                                aria-hidden="true"
-                                variant="dark"
-                            ></b-icon>
-                            New Ad
-                        </b-dropdown-item>
+                     
                         <b-dropdown-item @click="showClientAds()">
                             <b-icon
                                 icon="newspaper"

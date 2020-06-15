@@ -63,6 +63,7 @@ export default {
     },
     methods: {
         approveComment(comment) {
+            event.preventDefault();
             let url = "/admin/comment/" + comment.commentId;
 
             axios.put(url).then(response => {
@@ -83,6 +84,7 @@ export default {
             });
         },
         rejectComment(comment) {
+            event.preventDefault();
             let url = "/admin/comment/" + comment.commentId;
 
             axios.delete(url).then(response => {

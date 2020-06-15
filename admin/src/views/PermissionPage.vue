@@ -128,6 +128,7 @@ export default {
     props: ["email"],
     methods: {
         addNewPermission() {
+            event.preventDefault();
             let url = "/user/privilege/" + this.email;
             let perms = null;
             for (let p of this.permissionList) {
@@ -170,6 +171,7 @@ export default {
                 });
         },
         removePermission(permission) {
+            event.preventDefault();
             let url = "/user/privilege/" + this.email;
             console.log(permission);
             axios
