@@ -36,7 +36,7 @@ public class AdController {
 
     // Provera da li je ad userov
     @PostMapping(value = "/api/ad/check", produces = "application/json", consumes = "application/json")
-    public Boolean createAd(@RequestBody JSONObject object, Principal user) throws JSONException {
+    public Boolean checkAd(@RequestBody JSONObject object, Principal user) throws JSONException {
 
         if (adService.checkAds(object, user.getName()))
             return true;
