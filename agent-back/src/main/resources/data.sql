@@ -41,7 +41,7 @@ INSERT INTO public.booking(
 	VALUES (1, 1, '2020-02-02', '2021-02-02', 1, 'Beograd', '2018-02-02', 1);
 INSERT INTO public.booking(
 	id, ad, created, end_date, loaner, place, start_date, state)
-	VALUES (2, 1, '2020-01-02', '2021-05-05', 1, 'Beograd', '2018-02-02', 1);
+	VALUES (2, 1, '2020-01-02', '2021-05-05', 2, 'Beograd', '2018-02-02', 2);
 INSERT INTO public.booking(
 	id, ad, created, end_date, loaner, place, start_date, state)
 	VALUES (3, 2, '2020-02-02', '2021-02-02', 1, 'Novi Sad', '2020-07-02', 1);
@@ -51,3 +51,13 @@ INSERT INTO public.booking(
 
 
 alter sequence booking_id_seq RESTART with 5;
+
+--Messages
+INSERT INTO public.message(
+	id, body, booking, date, reveicer, sender)
+	VALUES (1, 'Bas odlican si', 2, '2020-02-01', 'user', 'test');
+INSERT INTO public.message(
+	id, body, booking, date, reveicer, sender)
+	VALUES (2, 'Bas ti hvala', 2, '2020-02-02', 'test', 'user');
+
+alter sequence message_id_seq RESTART with 5;
