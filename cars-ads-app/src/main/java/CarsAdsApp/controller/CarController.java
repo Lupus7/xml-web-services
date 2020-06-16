@@ -123,7 +123,7 @@ public class CarController {
     //Update images for specific car
     @PutMapping("/cars/{id}/images")
     @PreAuthorize("hasAuthority('EDIT_CAR') or hasAuthority('MASTER')")
-    public ResponseEntity<String> updateCarImages(@RequestBody ImageDTO imagedto, @PathVariable Long id){
+    public ResponseEntity<String> updateCarImages(@RequestBody ImageDTO imagedto, @PathVariable("id") Long id){
         Boolean updated = carService.updateImages(imagedto, id);
         if(updated)
             return ResponseEntity.ok("Successfully updated images");

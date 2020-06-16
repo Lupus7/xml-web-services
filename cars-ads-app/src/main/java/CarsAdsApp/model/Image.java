@@ -8,9 +8,9 @@ public class Image {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "image_id_seq_gen")
     @SequenceGenerator(name="image_id_seq_gen", sequenceName = "image_id_seq", allocationSize = 1)
-    private Integer Id;
+    private Long id;
     @Column(name = "encoded64_image",columnDefinition="text")
-    private String Encoded64Image;
+    private String encoded64Image;
     @Column(name = "car_id")
     private Long carId;
 
@@ -19,31 +19,31 @@ public class Image {
     }
 
     public Image(String encoded64Image, Long carId) {
-        Encoded64Image = encoded64Image;
+        this.encoded64Image = encoded64Image;
         this.carId = carId;
     }
 
-    public Integer getId() {
-        return Id;
+    public Long getId() {
+        return this.id;
     }
 
-    public void setId(Integer id) {
-        Id = id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEncoded64Image() {
-        return Encoded64Image;
+        return this.encoded64Image;
     }
 
     public void setEncoded64Image(String encoded64Image) {
-        Encoded64Image = encoded64Image;
+        this.encoded64Image = encoded64Image;
     }
 
     public Long getCarId() {
-        return carId;
+        return this.carId;
     }
 
     public void setCarId(Long carId) {
-        carId = carId;
+        this.carId = carId;
     }
 }

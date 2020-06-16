@@ -3,12 +3,35 @@
     <div class="container" style=" width:90%">
         <br />
 
-        <b-card v-if="this.ads.length === 0" class="text-center" style="background:#DCDCDC">
+         <table class="table table-hover" style="background:#efefef; border: 3px solid #4c4c4c">
+            <thead>
+                <tr>
+                <th colspan="2" style="color:#4c4c4c">
+                    <h4>My Ads</h4>
+                </th>
+                <th style="width:30%" colspan="1">
+                    <center>
+                    <b-button
+                        class="btn btn-danger"
+                        href="#"
+                        data-toggle="modal"
+                        data-target="#newad"
+                    >
+                        <b-icon icon="plus-circle" aria-hidden="true" /> New Ad
+                    </b-button>
+                    </center>
+                </th>
+                </tr>
+            </thead>
+        </table>
+
+        <b-card v-show="this.ads.length === 0" class="text-center" style="background:#DCDCDC">
             <div>
                 <h4 style="color:#696969">You have no ads!</h4>
             </div>
         </b-card>
 
+        <!-- SHOWING ADS -->
         <b-card-group deck class="row">
             <div v-for="ad in this.ads" :key="ad.id" class="col-12 col-md-3 col-lg-4">
                 <b-card style="width:90%">
@@ -168,6 +191,79 @@
         </div>
 
 
+    <!-- NEW AD FORM -->
+        <div class="modal fade" id="newad" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">New Ad</h5>
+                        <button type="button" class="close" @click="resetForm()" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <b-form>
+                            <div>
+                                <div class="form-group">
+                                    <label>Place</label>
+                                    <b-input v-model="placeF" type="text" class="form-control" />
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Start Date</label>
+                                        <b-form-datepicker
+                                            v-model="startDateF"
+                                            :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"
+                                            locale="en"
+                                        ></b-form-datepicker>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>End Date</label>
+                                        <b-form-datepicker
+                                            v-model="endDateF"
+                                            :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"
+                                            locale="en"
+                                        ></b-form-datepicker>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label>Select Car</label>
+                                        <b-form-select
+                                            v-model="carF"
+                                            :options="cars"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                  
+                                </div>
+
+                               
+                            </div>
+                        </b-form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button @click="createNewAd()" type="button" class="btn btn-success" data-dismiss="modal">
+                            <b-icon icon="check-circle" aria-hidden="true"></b-icon>Create Ad
+                        </button>
+                        <button
+                            @click="resetForm()"
+                            type="button"
+                            class="btn btn-danger"
+                            data-dismiss="modal"
+                        >
+                            <b-icon icon="x-circle"></b-icon>Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </template>
 
@@ -176,15 +272,25 @@ import axios from "axios";
 export default {
     data() {
         return {
+            // showing ads
             ads: [],
+            // edit
             startDateEditF:"",
             endDateEditF:"",
             placeEditF:"",
             editID:"",
+            // create
+            cars: [],
+            carF:"",
+            startDateF:"",
+            endDateF:"",
+            placeF:""
         };
     },
    
     methods: {
+
+        // GETTERS
         getClientAds() {
             axios.get("/cars-ads/api/ad/client").then(response => {
                 this.ads = response.data;
@@ -200,6 +306,8 @@ export default {
                 }
             });
         },
+
+        // ACTIVATE & DEACTIVATE
         deactivateAd(ad) {
             event.preventDefault();
             axios
@@ -246,6 +354,9 @@ export default {
                 }
             });
         },
+
+        // EDIT
+
         editAd(ad) {
             this.getClientCars();
             this.placeEditF = ad.place;
@@ -299,10 +410,54 @@ export default {
                         });
                     }
                 });
+        },
+
+        // CREATE ADD
+
+        resetForm() {
+            this.carF = "";
+            this.startDateF = "";
+            this.endDateF = "";
+            this.placeF = "";
+
+        },
+        createNewAd(){
+            event.preventDefault();
+            axios
+                .post("/cars-ads/api/ad", {
+                   startDate:this.startDateF+ " 00:00:00",
+                   endDate:this.endDateF+ " 00:00:00",
+                   place:this.placeF,
+                   carId:this.carF
+                })
+                .then(response => {
+                    this.resetForm();
+                    if (response.status === 200) {
+                        this.$bvToast.toast(response.data, {
+                            title: "New Ad",
+                            variant: "success",
+                            solid: true
+                        });
+                        this.getClientAds();
+                    } else if(response.status === 402) {
+                        this.$bvToast.toast(response.data, {
+                            title: "New Car",
+                            variant: "danger",
+                            solid: true
+                        });
+                    }else {
+                        this.$bvToast.toast(response.data, {
+                            title: "New Car",
+                            variant: "warning",
+                            solid: true
+                        });
+                    }
+                });
         }
     },
     created() {
         this.getClientAds();
+        this.getClientCars();
     }
 };
 </script>
