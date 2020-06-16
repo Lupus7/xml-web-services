@@ -61,3 +61,21 @@ INSERT INTO public.message(
 	VALUES (2, 'Bas ti hvala', 2, '2020-02-02', 'test', 'user');
 
 alter sequence message_id_seq RESTART with 5;
+
+
+--Rates
+
+INSERT INTO public.rate(
+	id, approved, booking, comment, rate)
+	VALUES (1, false, 1, 'very goood', 8);
+INSERT INTO public.rate(
+	id, approved, booking, comment, rate)
+	VALUES (2, true, 1, 'naaajs', 9);
+INSERT INTO public.rate(
+	id, approved, booking, comment, rate)
+	VALUES (3, false, 2, 'bad', 4);
+INSERT INTO public.rate(
+	id, approved, booking, comment, rate)
+	VALUES (4, true, 1, ' goood', 7);
+
+alter sequence rate_id_seq RESTART with 5;
