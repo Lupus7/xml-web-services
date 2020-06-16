@@ -42,11 +42,6 @@ public class AdService {
     public int createAd(AdDTO adDTO, String email) {
         // provera da li user sa name postoji, provera da li je ad userov
         // TODO: FIND A BETTER SOLUTION PLS!
-//        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
-//        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-//        if (userId == null)
-//            return 400;
-
         // provera za 3 ad-a
         Long userId = 0L;
         User user = userRepository.findByEmail(email);
@@ -74,10 +69,6 @@ public class AdService {
     public boolean checkAds(JSONObject object, String email) throws JSONException {
 
         // provera da li user sa name postoji, provera da li je ad userov
-//        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
-//        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-//        if (userId == null)
-//            return false;
         Long userId = 0L;
         User user = userRepository.findByEmail(email);
         if (user != null){
