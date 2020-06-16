@@ -194,15 +194,17 @@ public class CarService {
 
     public Boolean updateImages(ImageDTO imagedto, Long id) {
         //first find all images for specific car
+
+        if(imagedto.getImages().size() == 0)
+            return false;
+
         ArrayList<Image> carsImgs = (ArrayList<Image>) imageRepository.findAllByCarId(id);
         //delete all of them, then update
         for(Image image: carsImgs){
             imageRepository.delete(image);
         }
         for(String imageEnc64: imagedto.getImages()){
-            Image image = new Image();
-            image.setEncoded64Image(imageEnc64);
-            image.setCarId(id);
+            Image image = new Image(imageEnc64, id);
             imageRepository.save(image);
         }
         return true;
