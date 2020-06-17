@@ -22,7 +22,7 @@ alter sequence car_id_seq RESTART with 5;
 
 -- ads
 insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (1, 1, '2020-05-19T00:00:00', '2020-05-30T00:00:00', 'Novi Sad', 1, true);
-insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (2, 1, '2020-07-19T00:00:00', '2020-07-30T00:00:00', 'Beograd', 1, false);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (2, 2, '2020-07-19T00:00:00', '2020-07-30T00:00:00', 'Beograd', 1, false);
 insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (3, 2, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 1, false);
 insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (4, 3, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Nis', 1, true);
 insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (5, 4, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 4, true);
@@ -79,3 +79,19 @@ INSERT INTO public.rate(
 	VALUES (4, true, 1, ' goood', 7);
 
 alter sequence rate_id_seq RESTART with 5;
+
+--REPORTS
+INSERT INTO public.report(
+    id, allowed_mileage, booking, extra_info)
+    VALUES(1,140,1,'DOBAR AUTO NEMA STA');
+INSERT INTO public.report(
+    id, allowed_mileage, booking, extra_info)
+    VALUES(2,1233,2,'KRSINA');
+INSERT INTO public.report(
+    id, allowed_mileage, booking, extra_info)
+    VALUES(3,223,3,'IDE TRAZI 4.');
+INSERT INTO public.report(
+    id, allowed_mileage, booking, extra_info)
+    VALUES(4,442,4,'Ide ko po mudima');
+
+alter sequence report_id_seq RESTART with 5;

@@ -43,7 +43,8 @@ public class Report {
 
     @XmlElement(namespace = "xml-web-services-community")
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "report_id_seq_gen")
+    @SequenceGenerator(name="report_id_seq_gen", sequenceName = "report_id_seq", allocationSize = 1)
     protected long id;
     @XmlElement(namespace = "xml-web-services-community", required = true)
     protected String extraInfo;
