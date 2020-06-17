@@ -19,6 +19,7 @@ public class CarDTO {
     private String fuel;
     private String transmission;
     private List<String> images;
+    private String advertiser;
 
     public CarDTO(Car car) {
         this.carId = car.getId();
@@ -33,6 +34,7 @@ public class CarDTO {
         this.fuel = car.getFuel();
         this.transmission = car.getTransmission();
         this.images = new ArrayList<>();
+        this.advertiser = car.getOwner();
     }
 
     public CarDTO() {
@@ -134,5 +136,11 @@ public class CarDTO {
         this.images = images;
     }
 
+    public String getAdvertiser() {
+        return advertiser;
+    }
 
+    public void setAdvertiser(String advertiser) {
+        this.advertiser = advertiser;
+    }
 }

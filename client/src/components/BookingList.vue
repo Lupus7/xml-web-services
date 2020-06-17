@@ -1,5 +1,15 @@
 <template>
-    <div class="container">
+    <div>
+        <b-card
+            v-if="this.bookings.length === 0"
+            class="text-center"
+            style="background:#DCDCDC"
+        >
+            <div>
+                <h4 style="color:#696969">You have no bookings!</h4>
+            </div>
+        </b-card>
+
         <b-table
             striped
             bordered
@@ -7,6 +17,7 @@
             :items="bookings"
             :fields="fields"
             @row-clicked="showOptions"
+            v-else
         ></b-table>
         <b-modal
             ref="my-modal"
@@ -23,8 +34,6 @@
                         indicators
                         background="#ababab"
                         style="text-shadow: 1px 1px 2px #333;"
-                        @sliding-start="onSlideStart"
-                        @sliding-end="onSlideEnd"
                     >
                         <span v-if="info.images.length > 0">
                             <b-carousel-slide
@@ -88,18 +97,20 @@
             </span>
             <span>
                 <b-button
-                    class="float-left"
-                    style="background:#b20000; width:150px"
-                    @click="bookCar()"
+                    class="float-right"
+                    style="background:#b20000; width:150px; color: black"
+                    @click="approve()"
+                    v-if="mode=='requests' && info.state == 'PENDING'"
                 >
-                    Book Car
+                    Approve
                 </b-button>
                 <b-button
                     class="float-right"
                     style="background:white; width:150px; color: black"
-                    @click="addToCart()"
+                    @click="remove()"
+                    v-if="canCancel"
                 >
-                    Remove
+                    Cancel
                 </b-button>
             </span>
         </b-modal>
@@ -114,32 +125,75 @@ export default {
         return {
             fields: [
                 { key: "place", sortable: true },
-                { key: "startDate", sortable: true },
-                { key: "endDate", sortable: true },
-                { key: "created", sortable: true },
+                { key: "start_date", sortable: true },
+                { key: "end_date", sortable: true },
+                { key: "Created", sortable: true },
                 { key: "state", sortable: true },
             ],
             bookings: [],
-            info: null
+            info: null,
+            canCancel: true,
         };
     },
+    props: ["mode"],
     methods: {
         getBookings() {
             axios.get("/rent/api/booking").then((response) => {
                 this.bookings = response.data;
+                this.bookings.forEach((b) => {
+                    b.start_date = b.startDate.split("T")[0];
+                    b.end_date = b.endDate.split("T")[0];
+                    b.Created = b.created.split("T")[0];
+                });
+            });
+        },
+        getBookings2() {
+            axios.get("/rent/api/booking/request").then((response) => {
+                this.bookings = response.data;
+                this.bookings.forEach((b) => {
+                    b.start_date = b.startDate.split("T")[0];
+                    b.end_date = b.endDate.split("T")[0];
+                    b.Created = b.created.split("T")[0];
+                });
             });
         },
         showOptions(row) {
             console.log(row);
+            if (
+                row.state == "CANCELED" ||
+                row.state == "PAID" ||
+                row.state == "ENDED"
+            )
+                this.canCancel = false;
             let url = "/cars-ads/api/ad/" + row.ad;
 
             axios.get(url).then((response) => {
                 this.info = response.data;
+                this.info.id = row.id;
             });
+
+            this.$refs["my-modal"].show();
         },
+        remove() {
+            if (this.mode == "personal") {
+                axios
+                    .delete("/rent/api/booking/" + this.info.id)
+                    .then(this.$refs["my-modal"].hide());
+            } else {
+                axios
+                    .delete("/rent/api/booking/reject/" + this.info.id)
+                    .then(this.$refs["my-modal"].hide());
+            }
+        },
+        approve() {
+            axios
+                .put("/rent/api/booking/" + this.info.id)
+                .then(this.$refs["my-modal"].hide());
+        }
     },
     created() {
-        this.getBookings();
+        if (this.mode == "personal") this.getBookings();
+        else this.getBookings2();
     },
 };
 </script>

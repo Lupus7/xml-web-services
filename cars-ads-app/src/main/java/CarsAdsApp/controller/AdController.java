@@ -34,6 +34,7 @@ public class AdController {
 
     // Provera da li je ad userov
     @PostMapping(value = "/api/ad/check", produces = "application/json", consumes = "application/json")
+    @PreAuthorize("hasAuthority('MASTER')")
     public Boolean checking(@RequestBody JSONObject object, Principal user) throws JSONException {
 
         if (adService.checkAds(object, user.getName()))
@@ -58,7 +59,7 @@ public class AdController {
 
     // Deactivate ad-a
     @DeleteMapping(value = "/api/ad/deactivate/{id}")
-    @PreAuthorize("hasAuthority('DEACTIVATE_AD')")
+    @PreAuthorize("hasAuthority('DEACTIVATE_AD') or hasAuthority('MASTER')")
     public ResponseEntity<String> deactivateAd(@PathVariable(value = "id") Long id, Principal user) {
 
         if (adService.deactivateAd(id, user.getName()))
@@ -83,7 +84,7 @@ public class AdController {
 
     // Svi adovi clienta
     @GetMapping(value = "/api/ad/client")
-    @PreAuthorize("hasAuthority('READ_CLIENT_ADS')")
+    @PreAuthorize("hasAuthority('READ_CLIENT_ADS') or hasAuthority('MASTER')")
     public ResponseEntity<List<AdClientDTO>> getClientAds(Principal user){
         List<AdClientDTO> ads = adService.getClientAds(user.getName());
         return ResponseEntity.ok(ads);

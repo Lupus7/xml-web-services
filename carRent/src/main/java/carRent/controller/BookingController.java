@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Set;
 
 @RestController
 public class BookingController {
@@ -41,7 +42,7 @@ public class BookingController {
     }
 
     // Prihvatanje bookinga kod clienta
-    @PutMapping(value = "/api/booking/{id}", produces = "application/json", consumes = "application/json")
+    @PutMapping(value = "/api/booking/{id}")
     @PreAuthorize("hasAuthority('ACCEPT_BOOKING')")
     public ResponseEntity<String> acceptBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
@@ -52,7 +53,7 @@ public class BookingController {
     }
 
     // Otkazivanje booking requesta od strane clienta koje je zatrazio booking
-    @DeleteMapping(value = "/api/booking/{id}", produces = "application/json", consumes = "application/json")
+    @DeleteMapping(value = "/api/booking/{id}")
     @PreAuthorize("hasAuthority('CANCEL_BOOKING')")
     public ResponseEntity<String> cancelBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
@@ -80,7 +81,7 @@ public class BookingController {
     }
 
     // Odbijanje booking requesta od strane vlasnika auta
-    @DeleteMapping(value = "/api/booking/reject/{id}", produces = "application/json", consumes = "application/json")
+    @DeleteMapping(value = "/api/booking/reject/{id}")
     @PreAuthorize("hasAuthority('REJECT_BOOKING')")
     public ResponseEntity<String> rejectBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
@@ -96,6 +97,15 @@ public class BookingController {
     public ResponseEntity<ArrayList<BookingDTO>> getAllBookingRequests(Principal user) throws JSONException {
 
         return ResponseEntity.ok((ArrayList<BookingDTO>) bookingService.getAllBookingRequests(user.getName()));
+
+    }
+
+    // Get all bookings from other users
+    @GetMapping(value = "/api/booking/request", produces = "application/json")
+    @PreAuthorize("hasAuthority('READ_BOOKINGS')")
+    public ResponseEntity<Set<BookingDTO>> getAllBookingRequestsFromOthers(Principal user) throws JSONException {
+
+        return ResponseEntity.ok(bookingService.getAllBookingRequestsFromOthers(user.getName()));
 
     }
 

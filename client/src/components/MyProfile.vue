@@ -28,6 +28,9 @@
                             All Bookings
                         </b-dropdown-item>
                     </b-nav-item-dropdown>
+                </b-navbar-nav>
+
+                <b-navbar-nav style="margin-right:0.9rem">
                     <b-nav-item @click="showClientCart()" right>
                         <b-icon
                             icon="cart-fill"
@@ -40,7 +43,7 @@
             </div>
         </b-navbar>
         <BookingSubmitForm />
-        <BookingList v-if="this.boolbook" />
+        <AllBookings v-if="this.boolbook" />
         <ClientCars v-if="this.boolcars" />
         <ClientAds v-if="this.boolads" />
         <Cart v-if="this.boolcart" />
@@ -51,8 +54,8 @@
 import ClientCars from "./ClientCars";
 import ClientAds from "./ClientAds";
 import BookingSubmitForm from "./BookingSubmitForm";
-import BookingList from "./BookingList";
 import Cart from "./Cart";
+import AllBookings from "./AllBookings";
 
 export default {
     data() {
@@ -67,8 +70,8 @@ export default {
         ClientCars,
         ClientAds,
         BookingSubmitForm,
-        BookingList,
         Cart,
+        AllBookings,
     },
     methods: {
         showClientCars() {
