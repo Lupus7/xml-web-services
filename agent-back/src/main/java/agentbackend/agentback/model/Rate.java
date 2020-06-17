@@ -45,7 +45,8 @@ public class Rate {
 
     @XmlElement(namespace = "xml-web-services-community")
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rate_id_seq_gen")
+    @SequenceGenerator(name="rate_id_seq_gen", sequenceName = "rate_id_seq", allocationSize = 1)
     protected long id;
     @XmlElement(namespace = "xml-web-services-community")
     protected int rate;
