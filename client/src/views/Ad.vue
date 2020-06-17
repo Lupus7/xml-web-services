@@ -9,8 +9,6 @@
                     indicators
                     background="#ababab"
                     style="text-shadow: 1px 1px 2px #333;"
-                    @sliding-start="onSlideStart"
-                    @sliding-end="onSlideEnd"
                 >
                     <span v-if="info.images.length > 0">
                         <b-carousel-slide
@@ -48,8 +46,7 @@
                         aria-hidden="true"
                         variant="light"
                     ></b-icon>
-                    Advertizer: anonymus
-                    <!-- TODO: Advertizer: {{ info.advertiser }} -->
+                    Advertiser: {{ info.advertiser }}
                 </h4>
                 <h4 class="ad-info">
                     <b-icon
@@ -73,7 +70,7 @@
                         aria-hidden="true"
                         variant="light"
                     />
-                    Start Date: {{ info.startDate }}
+                    Start Date: {{ info.startDate.split("T")[0] }}
                 </h4>
                 <h4>
                     <b-icon
@@ -81,7 +78,7 @@
                         aria-hidden="true"
                         variant="light"
                     />
-                    End Date: {{ info.endDate }}
+                    End Date: {{ info.endDate.split("T")[0] }}
                 </h4>
                 <hr />
                 <h6 v-if="show">Log in to rent this car...</h6>
@@ -89,11 +86,12 @@
                     <b-button
                         class="float-left"
                         style="background:#b20000; width:150px"
-                        @click="bookCar()"
+                        @click="openDiag()"
                     >
                         Book Car
                     </b-button>
                     <b-button
+                        v-if="!inCart"
                         class="float-right"
                         style="background:white; width:150px; color: black"
                         @click="addToCart()"
@@ -101,9 +99,78 @@
                         <b-icon icon="plus" aria-hidden="true" variant="dark" />
                         Add to cart
                     </b-button>
+                    <b-button
+                        v-else
+                        class="float-right"
+                        style="background:white; width:150px; color: black"
+                        disabled
+                    >
+                        <b-icon
+                            icon="check"
+                            aria-hidden="true"
+                            variant="dark"
+                        />
+                        In cart
+                    </b-button>
                 </span>
             </div>
         </span>
+        <b-modal
+            ref="my-modal"
+            hide-footer
+            v-bind:title="info.brand + ' ' + info.model"
+            v-if="info != null"
+        >
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Start Date</label>
+                    <b-form-datepicker
+                        :date-format-options="{
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                        }"
+                        v-model="chosenStart"
+                        :min="chosenStart"
+                        :max="chosenEnd"
+                        locale="en"
+                    ></b-form-datepicker>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>End Date</label>
+                    <b-form-datepicker
+                        :date-format-options="{
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                        }"
+                        v-model="chosenEnd"
+                        :min="chosenStart"
+                        :max="chosenEnd"
+                        locale="en"
+                    ></b-form-datepicker>
+                </div>
+            </div>
+            <span>
+                <button
+                    type="button"
+                    class="btn btn-danger float-right"
+                    data-dismiss="modal"
+                >
+                    <b-icon icon="x-circle"></b-icon>Close
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-success float-right"
+                    data-dismiss="modal"
+                    style="margin-right: 5px"
+                    @click="bookCar()"
+                >
+                    <b-icon icon="check-circle" aria-hidden="true"></b-icon
+                    >Create Booking
+                </button>
+            </span>
+        </b-modal>
     </div>
 </template>
 
@@ -115,6 +182,10 @@ export default {
         return {
             info: {},
             show: true,
+            cart: [],
+            inCart: false,
+            chosenStart: {},
+            chosenEnd: {},
         };
     },
     props: ["id"],
@@ -124,6 +195,8 @@ export default {
 
             axios.get(url).then((response) => {
                 this.info = response.data;
+                this.chosenStart = this.info.startDate;
+                this.chosenEnd = this.info.endDate;
             });
         },
         bookCar() {
@@ -133,18 +206,36 @@ export default {
                 books: [
                     {
                         adId: this.info.adId,
-                        startDate: this.info.startDate,
-                        endDate: this.info.endDate,
+                        startDate: this.chosenStart + "T00:00:00",
+                        endDate: this.chosenEnd + "T00:00:00",
                         place: this.info.place,
                     },
                 ],
             });
+            this.$refs["my-modal"].hide();
+        },
+        openDiag() {
+            this.$refs["my-modal"].show();
         },
         addToCart() {
-            axios.put("/rent/api/cart/" + this.info.adId);
+            axios.put("/rent/api/cart/" + this.info.adId).then((response) => {
+                if (response.status < 300) this.inCart = true;
+            });
+        },
+        getCartItems() {
+            axios.get("/rent/api/cart").then((response) => {
+                this.cart = response.data;
+                this.isInCart();
+            });
+        },
+        isInCart() {
+            this.cart.forEach((c) => {
+                if (c.carId == this.info.carId) this.inCart = true;
+            });
         },
     },
     created() {
+        this.getCartItems();
         this.fill();
         const token = localStorage.getItem("accessToken");
         if (token === null || token === "") this.show = true;
