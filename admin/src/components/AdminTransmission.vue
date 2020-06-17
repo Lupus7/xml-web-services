@@ -170,6 +170,7 @@ export default {
     },
     methods: {
         removeTransmission(transm) {
+            event.preventDefault();
             let url = "/codebook/transmission/" + transm.id;
 
             axios.delete(url).then(response => {
@@ -191,6 +192,7 @@ export default {
         },
 
         addNewTransmission() {
+            event.preventDefault();
             axios
                 .post("/codebook/transmission", {
                     name: this.transF
@@ -218,6 +220,7 @@ export default {
             this.transId = transm.id;
         },
         editTransmissionFinal() {
+            event.preventDefault();
             let url = "/codebook/transmission/" + this.transId;
 
             axios

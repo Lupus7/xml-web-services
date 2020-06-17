@@ -1,4 +1,4 @@
-package agentbackend.agentback.security;
+package com.example.community.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -19,11 +19,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilter(new JwtAuthorizationFilter(authenticationManager()))
                 .authorizeRequests()
-                .antMatchers("/health").permitAll() // health available to all
-                .antMatchers("/login").permitAll() // health available to all
-                //.antMatchers("/**").permitAll(); // health available to all
-                //.antMatchers("/client-control/user/**").permitAll()
-                //.antMatchers("/util/auth/**").permitAll()
+                .antMatchers("/health").permitAll()
+                //.anyRequest().hasAuthority("MASTER")// health available to all
                 .anyRequest().authenticated(); // everything else available only to authenticated users
     }
 }

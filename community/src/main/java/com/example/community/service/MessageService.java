@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.ArrayList;
 
 @Service
@@ -18,13 +19,13 @@ public class MessageService {
     @Autowired
     CarRentProxy carRentProxy;
 
-    public Boolean createNew(MessageDto msg){
+    public Boolean createNew(MessageDto msg, Principal user){
         Integer bookingId = (int) (msg.getBooking());
-        Boolean check = carRentProxy.checkingBookingRequests(bookingId.toString(),null).getBody();
+        Boolean check = carRentProxy.checkingBookingRequests(bookingId.toString(),user.getName() + ";MASTER").getBody();
         if(!check)
             return false;
         //Get Ad id, and call ad service to get loaner name
-        Long adId = carRentProxy.getBookingsAd(msg.getBooking(), null).getBody();
+        Long adId = carRentProxy.getBookingsAd(msg.getBooking(), user.getName() + ";MASTER").getBody();
         ObjectFactory objectFactory = new ObjectFactory();
         Message message = objectFactory.createMessage();
         message.setBody(msg.getBody());

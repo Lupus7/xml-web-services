@@ -140,7 +140,7 @@ public class AdService {
         Long userId = userIdResponse.getBody();
 
         Optional<Ad> ad = adRepo.findById(id);
-        if (!ad.isPresent() || ad.get().getOwnerId() != userId || !ad.get().isActive())
+        if (!ad.isPresent() || ad.get().getOwnerId() != userId)
             return false;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (adDTO.getStartDate() != null) {

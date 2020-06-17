@@ -30,5 +30,24 @@ insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values
 alter sequence ad_id_seq RESTART with 6;
 
 insert into users(id, cart, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (1, 1, true, false, 'user', 'Joseph', 'Joestar', '1', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
+insert into users(id, cart, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (2, 2, true, false, 'test', 'Nikola', 'DzoniGej', '12', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
 
 alter sequence user_id_seq RESTART with 3;
+
+
+-- BOOKINGS
+INSERT INTO public.booking(
+	id, ad, created, end_date, loaner, place, start_date, state)
+	VALUES (1, 1, '2020-02-02', '2021-02-02', 1, 'Beograd', '2018-02-02', 1);
+INSERT INTO public.booking(
+	id, ad, created, end_date, loaner, place, start_date, state)
+	VALUES (2, 1, '2020-01-02', '2021-05-05', 1, 'Beograd', '2018-02-02', 1);
+INSERT INTO public.booking(
+	id, ad, created, end_date, loaner, place, start_date, state)
+	VALUES (3, 2, '2020-02-02', '2021-02-02', 1, 'Novi Sad', '2020-07-02', 1);
+INSERT INTO public.booking(
+	id, ad, created, end_date, loaner, place, start_date, state)
+	VALUES (4, 2, '2020-02-02', '2021-08-02', 1, 'Sabac', '2018-02-02', 1);
+
+
+alter sequence booking_id_seq RESTART with 5;

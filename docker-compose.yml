@@ -106,6 +106,21 @@ services:
         networks:
             - static-network
             
+    community-service:
+        image: community-service
+        build:
+            context: ./community
+            dockerfile: Dockerfile
+        tty: true
+        depends_on:
+            - consul-server
+            - db
+        restart: unless-stopped
+        environment:
+            DB_PATH: jdbc:postgresql://db:5432/
+        networks:
+            - static-network
+    
     gateway:
         image: gateway
         build:

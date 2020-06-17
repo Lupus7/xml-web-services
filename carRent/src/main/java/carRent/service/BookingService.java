@@ -15,11 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -151,6 +148,8 @@ public class BookingService {
 
     public boolean reserveBookingRequest(BundleDTO bundleDTO, String email) throws JSONException {
 
+        HashMap<Long, Booking> reservedBookings = new HashMap<>();
+
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
@@ -189,6 +188,7 @@ public class BookingService {
                 Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), bookDTO.getAdId(), (long) -1);
                 bundle.getBookings().add(booking);
                 bookingRepo.save(booking);
+                reservedBookings.put(booking.getId(), booking);
 
             }
 
@@ -216,6 +216,7 @@ public class BookingService {
             Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PAID, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), bundleDTO.getBooks().get(0).getAdId(), (long) -1);
             bundle.getBookings().add(booking);
             bookingRepo.save(booking);
+            reservedBookings.put(booking.getId(), booking);
 
         }
 
@@ -224,6 +225,8 @@ public class BookingService {
         for (Booking b : bundle.getBookings()) {
             ArrayList<Booking> bookings = bookingRepo.findAllByAd(b.getAd());
             for (Booking b1 : bookings) {
+                if (reservedBookings.containsKey(b1.getId()))
+                    continue;
                 b1.setState(RequestState.CANCELED);
                 bookingRepo.save(b1);
             }

@@ -177,6 +177,7 @@ export default {
     },
     methods: {
         removeModel(model) {
+            event.preventDefault();
             let url = "/codebook/model/" + model.id;
 
             axios.delete(url).then(response => {
@@ -198,6 +199,7 @@ export default {
         },
 
         addNewModel() {
+            event.preventDefault();
             axios
                 .post("/codebook/model/", {
                     name: this.modelF,
@@ -226,6 +228,7 @@ export default {
             this.modelId = model.id;
         },
         editModelFinal() {
+            event.preventDefault();
             let url = "/codebook/model/" + this.modelId;
 
             axios

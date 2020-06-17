@@ -104,6 +104,7 @@ export default {
     methods:{
 
         removeBrand(brand){
+            event.preventDefault();
             let url = "/codebook/brand/"+brand.id;
             axios.delete(url).then(response => {
                 if(response.status === 200){
@@ -127,7 +128,7 @@ export default {
         },
 
         addNewBrand(){
-
+            event.preventDefault();
             axios.post("/codebook/brand",{ 
                 "name":this.brandF, 
             }).then(response => { 
@@ -159,6 +160,7 @@ export default {
             this.brandId = brand.id;
         },
         editBrandFinal(){
+            event.preventDefault();
             let url = "/codebook/brand/"+this.brandId;
             axios.put(url,{ 
                 "name":this.brandEdit,

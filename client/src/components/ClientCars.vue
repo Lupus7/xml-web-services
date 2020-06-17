@@ -3,7 +3,29 @@
     <div class="container" style=" width:90%">
         <br />
 
-        <b-card v-if="this.cars.length === 0" class="text-center" style="background:#DCDCDC">
+        <table class="table table-hover" style="background:#efefef; border: 3px solid #4c4c4c">
+            <thead>
+                <tr>
+                <th colspan="2" style="color:#4c4c4c">
+                    <h4>My Cars</h4>
+                </th>
+                <th style="width:30%" colspan="1">
+                    <center>
+                    <b-button
+                        class="btn btn-danger"
+                        href="#"
+                        data-toggle="modal"
+                        data-target="#newcar"
+                    >
+                        <b-icon icon="plus-circle" aria-hidden="true" /> New Car
+                    </b-button>
+                    </center>
+                </th>
+                </tr>
+            </thead>
+        </table>
+
+        <b-card v-show="this.cars.length === 0" class="text-center" style="background:#DCDCDC">
             <div>
                 <h4 style="color:#696969">You have no cars!</h4>
             </div>
@@ -13,12 +35,11 @@
             <div v-for="car in this.cars" :key="car.id" class="col-12 col-md-3 col-lg-4">
                 <b-card style="width:95%">
                     <b-carousel 
-                        id="carousel-1"
                         controls
                         :interval=0
                         indicators
                         background="#ababab"
-                        v-bind:width="350"
+                        v-bind:img-width="320"
                         v-bind:img-height="300"
                         style="text-shadow: 1px 1px 2px #333"
                      
@@ -26,8 +47,8 @@
                         <template>
                             <div v-for="image in car.images" :key="image.id">
                                 <b-carousel-slide 
-                                    v-bind:width="350"
-                                    v-bind:height="300"
+                                    v-bind:imgWidth="320"
+                                    v-bind:imgHeight="300"
                                     v-bind:img-src="image"
                                 > </b-carousel-slide>
                             </div>
@@ -77,6 +98,186 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Edit Car</h5>
+                        <button
+                            type="button"
+                            class="close"
+                            @click="resetFormEdit()"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <b-form>
+                            <div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Car Brand</label>
+                                        <b-form-select
+                                            v-model="brandEF"
+                                            :options="brands"
+                                            @change="fillModelsEdit()"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Car Model</label>
+                                        <b-form-select
+                                            v-model="modelEF"
+                                            :options="models"
+                                            :disabled="modelBool"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Fuel Type</label>
+                                        <b-form-select
+                                            v-model="fuelEF"
+                                            :options="fuels"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Transmission Type</label>
+                                        <b-form-select
+                                            v-model="transmissionEF"
+                                            :options="transmissions"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Car Class</label>
+                                        <b-form-select
+                                            v-model="classEF"
+                                            :options="carClasses"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Traveled Km</label>
+                                        <b-input
+                                            v-model="total_mileageEF"
+                                            type="number"
+                                            min="0"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Predicted Km</label>
+                                        <b-input
+                                            v-model="planned_mileageEF"
+                                            type="number"
+                                            min="0"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Children Seats</label>
+                                        <b-input
+                                            v-model="seats_numberEF"
+                                            type="number"
+                                            min="0"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Description</label>
+                                        <b-form-textarea
+                                            rows="7"
+                                            v-model="descriptionEF"
+                                            type="text"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Images</label>
+                                        <b-form-file
+                                            @change="base64"
+                                            id="file"
+                                            no-drop
+                                            multiple
+                                            required
+                                            :file-name-formatter="formatNamesEdit"
+                                            placeholder="Select maximum of 6 images..."
+                                        />
+
+                                        <b-card-group deck>
+                                            <table v-for="image in this.imagesE" :key="image.id">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <b-img
+                                                                :src="image"
+                                                                style="margin-left:0.9rem;width:115px;height:70px"
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </b-card-group>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-0.5">
+                                        <b-form-checkbox
+                                            v-model="collision_damageEF"
+                                            style="width:20px; height:25px"
+                                            type="checkbox"
+                                        />
+                                    </div>
+                                    <div
+                                        class="form-group col-md-11"
+                                    >Collision Damage Waiver Protection</div>
+                                </div>
+                            </div>
+                        </b-form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button
+                            @click="editCarFinal()"
+                            type="button"
+                            class="btn btn-success"
+                            data-dismiss="modal"
+                        >
+                            <b-icon icon="check-circle" aria-hidden="true"></b-icon>Edit Car
+                        </button>
+                        <button
+                            @click="resetFormEdit()"
+                            type="button"
+                            class="btn btn-danger"
+                            data-dismiss="modal"
+                        >
+                            <b-icon icon="x-circle"></b-icon>Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    <!-- NEW CAR FORM -->
+        <div class="modal fade" id="newcar" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">New Car</h5>
                         <button
                             type="button"
                             class="close"
@@ -184,7 +385,7 @@
                                     <div class="form-group col-md-6">
                                         <label>Images</label>
                                         <b-form-file
-                                            @change="base64"
+                                            @change="base64Add"
                                             id="file"
                                             no-drop
                                             multiple
@@ -213,7 +414,7 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-0.5">
                                         <b-form-checkbox
-                                            v-model="collision_damageF"
+                                            v-model="collision_damageEF"
                                             style="width:20px; height:25px"
                                             type="checkbox"
                                         />
@@ -228,12 +429,12 @@
 
                     <div class="modal-footer">
                         <button
-                            @click="editCarFinal()"
+                            @click="addNewCar()"
                             type="button"
                             class="btn btn-success"
                             data-dismiss="modal"
                         >
-                            <b-icon icon="check-circle" aria-hidden="true"></b-icon>Edit Car
+                            <b-icon icon="check-circle" aria-hidden="true"></b-icon>Add Car
                         </button>
                         <button
                             @click="resetForm()"
@@ -247,6 +448,7 @@
                 </div>
             </div>
         </div>
+        
 
     </div>    
 
@@ -257,7 +459,31 @@ import axios from "axios";
 export default {
     data() {
         return {
+            // show
             cars: [],
+            // edit
+            descriptionEF: "",
+            brandEF: "",
+            modelEF: "",
+            fuelEF: "",
+            transmissionEF: "",
+            classEF: "",
+            total_mileageEF: 0,
+            planned_mileageEF: 0,
+            collision_damageEF: false,
+            seats_numberEF: 0,
+            brands: [],
+            carClasses: [],
+            transmissions: [],
+            fuels: [],
+            models: [],
+            modelBool: true,
+            brandsResponse: [],
+            imagesE: [],
+            editCarId:"",
+
+            // create
+
             descriptionF: "",
             brandF: "",
             modelF: "",
@@ -268,16 +494,8 @@ export default {
             planned_mileageF: 0,
             collision_damageF: false,
             seats_numberF: 0,
-            brands: [],
-            carClasses: [],
-            transmissions: [],
-            fuels: [],
-            models: [],
-            modelBool: true,
-            brandsResponse: [],
-            images: [],
-            files: [],
-            editCarId:"",
+            images: []
+            
             
         };
     },
@@ -309,21 +527,21 @@ export default {
 
         },
         editCar(car){
-
-            this.images = car.images;
-            this.descriptionF = car.description;
-            this.brandF = car.brand;
-            this.fuelF = car.fuel;
-            this.transmissionF = car.transmission;
-            this.classF = car.carClass;
-            this.total_mileageF = car.totalMileage;
-            this.planned_mileageF = car.allowedMileage;
-            this.collision_damageF = car.colDamProtection;
-            this.seats_numberF = car.childrenSeats;
+            event.preventDefault();
+            this.imagesE = car.images;
+            this.descriptionEF = car.description;
+            this.brandEF = car.brand;
+            this.fuelEF = car.fuel;
+            this.transmissionEF = car.transmission;
+            this.classEF = car.carClass;
+            this.total_mileageEF = car.totalMileage;
+            this.planned_mileageEF = car.allowedMileage;
+            this.collision_damageEF = car.colDamProtection;
+            this.seats_numberEF = car.childrenSeats;
             this.editCarId = car.carId;
 
-            this.fillModels();
-            this.modelF = car.model;
+            this.fillModelsEdit();
+            this.modelEF = car.model;
 
 
 
@@ -357,6 +575,123 @@ export default {
             });
         },
 
+        fillModelsEdit() {
+            if (this.brandEF === "") {
+                this.modelBool = true;
+                this.modelEF = "";
+                return;
+            }
+
+            let brandChosen = null;
+            for (let brand of this.brandsResponse) {
+                if (this.brandEF === brand.Name) {
+                    brandChosen = brand;
+                    break;
+                }
+            }
+            this.models = [];
+            this.models.push("");
+            for (let m of brandChosen.Models) this.models.push(m);
+            this.modelBool = false;
+        },
+
+        // EDIT
+        formatNamesEdit(files) {
+            if (files.length > 6) return "Select maximum of 6 images...";
+            else return `${files.length} images selected`;
+        },
+
+        base64(event) {
+            this.imagesE = [];
+            var input = event.target;
+
+            if (input.files.length > 6) {
+                this.$bvToast.toast("Maxumum number of images is 6", {
+                    title: "Images",
+                    variant: "warning",
+                    solid: true
+                });
+                return;
+            }
+
+            if (input.files) {
+                for (let file of input.files) {
+                    var reader = new FileReader();
+                    reader.onload = e => {
+                        let imageData = e.target.result;
+                        this.imagesE.push(imageData);
+                    };
+                    // Start the reader job - read file as a data url (base64 format)
+                    reader.readAsDataURL(file);
+                }
+            }
+        },
+        resetFormEdit() {
+            this.imagesE = [];
+            this.descriptionEF = "";
+            this.brandEF = "";
+            this.modelEF = "";
+            this.fuelEF = "";
+            this.transmissionEF = "";
+            this.classEF = "";
+            this.total_mileageEF = 0;
+            this.planned_mileageEF = 0;
+            this.collision_damageEF = false;
+            this.seats_numberEF = 0;
+            this.editCarId = "";
+        },
+        editCarFinal() {
+            event.preventDefault();
+            axios
+                .put("/cars-ads/cars/"+this.editCarId, {
+                    brand: this.brandEF,
+                    model: this.modelEF,
+                    fuel: this.fuelEF,
+                    transmission: this.transmissionEF,
+                    carClass: this.classEF,
+                    totalMileage: this.total_mileageEF,
+                    allowedMileage: this.planned_mileageEF,
+                    colDamProtection: this.collision_damageEF,
+                    childrenSeats: this.seats_numberEF,
+                    description: this.descriptionEF,
+                })
+                .then(response => {
+                    let responseString = response.data;
+                     axios
+                        .put("/cars-ads/cars/"+this.editCarId+"/images", {
+                            images:this.imagesE
+                        })
+                        .then(response => {
+                            if (response.status === 200) {
+                                this.$bvToast.toast(responseString, {
+                                    title: "Edit Car",
+                                    variant: "success",
+                                    solid: true
+                                });
+                                this.getClientCars();
+                                this.resetFormEdit();
+
+                            } else {
+                                this.$bvToast.toast(responseString, {
+                                    title: "Edit Car",
+                                    variant: "warning",
+                                    solid: true
+                                });
+                            }
+                        });
+                    
+              
+                });
+        },
+
+
+        // CREATE
+
+        formatNames(files) {
+            if (files.length > 6) return "Select maximum of 6 images...";
+            else return `${files.length} images selected`;
+        },
+
         fillModels() {
             if (this.brandF === "") {
                 this.modelBool = true;
@@ -376,11 +711,8 @@ export default {
             for (let m of brandChosen.Models) this.models.push(m);
             this.modelBool = false;
         },
-        formatNames(files) {
-            if (files.length > 6) return "Select maximum of 6 images...";
-            else return `${files.length} images selected`;
-        },
-        base64(event) {
+
+        base64Add(event) {
             this.images = [];
             var input = event.target;
 
@@ -417,12 +749,12 @@ export default {
             this.planned_mileageF = 0;
             this.collision_damageF = false;
             this.seats_numberF = 0;
-            this.editCarId = "";
         },
-        editCarFinal() {
+        addNewCar() {
             event.preventDefault();
+         
             axios
-                .put("/cars-ads/cars/"+this.editCarId, {
+                .post("/cars-ads/cars", {
                     brand: this.brandF,
                     model: this.modelF,
                     fuel: this.fuelF,
@@ -433,26 +765,29 @@ export default {
                     colDamProtection: this.collision_damageF,
                     childrenSeats: this.seats_numberF,
                     description: this.descriptionF,
+                    images: this.images,
                 })
                 .then(response => {
+                    this.resetForm();
+                    this.getClientCars();
+                    
                     if (response.status === 200) {
                         this.$bvToast.toast(response.data, {
-                            title: "Edit Car",
+                            title: "New Car",
                             variant: "success",
                             solid: true
                         });
-                        this.getClientCars();
-                        this.resetForm();
-
                     } else {
                         this.$bvToast.toast(response.data, {
-                            title: "Edit Car",
+                            title: "New Car",
                             variant: "warning",
                             solid: true
                         });
                     }
                 });
         }
+
+
     },
     created() {
         this.getClientCars();

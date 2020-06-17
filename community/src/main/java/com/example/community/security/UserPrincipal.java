@@ -1,4 +1,4 @@
-package agentbackend.agentback.security;
+package com.example.community.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,7 +19,13 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-      return new ArrayList<>();
+        List<String> authorities = new ArrayList<>(header);
+        authorities.remove(0);
+
+        return authorities
+                .stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toSet());
     }
 
     @Override

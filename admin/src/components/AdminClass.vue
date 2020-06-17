@@ -102,6 +102,7 @@ export default {
     methods:{
 
         removeClass(cclass){
+            event.preventDefault();
               let url = "/codebook/class/"+cclass.id;
               axios.delete(url).then(response => {
                 if(response.status === 200){
@@ -126,7 +127,7 @@ export default {
         },
 
         addNewClass(){
-
+            event.preventDefault();
             axios.post("/codebook/class",{ 
                 "name":this.classF, 
             }).then(response => { 
@@ -158,6 +159,7 @@ export default {
 
         },
         editClassFinal(){
+            event.preventDefault();
             let url = "/codebook/class/"+this.classId;
             axios.put(url,{ 
                 "id":this.classId,
