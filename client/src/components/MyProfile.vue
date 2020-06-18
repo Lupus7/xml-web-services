@@ -31,14 +31,25 @@
                 </b-navbar-nav>
 
                 <b-navbar-nav style="margin-right:0.9rem">
+
+                    <b-nav-item @click="showMessages()" right>
+                        <b-icon
+                            icon="chat-dots"
+                            aria-hidden="true"
+                            variant="dark"
+                        ></b-icon>
+                        Messages
+                    </b-nav-item>
+
                     <b-nav-item @click="showClientCart()" right>
                         <b-icon
-                            icon="cart-fill"
+                            icon="cart"
                             aria-hidden="true"
                             variant="dark"
                         ></b-icon>
                         My Cart
                     </b-nav-item>
+                
                 </b-navbar-nav>
             </div>
         </b-navbar>
@@ -98,6 +109,9 @@ export default {
             this.boolbook = false;
             this.boolcart = true;
         },
+        showMessages(){
+            this.$router.push("/messages");
+        }
     },
     created() {},
 };

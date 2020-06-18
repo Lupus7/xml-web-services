@@ -37,6 +37,15 @@ const router = new Router({
             beforeEnter: authetication
 
         },
+
+        {
+            path: "/messages",
+            name: "Messages",
+            props: true,
+            component: () => import("./components/Messages"),
+            beforeEnter: authetication
+
+        },
     ],
 });
 

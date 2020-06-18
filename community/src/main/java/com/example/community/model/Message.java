@@ -8,14 +8,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
 /**
  * <p>Java class for Message complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Message"&gt;
  *   &lt;complexContent&gt;
@@ -30,51 +31,56 @@ import java.util.Date;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Message", namespace = "xml-web-services-community", propOrder = {
-    "id",
-    "body",
-    "date",
-    "booking"
+        "id",
+        "body",
+        "date",
+        "booking"
 })
 @Entity
-@Table(name="message")
+@Table(name = "message")
 public class Message {
 
     @XmlElement(namespace = "xml-web-services-community")
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "message_id_seq_gen")
+    @SequenceGenerator(name = "message_id_seq_gen", sequenceName = "message_id_seq", allocationSize = 1)
     protected long id;
     @XmlElement(namespace = "xml-web-services-community", required = true)
+    @Column(unique = false, nullable = false, columnDefinition = "text")
     protected String body;
     @XmlElement(namespace = "xml-web-services-community", required = true)
     @XmlSchemaType(name = "date")
-    protected Date date;
+    @Column(unique = false, nullable = false)
+    protected LocalDateTime date;
+
+    @Column(unique = false)
     @XmlElement(namespace = "xml-web-services-community")
     protected long booking;
 
+    @Column(unique = false, nullable = false)
     protected String sender;
-    protected String reveicer;
+
+    @Column(unique = false, nullable = false)
+    protected String receiver;
 
     public Message() {
     }
 
 
-    public Message(long id, String body, Date date, long booking,String sender, String reveicer) {
+    public Message(long id, String body, LocalDateTime date, long booking, String sender, String receiver) {
         this.id = id;
         this.body = body;
         this.date = date;
         this.booking = booking;
         this.sender = sender;
-        this.reveicer = reveicer;
+        this.receiver = receiver;
     }
 
     /**
      * Gets the value of the id property.
-     * 
      */
     public long getId() {
         return id;
@@ -82,7 +88,6 @@ public class Message {
 
     /**
      * Sets the value of the id property.
-     * 
      */
     public void setId(long value) {
         this.id = value;
@@ -90,11 +95,9 @@ public class Message {
 
     /**
      * Gets the value of the body property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getBody() {
         return body;
@@ -102,11 +105,9 @@ public class Message {
 
     /**
      * Sets the value of the body property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setBody(String value) {
         this.body = value;
@@ -114,31 +115,26 @@ public class Message {
 
     /**
      * Gets the value of the date property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *     
+     *
+     * @return possible object is
+     * {@link XMLGregorianCalendar }
      */
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
     /**
      * Sets the value of the date property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link XMLGregorianCalendar }
      */
-    public void setDate(Date value) {
+    public void setDate(LocalDateTime value) {
         this.date = value;
     }
 
     /**
      * Gets the value of the booking property.
-     * 
      */
     public long getBooking() {
         return booking;
@@ -146,7 +142,6 @@ public class Message {
 
     /**
      * Sets the value of the booking property.
-     * 
      */
     public void setBooking(long value) {
         this.booking = value;
@@ -160,11 +155,11 @@ public class Message {
         this.sender = sender;
     }
 
-    public String getReveicer() {
-        return reveicer;
+    public String getReceiver() {
+        return receiver;
     }
 
-    public void setReveicer(String reveicer) {
-        this.reveicer = reveicer;
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 }

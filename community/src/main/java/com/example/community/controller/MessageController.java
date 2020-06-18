@@ -1,15 +1,13 @@
 package com.example.community.controller;
 
 
+import com.example.community.controller.dto.ConversationDTO;
 import com.example.community.controller.dto.MessageDto;
 import com.example.community.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -20,18 +18,30 @@ public class MessageController {
     @Autowired
     MessageService messageService;
 
-    @PostMapping("/messages")
-    public ResponseEntity<String> createMessage(@RequestBody MessageDto messageDto, Principal user){
-        if(messageService.createNew(messageDto,user)){
-            return ResponseEntity.ok("Successfully created");
+    @PostMapping("/message")
+    public ResponseEntity<MessageDto> createMessage(@RequestBody MessageDto messageDto, Principal user){
+        return ResponseEntity.ok(messageService.createNew(messageDto,user));
+    }
+
+    @PostMapping("/message/conversation")
+    public ResponseEntity<String> startConversation(@RequestBody ConversationDTO conversationDTO, Principal user){
+        if(messageService.startConversation(conversationDTO, user)){
+            return ResponseEntity.ok("Successfully started");
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    @GetMapping("/messages")
-    public ResponseEntity<ArrayList<MessageDto>> findAll(){
-        ArrayList<MessageDto> msgs = messageService.getAll();
+    @GetMapping("/message/people")
+    public ResponseEntity<ArrayList<String>> findReceivers(Principal user){
+        ArrayList<String> receivers = messageService.getPeople(user);
+        return ResponseEntity.ok(receivers);
+    }
+
+    @GetMapping("/message/{receiver}")
+    public ResponseEntity<ArrayList<MessageDto>> getConversation(@PathVariable("receiver") String receiver, Principal user){
+        ArrayList<MessageDto> msgs = messageService.getConversation(receiver,user);
         return ResponseEntity.ok(msgs);
     }
+
 
 }

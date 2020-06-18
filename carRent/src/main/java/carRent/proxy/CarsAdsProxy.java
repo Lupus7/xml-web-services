@@ -5,10 +5,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @FeignClient(name = "cars-ads")
@@ -28,4 +26,7 @@ public interface CarsAdsProxy {
 
     @PostMapping(value = "/api/ad/check", produces = "application/json", consumes = "application/json")
     Boolean checking(@RequestBody JSONObject object, @RequestHeader("Authorization") String auth) throws JSONException;
+
+    @GetMapping(value = "/api/ad/{id}")
+    ResponseEntity<AdClientDTO> getAd(@PathVariable("id") Long id, @RequestHeader("Authorization") String auth);
 }
