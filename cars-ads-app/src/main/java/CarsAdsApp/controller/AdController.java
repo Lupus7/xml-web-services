@@ -91,7 +91,7 @@ public class AdController {
     }
 
     @GetMapping(value = "/api/ad")
-    @PreAuthorize("hasAuthority('READ_ADS')")
+    @PreAuthorize("hasAuthority('READ_ADS') or hasAuthority('MASTER')")
     public ResponseEntity<List<Ad>> getAll(){
         List<Ad> ads = adService.getAll();
         return ResponseEntity.ok(ads);
@@ -106,6 +106,7 @@ public class AdController {
 
     // Id Ad
     @GetMapping(value = "/ad/check/{id}")
+    @PreAuthorize("hasAuthority('MASTER')")
     public ResponseEntity<Boolean> getAdById(@PathVariable("id") Long id){
         return ResponseEntity.ok(adService.getCheckAd(id));
     }

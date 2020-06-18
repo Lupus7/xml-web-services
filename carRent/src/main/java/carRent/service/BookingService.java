@@ -247,7 +247,7 @@ public class BookingService {
         booking.get().setState(RequestState.RESERVED);
         bookingRepo.save(booking.get());
 
-        carsAdsProxy.deactivateAd(booking.get().getAd(), user.getName() + ";MASTER");
+        carsAdsProxy.deactivateAd(booking.get().getAd(), user.getName()+";MASTER");
 
         new java.util.Timer().schedule(
                 new java.util.TimerTask() {
@@ -323,8 +323,13 @@ public class BookingService {
 
         ArrayList<Booking> bookings = bookingRepo.findAllByLoaner(userId);
         for (Booking booking : bookings) {
-            BookingDTO dto = new BookingDTO(booking);
-            bookingDTOS.add(dto);
+            ResponseEntity<AdClientDTO> ad = carsAdsProxy.getAd(booking.getAd(), email+";MASTER");
+            if(ad != null && ad.getBody() != null){
+                BookingDTO dto = new BookingDTO(booking, ad.getBody().getAdvertiser());
+                bookingDTOS.add(dto);
+            }
+
+
         }
 
         return bookingDTOS;

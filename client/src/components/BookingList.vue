@@ -65,8 +65,7 @@
                         aria-hidden="true"
                         variant="dark"
                     ></b-icon>
-                    Advertizer: anonymus
-                    <!-- TODO: Advertizer: {{ info.advertiser }} -->
+                    Advertizer: {{ info.advertiser }}
                     <br />
                     <b-icon
                         icon="geo-alt"
@@ -96,11 +95,22 @@
                 </div>
             </span>
             <span>
+
+                 <b-button
+                    class="float-left"
+                    style="width:160px; color: white"
+                    variant="dark"
+                    @click="startConversation(info)"
+                    v-if="this.mode=='personal' && info.state == 'RESERVED'"
+                >
+                    Start Conversation
+                </b-button>
+
                 <b-button
-                    class="float-right"
-                    style="background:#b20000; width:150px; color: black"
+                    class="float-left"
+                    style="background:#b20000; width:150px; color: white"
                     @click="approve()"
-                    v-if="mode=='requests' && info.state == 'PENDING'"
+                    v-if="this.mode=='requests' && info.state == 'PENDING'"
                 >
                     Approve
                 </b-button>
@@ -170,6 +180,7 @@ export default {
             axios.get(url).then((response) => {
                 this.info = response.data;
                 this.info.id = row.id;
+                this.info.state = row.state;
             });
 
             this.$refs["my-modal"].show();
@@ -189,6 +200,18 @@ export default {
             axios
                 .put("/rent/api/booking/" + this.info.id)
                 .then(this.$refs["my-modal"].hide());
+        },
+        startConversation(info){
+
+            axios.post("/community/message/conversation",{
+                "receiver":info.advertiser,
+                "bookingId":info.id
+
+            }).then(
+                this.$router.push("/messages")
+            );
+
+         
         }
     },
     created() {

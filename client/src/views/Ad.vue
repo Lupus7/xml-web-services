@@ -206,8 +206,8 @@ export default {
                 books: [
                     {
                         adId: this.info.adId,
-                        startDate: this.chosenStart + "T00:00:00",
-                        endDate: this.chosenEnd + "T00:00:00",
+                        startDate: this.chosenStart,
+                        endDate: this.chosenEnd,
                         place: this.info.place,
                     },
                 ],

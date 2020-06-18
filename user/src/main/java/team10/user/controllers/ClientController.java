@@ -75,4 +75,12 @@ public class ClientController {
         return ResponseEntity.badRequest().body(null);
     }
 
+    @GetMapping(value = "/user/{id}")
+    public ResponseEntity<String> getUserEmail(@PathVariable("id") Long id) {
+        String email = clientService.getUserEmail(id);
+        if (email != null && !email.equals(""))
+            return ResponseEntity.ok(email);
+        return ResponseEntity.badRequest().body(null);
+    }
+
 }

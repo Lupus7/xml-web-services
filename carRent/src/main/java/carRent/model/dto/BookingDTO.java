@@ -21,6 +21,8 @@ public class BookingDTO {
 
     private Long ad;
 
+    private String advertiser;
+
     public BookingDTO() {
 
     }
@@ -33,6 +35,18 @@ public class BookingDTO {
         this.place = booking.getPlace();
         this.created = booking.getCreated();
         this.ad = booking.getAd();
+
+    }
+
+    public BookingDTO(Booking booking, String advertiser) {
+        this.id = booking.getId();
+        this.startDate = booking.getStartDate();
+        this.endDate = booking.getEndDate();
+        this.state = booking.getState();
+        this.place = booking.getPlace();
+        this.created = booking.getCreated();
+        this.ad = booking.getAd();
+        this.advertiser = advertiser;
 
     }
 
@@ -90,5 +104,13 @@ public class BookingDTO {
 
     public void setAd(Long ad) {
         this.ad = ad;
+    }
+
+    public String getAdvertiser() {
+        return advertiser;
+    }
+
+    public void setAdvertiser(String advertiser) {
+        this.advertiser = advertiser;
     }
 }

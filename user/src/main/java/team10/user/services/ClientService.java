@@ -20,6 +20,7 @@ import team10.user.util.ClientMapper;
 import team10.user.util.UserMapper;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -145,6 +146,14 @@ public class ClientService {
         User user = userRepository.findByEmail(email);
         if (user != null)
             return user.getId();
+        return null;
+    }
+
+    public String getUserEmail(Long id) {
+
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent())
+            return user.get().getEmail();
         return null;
     }
 }

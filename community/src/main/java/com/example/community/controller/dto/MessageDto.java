@@ -1,21 +1,26 @@
 package com.example.community.controller.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class MessageDto {
 
     protected String body;
-    protected Date date;
+    protected LocalDateTime date;
     protected long booking;
+    private String receiver;
+    private String sender;
+    private Long id;
 
     public MessageDto() {
     }
 
-    public MessageDto(String body, Date date, long booking) {
+    public MessageDto(String body, LocalDateTime date, long booking) {
         this.body = body;
         this.date = date;
         this.booking = booking;
     }
+
+
 
     public String getBody() {
         return body;
@@ -25,11 +30,11 @@ public class MessageDto {
         this.body = body;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -39,5 +44,29 @@ public class MessageDto {
 
     public void setBooking(long booking) {
         this.booking = booking;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
