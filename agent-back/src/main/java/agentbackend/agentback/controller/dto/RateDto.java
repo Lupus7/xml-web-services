@@ -4,6 +4,7 @@ public class RateDto {
     private int rate;
     private String comment;
     private long booking;
+    private long carId;
 
     public RateDto(){
 
@@ -37,5 +38,13 @@ public class RateDto {
 
     public void setBooking(long booking) {
         this.booking = booking;
+    }
+
+    public long getCarId() {
+        return carId;
+    }
+
+    public void setCarId(long carId) {
+        this.carId = carId;
     }
 }

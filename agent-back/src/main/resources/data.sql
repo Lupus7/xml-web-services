@@ -66,17 +66,17 @@ alter sequence message_id_seq RESTART with 5;
 --Rates
 
 INSERT INTO public.rate(
-	id, approved, booking, comment, rate)
-	VALUES (1, false, 1, 'very goood', 8);
+	id, approved, booking, comment, rate,car_id,rater)
+	VALUES (1, true, 1, 'very goood', 8, 1 ,'user');
 INSERT INTO public.rate(
-	id, approved, booking, comment, rate)
-	VALUES (2, true, 1, 'naaajs', 9);
+	id, approved, booking, comment, rate,car_id,rater)
+	VALUES (2, true, 1, 'naaajs', 9, 1, 'test');
 INSERT INTO public.rate(
-	id, approved, booking, comment, rate)
-	VALUES (3, false, 2, 'bad', 4);
+	id, approved, booking, comment, rate,car_id,rater)
+	VALUES (3, true, 2, 'bad', 4, 1,'random');
 INSERT INTO public.rate(
-	id, approved, booking, comment, rate)
-	VALUES (4, true, 1, ' goood', 7);
+	id, approved, booking, comment, rate,car_id,rater)
+	VALUES (4, true, 2, ' goood', 7, 2, 'user');
 
 alter sequence rate_id_seq RESTART with 5;
 
