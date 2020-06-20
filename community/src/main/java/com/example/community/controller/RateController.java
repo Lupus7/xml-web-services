@@ -6,10 +6,7 @@ import com.example.community.model.Rate;
 import com.example.community.service.RateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
 import java.security.Principal;
@@ -41,6 +38,11 @@ public class RateController {
     @GetMapping("/rate")
     public ResponseEntity<List<CarRateDTO>> getRates(Principal user){
         return ResponseEntity.ok(rateService.getRates(user));
+    }
+
+    @GetMapping("/rate/{carId}")
+    public ResponseEntity<Double> getCarRate(@PathVariable("carId") Long carId){
+        return ResponseEntity.ok(rateService.getCarRate(carId));
     }
 
 }
