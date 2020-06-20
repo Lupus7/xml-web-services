@@ -14,15 +14,17 @@ public class ReportService {
     @Autowired
     private ReportRepository reportRepository;
 
-    public Boolean createReport(ReportDto reportDto){
+    public Boolean createReport(ReportDto reportDto) {
         Report report = new Report();
         report.setAllowedMileage(reportDto.getAllowedMileage());
         report.setBooking(reportDto.getBooking());
         report.setExtraInfo(reportDto.getExtraInfo());
         reportRepository.save(report);
-        return  true;
+        return true;
     }
 
-    public ArrayList<Report> getAllReports(){ return (ArrayList<Report>) reportRepository.findAll(); }
+    public ArrayList<Report> getAllReports() {
+        return (ArrayList<Report>) reportRepository.findAll();
+    }
 
 }

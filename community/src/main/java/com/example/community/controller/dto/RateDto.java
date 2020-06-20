@@ -1,18 +1,35 @@
 package com.example.community.controller.dto;
 
+import com.example.community.model.Rate;
+
 public class RateDto {
     private int rate;
     private String comment;
-    private long booking;
+    private Long booking;
+    private Long carId;
+    private Long id;
+    private boolean approved;
+    private String user;
 
-    public RateDto(){
+    public RateDto() {
 
     }
 
-    public RateDto(int rate, String comment, long booking) {
+    public RateDto(int rate, String comment, Long booking, Long carId) {
         this.rate = rate;
         this.comment = comment;
         this.booking = booking;
+        this.carId = carId;
+    }
+
+    public RateDto(Rate rate) {
+        this.id = rate.getId();
+        this.carId = rate.getCarId();
+        this.rate = rate.getRate();
+        this.comment = rate.getComment();
+        this.booking = rate.getBooking();
+        this.approved = rate.isApproved();
+        this.user = rate.getRater();
     }
 
     public int getRate() {
@@ -35,7 +52,40 @@ public class RateDto {
         return booking;
     }
 
-    public void setBooking(long booking) {
+    public void setBooking(Long booking) {
         this.booking = booking;
+    }
+
+
+    public Long getCarId() {
+        return carId;
+    }
+
+    public void setCarId(Long carId) {
+        this.carId = carId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 }

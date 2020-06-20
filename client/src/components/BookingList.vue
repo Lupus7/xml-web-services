@@ -96,7 +96,18 @@
             </span>
             <span>
 
-                 <b-button
+                <b-button
+                    class="float-left"
+                    style="width:160px; color: white"
+                    variant="danger"
+                    @click="leaveRate(info)"
+                    v-if="this.mode=='personal' && info.state == 'ENDED'"
+                >
+                    Leave Rate
+                </b-button>
+
+
+                <b-button
                     class="float-left"
                     style="width:160px; color: white"
                     variant="dark"
@@ -212,6 +223,9 @@ export default {
             );
 
          
+        },
+        leaveRate(info){
+            this.$router.push({name:"LeaveRate", params:{booking:info}})
         }
     },
     created() {

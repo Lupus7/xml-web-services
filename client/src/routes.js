@@ -46,6 +46,24 @@ const router = new Router({
             beforeEnter: authetication
 
         },
+
+        {
+            path: "/rates",
+            name: "MyRates",
+            props: true,
+            component: () => import("./components/MyRates"),
+            beforeEnter: authetication
+
+        },
+
+        {
+            path: "/leaverate",
+            name: "LeaveRate",
+            props: true,
+            component: () => import("./components/LeaveRate"),
+            beforeEnter: authetication
+
+        },
     ],
 });
 
