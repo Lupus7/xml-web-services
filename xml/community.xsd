@@ -26,7 +26,7 @@
             <xs:element name="rate" type="xs:int"/>
             <xs:element name="comment" type="xs:string"/>
             <xs:element name="approved" type="xs:boolean"/>
-            <xs:element name="user" type="xs:string"/>
+            <xs:element name="rater" type="xs:string"/>
             <xs:element name="booking" type="xs:long"/>
             <xs:element name="carId" type="xs:long"/>
         </xs:sequence>

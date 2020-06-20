@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="rate" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
  *         &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="approved" type="{http://www.w3.org/2001/XMLSchema}boolean"/&gt;
- *         &lt;element name="user" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="rater" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="booking" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *         &lt;element name="carId" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *       &lt;/sequence&gt;
@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
     "rate",
     "comment",
     "approved",
-    "user",
+    "rater",
     "booking",
     "carId"
 })
@@ -53,7 +53,7 @@ public class Rate {
     @XmlElement(namespace = "xml-web-services-community")
     protected boolean approved;
     @XmlElement(namespace = "xml-web-services-community", required = true)
-    protected String user;
+    protected String rater;
     @XmlElement(namespace = "xml-web-services-community")
     protected long booking;
     @XmlElement(namespace = "xml-web-services-community")
@@ -132,27 +132,27 @@ public class Rate {
     }
 
     /**
-     * Gets the value of the user property.
+     * Gets the value of the rater property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getUser() {
-        return user;
+    public String getRater() {
+        return rater;
     }
 
     /**
-     * Sets the value of the user property.
+     * Sets the value of the rater property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setUser(String value) {
-        this.user = value;
+    public void setRater(String value) {
+        this.rater = value;
     }
 
     /**
