@@ -10,6 +10,7 @@ import agentbackend.agentback.model.ObjectFactory;
 import agentbackend.agentback.repository.AdRepository;
 import agentbackend.agentback.repository.CarRepository;
 import agentbackend.agentback.repository.ImageRepository;
+import agentbackend.agentback.soapClient.CarSoapClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ public class CarService {
     @Autowired
     ImageRepository imageRepository;
 
+    @Autowired
+    CarSoapClient carSoapClient;
 
     //MEthod for creating new car in dataabse
     public boolean CreateCar(CarDTO newCarDto, String email) {
@@ -52,10 +55,15 @@ public class CarService {
         //Save car in database
         carRepository.save(car);
 
+        List<Image> imageList = new ArrayList<>();
+
         for(String image: newCarDto.getImages()){
             Image newImage = new Image(image, car.getId());
             imageRepository.save(newImage);
+            imageList.add(newImage);
         }
+
+        carSoapClient.putCar(car, imageList);
 
         return true;
     }
