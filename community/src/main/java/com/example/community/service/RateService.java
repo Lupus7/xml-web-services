@@ -80,6 +80,10 @@ public class RateService {
 
         List<Rate> rates = rateRepository.findAllByCarId(carId);
         double x = 0;
+
+        if(rates.size() == 0)
+            return x;
+
         for (Rate rate : rates)
             x += rate.getRate();
 
