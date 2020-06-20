@@ -21,6 +21,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/health").permitAll()
                 //.anyRequest().hasAuthority("MASTER")// health available to all
+                .antMatchers("/ws/**").permitAll()
                 .anyRequest().authenticated(); // everything else available only to authenticated users
     }
 }

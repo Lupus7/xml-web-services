@@ -2,26 +2,24 @@ package CarsAdsApp.service;
 
 import CarsAdsApp.controller.dto.ImageDTO;
 import CarsAdsApp.controller.dto.UpdateCarDTO;
-import CarsAdsApp.model.*;
+import CarsAdsApp.model.Ad;
+import CarsAdsApp.model.Car;
+import CarsAdsApp.model.Image;
+import CarsAdsApp.model.ObjectFactory;
 import CarsAdsApp.model.dto.CarDTO;
 import CarsAdsApp.proxy.RentProxy;
-import CarsAdsApp.proxy.UserProxy;
 import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.CarRepository;
 import CarsAdsApp.repository.ImageRepository;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.car_rent.agent_api.car.CarDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CarService {
@@ -36,6 +34,22 @@ public class CarService {
 
     @Autowired
     RentProxy rentProxy;
+
+    public boolean CreateCar(CarDetails carDetails) {
+        CarDTO carDTO = new CarDTO();
+        carDTO.setBrand(carDetails.getBrand());
+        carDTO.setModel(carDetails.getModel());
+        carDTO.setCarClass(carDetails.getCarClass());
+        carDTO.setFuel(carDetails.getFuel());
+        carDTO.setTransmission(carDetails.getTransmission());
+        carDTO.setTotalMileage(carDetails.getTotalMileage());
+        carDTO.setAllowedMileage(carDetails.getAllowedMileage());
+        carDTO.setChildrenSeats(carDetails.getChildrenSeats());
+        carDTO.setDescription(carDetails.getDescription());
+        carDTO.setColDamProtection(carDetails.isColDamProtection());
+        carDTO.setImages(carDetails.getImages());
+        return CreateCar(carDTO, carDetails.getOwner());
+    }
 
     public boolean CreateCar(CarDTO newCarDto, String email) {
         if (newCarDto.getBrand() == null || newCarDto.getModel() == null || newCarDto.getFuel() == null || newCarDto.getCarClass() == null || newCarDto.getTransmission() == null) {
