@@ -1,5 +1,6 @@
 package com.example.community.controller;
 
+import com.example.community.controller.dto.CarRateDTO;
 import com.example.community.controller.dto.RateDto;
 import com.example.community.model.Rate;
 import com.example.community.service.RateService;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.websocket.server.PathParam;
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class RateController {
@@ -19,33 +22,25 @@ public class RateController {
     @Autowired
     RateService rateService;
 
-    @PostMapping("/rates")
-    public ResponseEntity<String> leaveRate(@RequestBody  RateDto rateDto){
-        Boolean succeed = rateService.craeteRate(rateDto);
+    @PostMapping("/rate")
+    public ResponseEntity<String> leaveRate(@RequestBody  RateDto rateDto, Principal user){
+        Boolean succeed = rateService.createRate(rateDto, user);
         if(succeed)
             return ResponseEntity.ok("Successfully left rate");
         return ResponseEntity.badRequest().build();
     }
 
-    @GetMapping("/rates")
-    public ResponseEntity<ArrayList<RateDto>> findAll(){
-        ArrayList<Rate> rates = rateService.getAllRates();
-        ArrayList<RateDto> dtos = new ArrayList<>();
-        if(rates != null){
-            for(Rate rate: rates){
-                RateDto newRate = new RateDto(rate.getRate(), rate.getComment(), rate.getBooking());
-                dtos.add(newRate);
-            }
-        }
-        return ResponseEntity.ok(dtos);
-    }
-
-    @GetMapping("/rates/{id}/approve")
+    @GetMapping("/rate/{id}/approve")
     public ResponseEntity<String> approveRate(@PathParam("id")Long id){
         Boolean approved = rateService.approveRate(id);
         if (approved)
             return ResponseEntity.ok("Successfull");
         return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/rate")
+    public ResponseEntity<List<CarRateDTO>> getRates(Principal user){
+        return ResponseEntity.ok(rateService.getRates(user));
     }
 
 }

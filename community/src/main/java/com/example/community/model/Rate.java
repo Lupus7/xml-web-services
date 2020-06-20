@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="approved" type="{http://www.w3.org/2001/XMLSchema}boolean"/&gt;
  *         &lt;element name="booking" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
+ *         &lt;element name="carId" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
+ *         &lt;element name="rater" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -37,35 +39,38 @@ import javax.xml.bind.annotation.XmlType;
     "rate",
     "comment",
     "approved",
-    "booking"
+    "booking",
+    "carId",
+    "rater"
+
 })
 @Entity
-@Table(name="rate")
+@Table(name = "rate")
 public class Rate {
 
     @XmlElement(namespace = "xml-web-services-community")
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rate_id_seq_gen")
+    @SequenceGenerator(name = "rate_id_seq_gen", sequenceName = "rate_id_seq", allocationSize = 1)
     protected long id;
     @XmlElement(namespace = "xml-web-services-community")
+    @Column(nullable = false)
     protected int rate;
     @XmlElement(namespace = "xml-web-services-community", required = true)
+    @Column()
     protected String comment;
     @XmlElement(namespace = "xml-web-services-community")
+    @Column(nullable = false)
     protected boolean approved;
     @XmlElement(namespace = "xml-web-services-community")
+    @Column(nullable = false)
     protected long booking;
-
-    public Rate() {
-    }
-
-    public Rate(long id, int rate, String comment, boolean approved, long booking) {
-        this.id = id;
-        this.rate = rate;
-        this.comment = comment;
-        this.approved = approved;
-        this.booking = booking;
-    }
+    @XmlElement(namespace = "xml-web-services-community")
+    @Column(nullable = false)
+    protected long carId;
+    @XmlElement(namespace = "xml-web-services-community")
+    @Column(nullable = false)
+    protected String rater;
 
     /**
      * Gets the value of the id property.
@@ -127,6 +132,34 @@ public class Rate {
      * Gets the value of the approved property.
      * 
      */
+    /**
+     * Gets the value of the comment property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getRater() {
+        return rater;
+    }
+
+    /**
+     * Sets the value of the comment property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setRater(String value) {
+        this.rater = value;
+    }
+
+    /**
+     * Gets the value of the approved property.
+     *
+     */
     public boolean isApproved() {
         return approved;
     }
@@ -155,4 +188,22 @@ public class Rate {
         this.booking = value;
     }
 
+    /**
+     * Gets the value of the carId property.
+     * 
+     */
+    public long getCarId() {
+        return carId;
+    }
+
+    /**
+     * Sets the value of the carId property.
+     * 
+     */
+    public void setCarId(long value) {
+        this.carId = value;
+    }
+
+    public Rate() {
+    }
 }

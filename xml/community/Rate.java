@@ -21,7 +21,9 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="rate" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
  *         &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="approved" type="{http://www.w3.org/2001/XMLSchema}boolean"/&gt;
+ *         &lt;element name="user" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="booking" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
+ *         &lt;element name="carId" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -36,7 +38,9 @@ import javax.xml.bind.annotation.XmlType;
     "rate",
     "comment",
     "approved",
-    "booking"
+    "user",
+    "booking",
+    "carId"
 })
 public class Rate {
 
@@ -48,8 +52,12 @@ public class Rate {
     protected String comment;
     @XmlElement(namespace = "xml-web-services-community")
     protected boolean approved;
+    @XmlElement(namespace = "xml-web-services-community", required = true)
+    protected String user;
     @XmlElement(namespace = "xml-web-services-community")
     protected long booking;
+    @XmlElement(namespace = "xml-web-services-community")
+    protected long carId;
 
     /**
      * Gets the value of the id property.
@@ -124,6 +132,30 @@ public class Rate {
     }
 
     /**
+     * Gets the value of the user property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getUser() {
+        return user;
+    }
+
+    /**
+     * Sets the value of the user property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setUser(String value) {
+        this.user = value;
+    }
+
+    /**
      * Gets the value of the booking property.
      * 
      */
@@ -137,6 +169,22 @@ public class Rate {
      */
     public void setBooking(long value) {
         this.booking = value;
+    }
+
+    /**
+     * Gets the value of the carId property.
+     * 
+     */
+    public long getCarId() {
+        return carId;
+    }
+
+    /**
+     * Sets the value of the carId property.
+     * 
+     */
+    public void setCarId(long value) {
+        this.carId = value;
     }
 
 }

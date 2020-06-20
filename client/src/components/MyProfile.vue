@@ -32,6 +32,16 @@
 
                 <b-navbar-nav style="margin-right:0.9rem">
 
+
+                     <b-nav-item @click="showRates()" right>
+                        <b-icon
+                            icon="star"
+                            aria-hidden="true"
+                            variant="dark"
+                        ></b-icon>
+                        My Rates
+                    </b-nav-item>
+
                     <b-nav-item @click="showMessages()" right>
                         <b-icon
                             icon="chat-dots"
@@ -111,6 +121,9 @@ export default {
         },
         showMessages(){
             this.$router.push("/messages");
+        },
+        showRates(){
+            this.$router.push("/rates");
         }
     },
     created() {},

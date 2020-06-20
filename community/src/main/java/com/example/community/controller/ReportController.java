@@ -19,7 +19,7 @@ public class ReportController {
     private ReportService reportService;
 
     @PostMapping("/reports")
-    public ResponseEntity<String> createReoport(@RequestBody ReportDto reportDto){
+    public ResponseEntity<String> createReport(@RequestBody ReportDto reportDto){
         if(reportService.createReport(reportDto)){
             return ResponseEntity.ok("Successfully created...");
         }
