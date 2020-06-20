@@ -75,4 +75,16 @@ public class RateService {
 
         return carRates;
     }
+
+    public Double getCarRate(Long carId) {
+
+        List<Rate> rates = rateRepository.findAllByCarId(carId);
+        double x = 0;
+        for (Rate rate : rates)
+            x += rate.getRate();
+
+        return x / rates.size();
+
+
+    }
 }
