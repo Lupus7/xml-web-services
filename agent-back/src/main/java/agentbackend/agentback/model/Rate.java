@@ -56,6 +56,12 @@ public class Rate {
     protected boolean approved;
     @XmlElement(namespace = "xml-web-services-community")
     protected long booking;
+    @XmlElement(namespace = "xml-web-services-community")
+    @Column(nullable = false)
+    protected long carId;
+    @XmlElement(namespace = "xml-web-services-community")
+    @Column(nullable = false)
+    protected String rater;
 
     public Rate() {
     }
@@ -156,4 +162,19 @@ public class Rate {
         this.booking = value;
     }
 
+    public long getCarId() {
+        return carId;
+    }
+
+    public void setCarId(long carId) {
+        this.carId = carId;
+    }
+
+    public String getRater() {
+        return rater;
+    }
+
+    public void setRater(String rater) {
+        this.rater = rater;
+    }
 }
