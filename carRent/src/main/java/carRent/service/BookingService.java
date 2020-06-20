@@ -16,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -244,25 +245,10 @@ public class BookingService {
         if (!booking.isPresent())
             return false;
 
-        booking.get().setState(RequestState.RESERVED);
+        booking.get().setState(RequestState.PAID);
         bookingRepo.save(booking.get());
 
-        carsAdsProxy.deactivateAd(booking.get().getAd(), user.getName()+";MASTER");
-
-        new java.util.Timer().schedule(
-                new java.util.TimerTask() {
-                    @Override
-                    public void run() {
-                        if (booking.get().getState().equals(RequestState.RESERVED)) {
-                            booking.get().setState(RequestState.CANCELED);
-                            bookingRepo.save(booking.get());
-                            cancel();
-                        }
-                    }
-                },
-                12 * 60 * 60 * 1000
-        );
-
+        carsAdsProxy.deactivateAd(booking.get().getAd(), user.getName() + ";MASTER");
 
         return true;
     }
@@ -323,8 +309,8 @@ public class BookingService {
 
         ArrayList<Booking> bookings = bookingRepo.findAllByLoaner(userId);
         for (Booking booking : bookings) {
-            ResponseEntity<AdClientDTO> ad = carsAdsProxy.getAd(booking.getAd(), email+";MASTER");
-            if(ad != null && ad.getBody() != null){
+            ResponseEntity<AdClientDTO> ad = carsAdsProxy.getAd(booking.getAd(), email + ";MASTER");
+            if (ad != null && ad.getBody() != null) {
                 BookingDTO dto = new BookingDTO(booking, ad.getBody().getAdvertiser());
                 bookingDTOS.add(dto);
             }
@@ -405,4 +391,22 @@ public class BookingService {
 
         return new BookingDTO();
     }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void checkingEndedState() {
+
+        List<Booking> bookings = bookingRepo.findAllByState(RequestState.PAID);
+        LocalDateTime today = LocalDateTime.now();
+
+        for (Booking booking : bookings) {
+
+            if (booking.getEndDate().isBefore(today) || booking.getEndDate().equals(today)) {
+                booking.setState(RequestState.ENDED);
+                bookingRepo.save(booking);
+            }
+
+        }
+
+    }
+
 }
