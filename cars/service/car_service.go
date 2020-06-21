@@ -2,11 +2,15 @@ package service
 
 import (
 	"fmt"
+	//"github.com/hashicorp/consul/api"
+	//"github.com/hashicorp/consul/connect"
 	"strings"
 	"time"
 	"xml-web-services/cars/handler/dto"
 	"xml-web-services/cars/model"
 	"xml-web-services/cars/store/postgres"
+	//"github.com/hashicorp/consul/api"
+	//"github.com/hashicorp/consul/connect"
 )
 
 type CarService struct {
@@ -36,7 +40,8 @@ func(cs *CarService)FindImagesByCarId(carId int64)([]*model.Image,error){
 func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	fmt.Printf("%v", *request)
 	var ads []*model.Ad
-	ads, _ = cs.Store.FindAllAds()
+	ads, _ = cs.Store.FindAllActiveAds()
+
 	if request.TakeOverDate != "" && request.ReturnDate != "" {
 		startDate, err := time.Parse(time.RFC3339, request.TakeOverDate)
 		if err != nil {
