@@ -1,5 +1,8 @@
 package carRent.model.dto;
 
+import com.car_rent.agent_api.BookDetails;
+
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.LocalDateTime;
 
 public class BookDTO {
@@ -20,6 +23,22 @@ public class BookDTO {
         this.endDate = endDate;
         this.place = place;
         this.adId = adId;
+    }
+
+    public LocalDateTime convert(XMLGregorianCalendar date) {
+
+        return LocalDateTime.of(
+                date.getYear(),
+                date.getMonth(),
+                date.getDay(), 0, 0, 0);
+
+    }
+
+    public BookDTO(BookDetails bookDetails) {
+        this.startDate = convert(bookDetails.getStartDate());
+        this.endDate = convert(bookDetails.getEndDate());
+        this.place = bookDetails.getPlace();
+        this.adId = bookDetails.getAdId();
     }
 
     public LocalDateTime getStartDate() {

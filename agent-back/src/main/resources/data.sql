@@ -36,24 +36,24 @@ alter sequence user_id_seq RESTART with 3;
 
 
 -- BOOKINGS
-INSERT INTO public.booking(
+INSERT INTO booking(
 	id, ad, created, end_date, loaner, place, start_date, state)
-	VALUES (1, 1, '2020-02-02', '2021-02-02', 1, 'Beograd', '2018-02-02', 1);
-INSERT INTO public.booking(
+	VALUES (1, 1, '2020-03-02 00:00:00', '2020-08-02 00:00:00', 1, 'Beograd', '2020-07-02 00:00:00', 1);
+INSERT INTO booking(
 	id, ad, created, end_date, loaner, place, start_date, state)
-	VALUES (2, 1, '2020-01-02', '2021-05-05', 2, 'Beograd', '2018-02-02', 2);
-INSERT INTO public.booking(
+	VALUES (2, 1, '2020-03-02 00:00:00', '2020-08-02 00:00:00', 2, 'Beograd', '2020-07-02 00:00:00', 2);
+INSERT INTO booking(
 	id, ad, created, end_date, loaner, place, start_date, state)
-	VALUES (3, 2, '2020-02-02', '2021-02-02', 1, 'Novi Sad', '2020-07-02', 1);
-INSERT INTO public.booking(
+	VALUES (3, 2, '2020-03-02 00:00:00', '2020-08-02 00:00:00', 1, 'Novi Sad', '2020-07-02 00:00:00', 1);
+INSERT INTO booking(
 	id, ad, created, end_date, loaner, place, start_date, state)
-	VALUES (4, 2, '2020-02-02', '2021-08-02', 1, 'Sabac', '2018-02-02', 1);
+	VALUES (4, 2, '2020-03-02 00:00:00', '2020-08-02 00:00:00', 1, 'Sabac', '2020-03-07 00:00:00', 1);
 
 
 alter sequence booking_id_seq RESTART with 5;
 
 --Messages
-INSERT INTO public.message(
+INSERT INTO message(
 	id, body, booking, date, reveicer, sender)
 	VALUES (1, 'Bas odlican si', 2, '2020-02-01', 'user', 'test');
 INSERT INTO public.message(
@@ -65,33 +65,33 @@ alter sequence message_id_seq RESTART with 5;
 
 --Rates
 
-INSERT INTO public.rate(
+INSERT INTO rate(
 	id, approved, booking, comment, rate,car_id,rater)
 	VALUES (1, true, 1, 'very goood', 8, 1 ,'user');
-INSERT INTO public.rate(
+INSERT INTO rate(
 	id, approved, booking, comment, rate,car_id,rater)
 	VALUES (2, true, 1, 'naaajs', 9, 1, 'test');
-INSERT INTO public.rate(
+INSERT INTO rate(
 	id, approved, booking, comment, rate,car_id,rater)
 	VALUES (3, true, 2, 'bad', 4, 1,'random');
-INSERT INTO public.rate(
+INSERT INTO rate(
 	id, approved, booking, comment, rate,car_id,rater)
 	VALUES (4, true, 2, ' goood', 7, 2, 'user');
 
 alter sequence rate_id_seq RESTART with 5;
 
 --REPORTS
-INSERT INTO public.report(
+INSERT INTO report(
     id, allowed_mileage, booking, extra_info)
     VALUES(1,140,1,'DOBAR AUTO NEMA STA');
-INSERT INTO public.report(
+INSERT INTO report(
     id, allowed_mileage, booking, extra_info)
     VALUES(2,1233,2,'KRSINA');
-INSERT INTO public.report(
+INSERT INTO report(
     id, allowed_mileage, booking, extra_info)
     VALUES(3,223,3,'IDE TRAZI 4.');
-INSERT INTO public.report(
+INSERT INTO report(
     id, allowed_mileage, booking, extra_info)
-    VALUES(4,442,4,'Ide ko po mudima');
+    VALUES(4,442,4,'Report');
 
 alter sequence report_id_seq RESTART with 5;

@@ -138,6 +138,9 @@
 						<schema>
 							<url>http://localhost:8080/cars-ads/ws/ads.wsdl</url>
 						</schema>
+						<schema>
+							<url>http://localhost:8080/rent/ws/booking.wsdl</url>
+						</schema>
 					</schemas>
 				</configuration>
 			</plugin>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cr="http://car-rent.com/agent-api"
+    targetNamespace="http://car-rent.com/agent-api" elementFormDefault="qualified">
+
+    <xs:element name="reserveBookingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="bundleDetails" type="cr:BundleDetails"/>
+                <xs:element name="email" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="reserveBookingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="acceptBookingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+                <xs:element name="email" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="acceptBookingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="checkingBookingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="object" type="xs:string"/>
+                <xs:element name="email" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="checkingBookingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteBookingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:string"/>
+                <xs:element name="email" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="deleteBookingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="rejectBookingRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+                <xs:element name="email" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="rejectBookingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="response" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:complexType name="BundleDetails">
+        <xs:sequence>
+            <xs:element name="booksDetails" type="cr:BookDetails" maxOccurs="unbounded"/>
+            <xs:element name="loaner" type="xs:string"/>
+
+
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BookDetails">
+        <xs:sequence>
+            <xs:element name="adId" type="xs:long"/>
+            <xs:element name="place" type="xs:string"/>
+            <xs:element name="startDate" type="xs:date"/>
+            <xs:element name="endDate" type="xs:date"/>
+
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BookingDetails">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="place" type="xs:string"/>
+            <xs:element name="startDate" type="xs:date"/>
+            <xs:element name="endDate" type="xs:date"/>
+            <xs:element name="created" type="xs:date"/>
+            <xs:element name="state" type="xs:int"/>
+            <xs:element name="ad" type="xs:long"/>
+            <xs:element name="advertiser" type="xs:string"/>
+
+        </xs:sequence>
+    </xs:complexType>
+
+
+</xs:schema>

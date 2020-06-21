@@ -1,14 +1,11 @@
-package carRent.model.dto;
-
-import com.car_rent.agent_api.BookDetails;
-import com.car_rent.agent_api.BundleDetails;
+package agentbackend.agentback.controller.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BundleDTO {
 
-    private List<BookDTO> books;
+    private List<BookDTO> books = new ArrayList<>();
 
     // Samo kod samostalnog zauzeca se koristi
     private String loaner;
@@ -20,14 +17,6 @@ public class BundleDTO {
     public BundleDTO(List<BookDTO> books, String loaner) {
         this.books = books;
         this.loaner = loaner;
-    }
-
-    public BundleDTO(BundleDetails bundleDetails) {
-        this.books = new ArrayList<>();
-        for (BookDetails bookDetails : bundleDetails.getBooksDetails())
-            this.books.add(new BookDTO(bookDetails));
-
-        this.loaner = bundleDetails.getLoaner();
     }
 
     public BundleDTO() {
