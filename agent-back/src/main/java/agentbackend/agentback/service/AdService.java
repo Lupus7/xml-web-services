@@ -40,17 +40,14 @@ public class AdService {
     private UserRepository userRepository;
 
     public int createAd(AdDTO adDTO, String email) {
-        // provera da li user sa name postoji, provera da li je ad userov
-        // TODO: FIND A BETTER SOLUTION PLS!
-        // provera za 3 ad-a
         Long userId = 0L;
         User user = userRepository.findByEmail(email);
         if (user != null){
             userId = user.getId();
         }
         ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
-        if (ads.size() == 3)
-            return 402;
+//        if (ads.size() == 3)
+//            return 402;
 
         if (adDTO == null)
             return 400;
@@ -107,8 +104,8 @@ public class AdService {
             return 400;
 
         ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
-        if (ads.size() == 3)
-            return 402;
+//        if (ads.size() == 3)
+//            return 402;
 
 
         ad.get().setActive(true);
@@ -214,8 +211,7 @@ public class AdService {
         List<Image> images = imageRepo.findAllByCarId(car.get().getId());
         if (images == null)
             return null;
-        // TODO: ADD ADVERTIZER
-        return new AdClientDTO(ad.get(), car.get(), images);
+        return new AdClientDTO(ad.get(), car.get(), images, car.get().getOwner());
     }
 
     public Boolean getCheckAd(Long id) {
