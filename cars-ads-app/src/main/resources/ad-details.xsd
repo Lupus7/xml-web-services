@@ -1,15 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cr="http://car-rent.com/agent-api"
     targetNamespace="http://car-rent.com/agent-api" elementFormDefault="qualified">
-    <xs:complexType name="putActivateAdRequest">
+    <xs:element name="createAdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="adDetails" type="cr:AdFormDetails"/>
+                <xs:element name="email" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="createAdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="activateAdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+                <xs:element name="email" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="activateAdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+                <xs:element name="active" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deactivateAdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+                <xs:element name="email" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="deactivateAdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+                <xs:element name="active" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="editAdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+                <xs:element name="email" type="xs:string"/>
+                <xs:element name="adDetails" type="cr:AdFormDetails"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="editAdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getAdsRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="email" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getAdsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="adDetails" type="cr:AdDetails" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:complexType name="AdFormDetails">
         <xs:sequence>
-            <xs:element name="id" type="xs:long"/>
-            <xs:element name="email" type="xs:string"/>
+            <xs:element name="carId" type="xs:long"/>
+            <xs:element name="startDate" type="xs:string"/>
+            <xs:element name="endDate" type="xs:string"/>
+            <xs:element name="place" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="putActivateAdResponse">
+
+    <xs:complexType name="AdDetails">
         <xs:sequence>
-            <xs:element name="isOk" type="xs:boolean"/>
+            <xs:element name="startDate" type="xs:date"/>
+            <xs:element name="endDate" type="xs:date"/>
+            <xs:element name="place" type="xs:string"/>
+            <xs:element name="carId" type="xs:long"/>
+            <xs:element name="adId" type="xs:long"/>
+            <xs:element name="totalMileage" type="xs:double"/>
+            <xs:element name="allowedMileage" type="xs:double"/>
+            <xs:element name="childrenSeats" type="xs:int"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="colDamProtection" type="xs:boolean"/>
+            <xs:element name="brand" type="xs:string"/>
+            <xs:element name="model" type="xs:string"/>
+            <xs:element name="carClass" type="xs:string"/>
+            <xs:element name="fuel" type="xs:string"/>
+            <xs:element name="transmission" type="xs:string"/>
+            <xs:element name="advertiser" type="xs:string"/>
+            <xs:element name="active" type="xs:boolean"/>
+            <xs:element name="images" type="xs:string" maxOccurs="unbounded"/>
+
         </xs:sequence>
     </xs:complexType>
 </xs:schema>

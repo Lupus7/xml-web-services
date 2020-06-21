@@ -63,7 +63,7 @@ public class CarService {
             imageList.add(newImage);
         }
 
-        //carSoapClient.putCar(car, imageList);
+        carSoapClient.createCar(car, imageList);
 
         return true;
     }

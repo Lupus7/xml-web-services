@@ -11,6 +11,7 @@ import agentbackend.agentback.repository.AdRepository;
 import agentbackend.agentback.repository.CarRepository;
 import agentbackend.agentback.repository.ImageRepository;
 import agentbackend.agentback.repository.UserRepository;
+import agentbackend.agentback.soapClient.AdSoapClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,15 +40,15 @@ public class AdService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AdSoapClient adSoapClient;
+
     public int createAd(AdDTO adDTO, String email) {
         Long userId = 0L;
         User user = userRepository.findByEmail(email);
         if (user != null){
             userId = user.getId();
         }
-        ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
-//        if (ads.size() == 3)
-//            return 402;
 
         if (adDTO == null)
             return 400;
@@ -59,6 +60,8 @@ public class AdService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Ad ad = new Ad(LocalDateTime.parse(adDTO.getStartDate(), formatter), LocalDateTime.parse(adDTO.getEndDate(), formatter), adDTO.getPlace(), adDTO.getCarId(), userId);
         adRepo.save(ad);
+
+        adSoapClient.createAd(adDTO,email);
 
         return 200;
     }
@@ -103,13 +106,10 @@ public class AdService {
         if (!ad.isPresent() || ad.get().getOwnerId() != userId || ad.get().isActive())
             return 400;
 
-        ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
-//        if (ads.size() == 3)
-//            return 402;
-
-
         ad.get().setActive(true);
         adRepo.save(ad.get());
+
+        adSoapClient.activateAd(ad.get().getServiceId(),email);
 
         return 200;
     }
@@ -132,6 +132,9 @@ public class AdService {
 
         ad.get().setActive(false);
         adRepo.save(ad.get());
+
+        adSoapClient.deactivateAd(ad.get().getServiceId(),email);
+
 
         return true;
     }
@@ -163,6 +166,8 @@ public class AdService {
             ad.get().setPlace(adDTO.getPlace());
 
         adRepo.save(ad.get());
+
+        adSoapClient.editAd(ad.get().getServiceId(),adDTO,email);
 
         return true;
     }

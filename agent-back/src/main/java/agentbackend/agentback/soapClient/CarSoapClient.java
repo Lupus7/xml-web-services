@@ -4,9 +4,8 @@ import agentbackend.agentback.config.SoapProperties;
 import agentbackend.agentback.model.Car;
 import agentbackend.agentback.model.Image;
 import com.car_rent.agent_api.wsdl.CarDetails;
-import com.car_rent.agent_api.wsdl.PutCarDetailsRequest;
-import com.car_rent.agent_api.wsdl.PutCarDetailsResponse;
-import org.springframework.stereotype.Component;
+import com.car_rent.agent_api.wsdl.CreateCarRequest;
+import com.car_rent.agent_api.wsdl.CreateCarResponse;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 
@@ -15,8 +14,8 @@ import java.util.stream.Collectors;
 
 public class CarSoapClient extends WebServiceGatewaySupport {
 
-    public PutCarDetailsResponse putCar(Car car, List<Image> imageList) {
-        PutCarDetailsRequest request = new PutCarDetailsRequest();
+    public CreateCarResponse createCar(Car car, List<Image> imageList) {
+        CreateCarRequest request = new CreateCarRequest();
 
         CarDetails carDetails = new CarDetails();
         carDetails.setId(car.getId());
@@ -34,8 +33,11 @@ public class CarSoapClient extends WebServiceGatewaySupport {
 
         request.setCarDetails(carDetails);
 
-        return (PutCarDetailsResponse) getWebServiceTemplate()
+        return (CreateCarResponse) getWebServiceTemplate()
                 .marshalSendAndReceive(SoapProperties.CARS_WSDL, request,
-                        new SoapActionCallback(SoapProperties.NAMESPACE_URI + "/putCarDetailsRequest"));
+                        new SoapActionCallback(SoapProperties.NAMESPACE_URI + "/createCarRequest"));
     }
+
+
+    // TODO get,edit,delete,update images
 }
