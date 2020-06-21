@@ -119,7 +119,7 @@ func health(c echo.Context) error {
 	return c.String(http.StatusOK, "OK")
 }
 
-func registerServiceWithConsul() {
+func registerServiceWithConsul(){
 	config := consulapi.DefaultConfig()
 	config.Address = os.Getenv("CONSUL_ADDR")
 	consul, err := consulapi.NewClient(config)
