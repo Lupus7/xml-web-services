@@ -11,4 +11,5 @@ public interface RateRepository extends JpaRepository<Rate, Long> {
     List<Rate> findAllByCarId(Long carId);
 
     Rate findByBooking(long booking);
+    List<Rate> findAllByApprovedIsFalseAndCommentIsNot(String comment);
 }

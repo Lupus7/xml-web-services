@@ -36,6 +36,14 @@ const router = new Router({
 
         },
         {
+            path: "/dashboard/:mode",
+            name: "MyProfileMode",
+            props: true,
+            component: () => import("./components/MyProfile"),
+            beforeEnter: authetication
+
+        },
+        {
             path: "/messages",
             name: "Messages",
             props: true,

@@ -1,14 +1,10 @@
 package agentbackend.agentback.controller.dto;
 
+import agentbackend.agentback.model.Rate;
 
-import agentbackend.agentback.model.Car;
-import agentbackend.agentback.model.Image;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class CarDTO {
+public class CarRateDTO {
 
     private Long carId;
     private String brand;
@@ -17,33 +13,38 @@ public class CarDTO {
     private double totalMileage;
     private double allowedMileage;
     private int childrenSeats;
-    private String description;
     private boolean colDamProtection;
     private String fuel;
     private String transmission;
     private List<String> images;
+    private String advertiser;
+    private int rate;
+    private String comment;
+    private Long rateId;
+    private boolean approved;
+    private String user;
 
-    public CarDTO(Car car, List<Image> images) {
-        this(car);
-        this.images = images.stream().map(Image::getEncoded64Image).collect(Collectors.toList());
+    public CarRateDTO(Rate rate, CarDTO carDTO, String owner) {
+        this.carId = rate.getCarId();
+        this.brand = carDTO.getBrand();
+        this.model = carDTO.getModel();
+        this.carClass = carDTO.getCarClass();
+        this.totalMileage = carDTO.getTotalMileage();
+        this.allowedMileage = carDTO.getAllowedMileage();
+        this.childrenSeats = carDTO.getChildrenSeats();
+        this.colDamProtection = carDTO.isColDamProtection();
+        this.fuel = carDTO.getFuel();
+        this.transmission = carDTO.getTransmission();
+        this.images = carDTO.getImages();
+        this.advertiser = owner;
+        this.rate = rate.getRate();
+        this.comment = rate.getComment();
+        this.rateId = rate.getId();
+        this.approved = rate.isApproved();
+        this.user = rate.getRater();
     }
 
-    public CarDTO(Car car) {
-        this.carId = car.getId();
-        this.brand = car.getBrand();
-        this.model = car.getModel();
-        this.carClass = car.getCarClass();
-        this.totalMileage = car.getTotalMileage();
-        this.allowedMileage = car.getAllowedMileage();
-        this.childrenSeats = car.getChildrenSeats();
-        this.description = car.getDescription();
-        this.colDamProtection = car.isColDamProtection();
-        this.fuel = car.getFuel();
-        this.transmission = car.getTransmission();
-        this.images = new ArrayList<>();
-    }
-
-    public CarDTO() {
+    public CarRateDTO() {
     }
 
     public Long getCarId() {
@@ -102,13 +103,6 @@ public class CarDTO {
         this.childrenSeats = childrenSeats;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public boolean isColDamProtection() {
         return colDamProtection;
@@ -142,5 +136,51 @@ public class CarDTO {
         this.images = images;
     }
 
+    public String getAdvertiser() {
+        return advertiser;
+    }
 
+    public void setAdvertiser(String advertiser) {
+        this.advertiser = advertiser;
+    }
+
+    public int getRate() {
+        return rate;
+    }
+
+    public void setRate(int rate) {
+        this.rate = rate;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public Long getRateId() {
+        return rateId;
+    }
+
+    public void setRateId(Long rateId) {
+        this.rateId = rateId;
+    }
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
 }

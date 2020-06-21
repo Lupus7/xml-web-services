@@ -2,12 +2,15 @@ package agentbackend.agentback.service;
 
 
 import agentbackend.agentback.controller.dto.CarDTO;
+import agentbackend.agentback.controller.dto.CarRateDTO;
 import agentbackend.agentback.controller.dto.RateDto;
 import agentbackend.agentback.model.Booking;
 import agentbackend.agentback.model.Car;
+import agentbackend.agentback.model.Image;
 import agentbackend.agentback.model.Rate;
 import agentbackend.agentback.repository.BookingRepository;
 import agentbackend.agentback.repository.CarRepository;
+import agentbackend.agentback.repository.ImageRepository;
 import agentbackend.agentback.repository.RateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,8 @@ public class RateService {
     private BookingRepository bookingRepository;
     @Autowired
     private CarRepository carRepository;
+    @Autowired
+    private ImageRepository imageRepository;
 
     public Boolean createRate(RateDto ratedto, Principal user){
         //Ako ne postoji auto sa zadatim Id-jem, izadji
@@ -222,4 +227,22 @@ public class RateService {
     }
 
 
+    public List<CarRateDTO> getRates(Principal user) {
+
+        List<CarRateDTO> carRates = new ArrayList<>();
+
+        List<Car> cars = carRepository.findAllByOwner(user.getName());
+
+        if (cars == null)
+            return carRates;
+
+        for (Car car : cars) {
+            List<Rate> rates = rateRepository.findAllByCarId(car.getId());
+            List<Image> images = imageRepository.findAllByCarId(car.getId());
+            for (Rate rate : rates)
+                carRates.add(new CarRateDTO(rate, new CarDTO(car, images), user.getName()));
+        }
+
+        return carRates;
+    }
 }

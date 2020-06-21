@@ -96,28 +96,33 @@
                 </div>
             </span>
             <span>
-
-                <b-button
-                    class="float-left"
-                    style="width:160px; color: white"
-                    variant="danger"
-                    @click="leaveRate(info)"
-                    v-if="this.mode=='personal' && info.state == 'ENDED'"
-                >
-                    Leave Rate
-                </b-button>
-
-
-                <b-button
-                    class="float-left"
-                    style="width:160px; color: white"
-                    variant="dark"
-                    @click="startConversation(info)"
-                    v-if="this.mode=='personal' && info.state == 'PAID'"
-                >
-                    Start Conversation
-                </b-button>
-
+                <span v-if="info.state == 'PAID'">
+                    <div class="form-group">
+                        <label>Distance traveled [km]</label>
+                        <b-input
+                            type="number"
+                            class="form-control"
+                            v-model="mileage"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label>Extra info</label>
+                        <b-form-textarea
+                            type="text"
+                            class="form-control"
+                            v-model="extraInfo"
+                            rows="3"
+                            max-rows="6"
+                        />
+                    </div>
+                    <b-button
+                        class="float-right"
+                        style="background:#b20000; color: white"
+                        @click="report()"
+                    >
+                        Report and end booking
+                    </b-button>
+                </span>
                 <b-button
                     class="float-left"
                     style="background:#b20000; width:150px; color: white"
@@ -155,6 +160,8 @@ export default {
             bookings: [],
             info: null,
             canCancel: true,
+            extraInfo: "",
+            mileage: 0
         };
     },
     props: ["mode"],
@@ -218,6 +225,15 @@ export default {
         approve() {
             axios
                 .put("/api/booking/" + this.info.id)
+                .then(this.closeModalAndRefresh());
+        },
+        report() {
+            axios
+                .post("/reports", {
+                    extraInfo: this.extraInfo,
+                    allowedMileage: this.mileage,
+                    booking: this.info.id
+                })
                 .then(this.closeModalAndRefresh());
         },
         closeModalAndRefresh() {

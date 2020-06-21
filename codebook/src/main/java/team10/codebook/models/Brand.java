@@ -16,7 +16,7 @@ public class Brand {
     @Column(name = "name", unique = false, nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Model> models;
 
 
