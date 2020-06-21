@@ -16,10 +16,9 @@
                 <b-card v-bind:img-src="comment.carImage" img-alt="Image" img-top>
                     <b-card-title>{{comment.car}}</b-card-title>
 
-                    <b-card-sub-title class="mb-2">User: {{comment.user}}</b-card-sub-title>
-                    <b-card-sub-title class="mb-3">Comment Date: {{comment.commentCreated}}</b-card-sub-title>
+                    <b-card-sub-title class="mb-2">User: {{comment.rater}}</b-card-sub-title>
 
-                    <b-card-text>{{comment.bodyComment}}</b-card-text>
+                    <b-card-text>{{comment.comment}}</b-card-text>
 
                     <div class="modal-footer">
                         <div class="row">
@@ -64,9 +63,9 @@ export default {
     methods: {
         approveComment(comment) {
             event.preventDefault();
-            let url = "/admin/comment/" + comment.commentId;
+            let url = "/community/rate/" + comment.id + "/approve";
 
-            axios.put(url).then(response => {
+            axios.get(url).then(response => {
                 if (response.status === 200) {
                     this.$bvToast.toast(response.data, {
                         title: "Comment Approve",
@@ -85,9 +84,9 @@ export default {
         },
         rejectComment(comment) {
             event.preventDefault();
-            let url = "/admin/comment/" + comment.commentId;
+            let url = "/community/rate/" + comment.id + "/reject";
 
-            axios.delete(url).then(response => {
+            axios.get(url).then(response => {
                 if (response.status === 200) {
                     this.$bvToast.toast(response.data, {
                         title: "Comment Reject",

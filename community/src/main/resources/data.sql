@@ -1,1 +1,1 @@
-insert into rates values(1,7,'commmentar',true,1,1,'user');
+insert into rate (id, rate, comment, approved, car_id, booking, rater) values(1,7,'commmentar',false,1,1,'user');

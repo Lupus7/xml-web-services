@@ -33,7 +33,7 @@ public class RateController {
     }
 
     @GetMapping("/rate/{id}/approve")
-    public ResponseEntity<String> approveRate(@PathParam("id")Long id){
+    public ResponseEntity<String> approveRate(@PathVariable("id") Long id){
         Boolean approved = rateService.approveRate(id);
         if (approved)
             return ResponseEntity.ok("Successfull");
@@ -41,7 +41,7 @@ public class RateController {
     }
 
     @GetMapping("/rate/{id}/reject")
-    public ResponseEntity<String> rejectRate(@PathParam("id")Long id){
+    public ResponseEntity<String> rejectRate(@PathVariable("id") Long id){
         Boolean approved = rateService.rejectRate(id);
         if (approved)
             return ResponseEntity.ok("Successfull");
