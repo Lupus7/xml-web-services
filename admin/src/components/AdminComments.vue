@@ -105,7 +105,7 @@ export default {
             });
         },
         fill() {
-            axios.get("/admin/comment").then(response => {
+            axios.get("/community/rate/not-approved").then(response => {
                 this.comments = response.data;
             });
         }

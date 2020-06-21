@@ -213,7 +213,6 @@
                                             class="form-control"
                                         />
                                     </div>
-                                    <!--
                                     <div class="form-group col-md-6">
                                         <label>Images</label>
                                         <b-form-file
@@ -241,7 +240,6 @@
                                             </table>
                                         </b-card-group>
                                     </div>
-                                    -->
                                 </div>
 
                                 <div class="form-row">
@@ -560,32 +558,15 @@ export default {
 
         },
         getCarSpec() {
-            axios.get("/cars/api/brands").then(response => {
-                // stavi brandove u brands, a mozda samo stringove ubaci
-                this.brandsResponse = response.data;
-                this.brands = [];
-                this.brands.push("");
-
-                for (let b of this.brandsResponse) this.brands.push(b.Name);
-            });
-
-            axios.get("/cars/api/classes").then(response => {
-                this.carClasses = [];
-                this.carClasses.push("");
-                for (let cl of response.data) this.carClasses.push(cl);
-            });
-
-            axios.get("/cars/api/fuels").then(response => {
-                this.fuels = [];
-                this.fuels.push("");
-                for (let fl of response.data) this.fuels.push(fl);
-            });
-
-            axios.get("/cars/api/transmissions").then(response => {
-                this.transmissions = [];
-                this.transmissions.push("");
-                for (let tr of response.data) this.transmissions.push(tr);
-            });
+            axios
+                .get("/cars/spec")
+                .then(response => {
+                    this.brandsResponse = response.data.brands;
+                    this.brands = response.data.brands.map(brand => brand.name);
+                    this.carClasses = response.data.carClasses;
+                    this.fuels = response.data.fuels;
+                    this.transmissions = response.data.transmissions;
+                });
         },
 
         fillModelsEdit() {
@@ -597,14 +578,14 @@ export default {
 
             let brandChosen = null;
             for (let brand of this.brandsResponse) {
-                if (this.brandEF === brand.Name) {
+                if (this.brandEF === brand.name) {
                     brandChosen = brand;
                     break;
                 }
             }
             this.models = [];
             this.models.push("");
-            for (let m of brandChosen.Models) this.models.push(m);
+            for (let m of brandChosen.models) this.models.push(m);
             this.modelBool = false;
         },
 
@@ -668,33 +649,33 @@ export default {
                     childrenSeats: this.seats_numberEF,
                     description: this.descriptionEF,
                 })
-                // .then(response => {
-                //     let responseString = response.data;
-                //      axios
-                //         .put("/cars/"+this.editCarId+"/images", {
-                //             images:this.imagesE
-                //         })
-                //         .then(response => {
-                //             if (response.status === 200) {
-                //                 this.$bvToast.toast(responseString, {
-                //                     title: "Edit Car",
-                //                     variant: "success",
-                //                     solid: true
-                //                 });
-                //                 this.getClientCars();
-                //                 this.resetFormEdit();
+                .then(response => {
+                    let responseString = response.data;
+                     axios
+                        .put("/cars/"+this.editCarId+"/images", {
+                            images:this.imagesE
+                        })
+                        .then(response => {
+                            if (response.status === 200) {
+                                this.$bvToast.toast(responseString, {
+                                    title: "Edit Car",
+                                    variant: "success",
+                                    solid: true
+                                });
+                                this.getClientCars();
+                                this.resetFormEdit();
 
-                //             } else {
-                //                 this.$bvToast.toast(responseString, {
-                //                     title: "Edit Car",
-                //                     variant: "warning",
-                //                     solid: true
-                //                 });
-                //             }
-                //         });
+                            } else {
+                                this.$bvToast.toast(responseString, {
+                                    title: "Edit Car",
+                                    variant: "warning",
+                                    solid: true
+                                });
+                            }
+                        });
                     
               
-                // });
+                });
         },
 
 
@@ -714,14 +695,14 @@ export default {
 
             let brandChosen = null;
             for (let brand of this.brandsResponse) {
-                if (this.brandF === brand.Name) {
+                if (this.brandF === brand.name) {
                     brandChosen = brand;
                     break;
                 }
             }
             this.models = [];
             this.models.push("");
-            for (let m of brandChosen.Models) this.models.push(m);
+            for (let m of brandChosen.models) this.models.push(m);
             this.modelBool = false;
         },
 

@@ -46,6 +46,13 @@ public class CodebookService {
                 .collect(Collectors.toList());
     }
 
+    public List<CodebookItemDTO> getAllModelsByBrand(String name) {
+        return brandRepository.findByName(name).getModels()
+                .stream()
+                .map(CodebookItemMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
     public boolean addBrand(CodebookItemDTO codebookItemDTO) {
         Brand item = new Brand(codebookItemDTO.getName());
         brandRepository.save(item);

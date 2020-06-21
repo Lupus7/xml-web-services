@@ -141,7 +141,7 @@ export default {
         },
     },
     created() {
-        axios.get("/community/rate").then((response) => {
+        axios.get("/rate").then((response) => {
             this.carRates = response.data;
         });
     },

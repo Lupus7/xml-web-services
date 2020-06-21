@@ -1,9 +1,12 @@
 package agentbackend.agentback.controller;
 
 import agentbackend.agentback.controller.dto.CarDTO;
+import agentbackend.agentback.controller.dto.ImageDTO;
 import agentbackend.agentback.controller.dto.UpdateCarDTO;
 import agentbackend.agentback.model.Car;
 import agentbackend.agentback.service.CarService;
+import agentbackend.agentback.soapClient.SpecSoapClient;
+import com.car_rent.agent_api.wsdl.GetAllSpecsResponse;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -116,5 +119,20 @@ public class CarController {
         return ResponseEntity.badRequest().body(null);
     }
 
+    @GetMapping("/cars/spec")
+    public ResponseEntity<GetAllSpecsResponse> getAllSpecs(Principal user) {
+        GetAllSpecsResponse response = carService.getAllSpecs(user.getName());
+        if (response != null)
+            return ResponseEntity.ok(response);
+        return ResponseEntity.badRequest().build();
+    }
 
+    //Update images for specific car
+    @PutMapping("/cars/{id}/images")
+    public ResponseEntity<String> updateCarImages(@RequestBody ImageDTO imagedto, @PathVariable("id") Long id){
+        Boolean updated = carService.updateImages(imagedto, id);
+        if(updated)
+            return ResponseEntity.ok("Successfully updated images");
+        return ResponseEntity.badRequest().build();
+    }
 }

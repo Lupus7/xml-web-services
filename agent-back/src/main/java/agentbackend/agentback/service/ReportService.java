@@ -31,7 +31,7 @@ public class ReportService {
         if(booking == null)
             return false;
         //Ako nije zavrsen request, ne moze da podnese report
-        if(booking.getState() != RequestState.ENDED)
+        if(booking.getState() != RequestState.PAID)
             return false;
         report.setAllowedMileage(reportDto.getAllowedMileage());
         report.setBooking(reportDto.getBooking());
@@ -46,6 +46,9 @@ public class ReportService {
         if (!car.isPresent())
             return false;
         car.get().setTotalMileage(car.get().getTotalMileage() + report.getAllowedMileage());
+
+        booking.setState(RequestState.ENDED);
+        bookingRepository.save(booking);
         carRepository.save(car.get());
         reportRepository.save(report);
         return  true;

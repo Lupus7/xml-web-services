@@ -27,9 +27,22 @@ public class RateController {
         return ResponseEntity.badRequest().build();
     }
 
+    @GetMapping("/rate/not-approved")
+    public ResponseEntity<List<Rate>> findAllNotApproved() {
+        return ResponseEntity.ok(rateService.getAllNotApprovedRates());
+    }
+
     @GetMapping("/rate/{id}/approve")
     public ResponseEntity<String> approveRate(@PathParam("id")Long id){
         Boolean approved = rateService.approveRate(id);
+        if (approved)
+            return ResponseEntity.ok("Successfull");
+        return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/rate/{id}/reject")
+    public ResponseEntity<String> rejectRate(@PathParam("id")Long id){
+        Boolean approved = rateService.rejectRate(id);
         if (approved)
             return ResponseEntity.ok("Successfull");
         return ResponseEntity.badRequest().build();

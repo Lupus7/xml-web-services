@@ -2,6 +2,7 @@ package agentbackend.agentback.service;
 
 
 import agentbackend.agentback.controller.dto.CarDTO;
+import agentbackend.agentback.controller.dto.ImageDTO;
 import agentbackend.agentback.controller.dto.UpdateCarDTO;
 import agentbackend.agentback.model.Ad;
 import agentbackend.agentback.model.Car;
@@ -11,6 +12,8 @@ import agentbackend.agentback.repository.AdRepository;
 import agentbackend.agentback.repository.CarRepository;
 import agentbackend.agentback.repository.ImageRepository;
 import agentbackend.agentback.soapClient.CarSoapClient;
+import agentbackend.agentback.soapClient.SpecSoapClient;
+import com.car_rent.agent_api.wsdl.GetAllSpecsResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,9 @@ public class CarService {
 
     @Autowired
     CarSoapClient carSoapClient;
+
+    @Autowired
+    SpecSoapClient specSoapClient;
 
     //MEthod for creating new car in dataabse
     public boolean CreateCar(CarDTO newCarDto, String email) {
@@ -188,5 +194,27 @@ public class CarService {
             carDTOS.add(new CarDTO(car));
 
         return carDTOS;
+    }
+
+    public GetAllSpecsResponse getAllSpecs(String name) {
+        return specSoapClient.getAllSpecs(name);
+    }
+
+    public Boolean updateImages(ImageDTO imagedto, Long id) {
+        //first find all images for specific car
+
+        if(imagedto.getImages().size() == 0)
+            return false;
+
+        ArrayList<Image> carsImgs = (ArrayList<Image>) imageRepository.findAllByCarId(id);
+        //delete all of them, then update
+        for(Image image: carsImgs){
+            imageRepository.delete(image);
+        }
+        for(String imageEnc64: imagedto.getImages()){
+            Image image = new Image(imageEnc64, id);
+            imageRepository.save(image);
+        }
+        return true;
     }
 }

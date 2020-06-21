@@ -6,7 +6,6 @@ import agentbackend.agentback.model.Image;
 import com.car_rent.agent_api.wsdl.CarDetails;
 import com.car_rent.agent_api.wsdl.PutCarDetailsRequest;
 import com.car_rent.agent_api.wsdl.PutCarDetailsResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 

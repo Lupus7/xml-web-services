@@ -43,8 +43,8 @@ public class RateService {
         return true;
     }
 
-    public ArrayList<Rate> getAllRates() {
-        return (ArrayList<Rate>) rateRepository.findAll();
+    public ArrayList<Rate> getAllNotApprovedRates() {
+        return (ArrayList<Rate>) rateRepository.findAllByApprovedIsFalseAndCommentIsNot("REJECTED!");
     }
 
     public Boolean approveRate(Long id) {
@@ -90,5 +90,15 @@ public class RateService {
         return x / rates.size();
 
 
+    }
+
+    public Boolean rejectRate(Long id) {
+        Rate rate = rateRepository.getOne(id);
+        if (rate == null)
+            return false;
+        rate.setApproved(false);
+        rate.setComment("REJECTED!");
+        rateRepository.save(rate);
+        return true;
     }
 }
