@@ -6,7 +6,6 @@ import agentbackend.agentback.service.BookingService;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -60,7 +59,7 @@ public class BookingController {
     }
 
     // Odbijanje booking requesta od strane agenta
-    @DeleteMapping(value = "/api/booking/reject/{id}", produces = "application/json", consumes = "application/json")
+    @DeleteMapping(value = "/api/booking/reject/{id}")
     //@PreAuthorize("hasAuthority('REJECT_BOOKING')")
     public ResponseEntity<String> rejectBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
@@ -73,13 +72,13 @@ public class BookingController {
     // Get all booking that agent got
     @GetMapping(value = "/api/booking/request")
     //@PreAuthorize("hasAuthority('READ_BOOKINGS')")
-    public ResponseEntity<Set<BookingDTO>> getAllBookingRequestsFromOthers(Principal user) throws JSONException {
+    public ResponseEntity<ArrayList<BookingDTO>> getAllPersonalBookingRequests(Principal user) throws JSONException {
 
         return ResponseEntity.ok(bookingService.getAllBookingRequestsFromOthers(user.getName()));
 
     }
 
-    @GetMapping(value = "/api/booking/{id}")
+    @GetMapping(value = "/api/booking/{id}", produces = "application/json")
     //@PreAuthorize("hasAuthority('READ_BOOKINGS')")
     public ResponseEntity<BookingDTO> getBooking(@PathVariable("id") Long id, Principal user) throws JSONException {
 

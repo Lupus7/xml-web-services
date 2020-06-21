@@ -3,6 +3,7 @@ package agentbackend.agentback.controller;
 
 import agentbackend.agentback.controller.dto.CarDTO;
 import agentbackend.agentback.controller.dto.ReportDto;
+import agentbackend.agentback.controller.dto.StatisticsDTO;
 import agentbackend.agentback.model.Car;
 import agentbackend.agentback.model.Report;
 import agentbackend.agentback.service.ReportService;
@@ -11,8 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 public class ReportController {
@@ -51,6 +54,14 @@ public class ReportController {
         HashMap<String,Double> sorted = reportService.withMostMileage();
         if(sorted != null)
             return ResponseEntity.ok(sorted);
+        return  ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/reports/statistics")
+    public ResponseEntity<List<StatisticsDTO>> getStatistics(Principal user) {
+        List<StatisticsDTO> retVal = reportService.getStatistics(user.getName());
+        if (retVal != null)
+            return ResponseEntity.ok(retVal);
         return  ResponseEntity.badRequest().build();
     }
 }

@@ -139,6 +139,26 @@ public class BookingService {
         return bookingDTOS;
     }
 
+    public Set<BookingDTO> getAllBookingRequestsFromClients(String email) {
+        Set<BookingDTO> bookingDTOS = new HashSet<>();
+
+        User user = userRepository.findByEmail(email);
+        if (user == null)
+            return bookingDTOS;
+
+        List<Ad> ads = adRepository.findAllByOwnerId(user.getId());
+
+        if (ads == null || ads.isEmpty())
+            return bookingDTOS;
+
+        ads.forEach(ad -> {
+            bookingRepo.findAllByAd(ad.getId()).forEach(book -> {
+                bookingDTOS.add(new BookingDTO(book));
+            });
+        });
+
+        return bookingDTOS;
+    }
 
     public boolean checkingBookingRequests(String jsonObject, String email) {
 

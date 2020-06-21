@@ -107,8 +107,8 @@ public class MessageService {
 
     public ArrayList<MessageDto> getConversation(String receiver, Principal user) {
         ArrayList<MessageDto> messageDtos = new ArrayList<>();
-        List<Message> messageList1 = messageRepository.findAllBySenderAndReceiverOrderByDateAsc(user.getName(), receiver);
-        List<Message> messageList2 = messageRepository.findAllByReceiverAndSenderOrderByDateAsc(user.getName(), receiver);
+        List<Message> messageList1 = messageRepository.findAllBySenderAndReceiverOrderByDateDesc(user.getName(), receiver);
+        List<Message> messageList2 = messageRepository.findAllByReceiverAndSenderOrderByDateDesc(user.getName(), receiver);
 
         for (Message m : messageList1) {
             MessageDto dto = new MessageDto();
@@ -134,7 +134,7 @@ public class MessageService {
         MessageDto temp;
         for (int i = 0; i < messageDtos.size(); i++) {
             for (int j = 0; j < messageDtos.size(); j++) {
-                if (messageDtos.get(i).getDate().isAfter(messageDtos.get(j).getDate())) {
+                if (messageDtos.get(i).getDate().isBefore(messageDtos.get(j).getDate())) {
                     temp = messageDtos.get(j);
                     messageDtos.set(j, messageDtos.get(i));
                     messageDtos.set(i, temp);
