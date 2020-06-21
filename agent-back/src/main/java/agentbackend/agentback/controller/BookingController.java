@@ -6,11 +6,11 @@ import agentbackend.agentback.service.BookingService;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Set;
 
 @RestController
 public class BookingController {
@@ -41,7 +41,7 @@ public class BookingController {
     }
 
     // Prihvatanje bookinga kod clienta
-    @PutMapping(value = "/api/booking/{id}", produces = "application/json", consumes = "application/json")
+    @PutMapping(value = "/api/booking/{id}")
     //@PreAuthorize("hasAuthority('ACCEPT_BOOKING')")
     public ResponseEntity<String> acceptBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
@@ -52,7 +52,7 @@ public class BookingController {
     }
 
     // Otkazivanje booking requesta od strane clienta koje je zatrazio booking
-    @DeleteMapping(value = "/api/booking/{id}", produces = "application/json", consumes = "application/json")
+    @DeleteMapping(value = "/api/booking/{id}")
     //@PreAuthorize("hasAuthority('CANCEL_BOOKING')")
     public ResponseEntity<String> cancelBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
@@ -80,7 +80,7 @@ public class BookingController {
     }
 
     // Odbijanje booking requesta od strane vlasnika auta
-    @DeleteMapping(value = "/api/booking/reject/{id}", produces = "application/json", consumes = "application/json")
+    @DeleteMapping(value = "/api/booking/reject/{id}")
     //@PreAuthorize("hasAuthority('REJECT_BOOKING')")
     public ResponseEntity<String> rejectBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
@@ -93,9 +93,18 @@ public class BookingController {
     // Get all client bookings
     @GetMapping(value = "/api/booking", produces = "application/json")
     //@PreAuthorize("hasAuthority('READ_BOOKINGS')")
-    public ResponseEntity<ArrayList<BookingDTO>> getAllBookingRequests(Principal user) throws JSONException {
+    public ResponseEntity<ArrayList<BookingDTO>> getAllPersonalBookingRequests(Principal user) throws JSONException {
 
         return ResponseEntity.ok(bookingService.getAllBookingRequests(user.getName()));
+
+    }
+
+    // Get all client booking requests
+    @GetMapping(value = "/api/booking/request", produces = "application/json")
+    //@PreAuthorize("hasAuthority('READ_BOOKINGS')")
+    public ResponseEntity<Set<BookingDTO>> getAllBookingRequests(Principal user) throws JSONException {
+
+        return ResponseEntity.ok(bookingService.getAllBookingRequestsFromClients(user.getName()));
 
     }
 

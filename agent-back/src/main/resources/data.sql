@@ -30,7 +30,7 @@ insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values
 alter sequence ad_id_seq RESTART with 6;
 
 insert into users(id, cart, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (1, 1, true, false, 'user', 'Joseph', 'Joestar', '1', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
-insert into users(id, cart, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (2, 2, true, false, 'test', 'Nikola', 'DzoniGej', '12', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
+insert into users(id, cart, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (2, 2, true, false, 'user1', 'Nikola', 'DzoniGej', '12', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
 
 alter sequence user_id_seq RESTART with 3;
 
@@ -54,11 +54,11 @@ alter sequence booking_id_seq RESTART with 5;
 
 --Messages
 INSERT INTO public.message(
-	id, body, booking, date, reveicer, sender)
-	VALUES (1, 'Bas odlican si', 2, '2020-02-01', 'user', 'test');
+	id, body, booking, date, receiver, sender)
+	VALUES (1, 'Bas odlican si', 2, '2020-02-01', 'user', 'user1');
 INSERT INTO public.message(
-	id, body, booking, date, reveicer, sender)
-	VALUES (2, 'Bas ti hvala', 2, '2020-02-02', 'test', 'user');
+	id, body, booking, date, receiver, sender)
+	VALUES (2, 'Bas ti hvala', 2, '2020-02-02', 'user1', 'user');
 
 alter sequence message_id_seq RESTART with 5;
 

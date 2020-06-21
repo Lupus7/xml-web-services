@@ -29,8 +29,14 @@ public class AdClientDTO {
     private String transmission;
     private List<String> images;
     private boolean active;
+    private String advertiser;
 
     public AdClientDTO() {
+    }
+
+    public AdClientDTO(Ad ad, Car car, List<Image> images, String advertiser) {
+        this(ad, car, images);
+        this.advertiser = advertiser;
     }
 
     public AdClientDTO(Ad ad, Car car, List<Image> images) {
@@ -196,5 +202,13 @@ public class AdClientDTO {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getAdvertiser() {
+        return advertiser;
+    }
+
+    public void setAdvertiser(String advertiser) {
+        this.advertiser = advertiser;
     }
 }

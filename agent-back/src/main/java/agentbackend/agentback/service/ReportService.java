@@ -2,11 +2,9 @@ package agentbackend.agentback.service;
 
 import agentbackend.agentback.controller.dto.CarDTO;
 import agentbackend.agentback.controller.dto.ReportDto;
+import agentbackend.agentback.controller.dto.StatisticsDTO;
 import agentbackend.agentback.model.*;
-import agentbackend.agentback.repository.AdRepository;
-import agentbackend.agentback.repository.BookingRepository;
-import agentbackend.agentback.repository.CarRepository;
-import agentbackend.agentback.repository.ReportRepository;
+import agentbackend.agentback.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +22,8 @@ public class ReportService {
     private AdRepository adRepository;
     @Autowired
     private CarRepository carRepository;
+    @Autowired
+    private RateRepository rateRepository;
 
     public Boolean createReport(ReportDto reportDto){
         Report report = new Report();
@@ -36,6 +36,17 @@ public class ReportService {
         report.setAllowedMileage(reportDto.getAllowedMileage());
         report.setBooking(reportDto.getBooking());
         report.setExtraInfo(reportDto.getExtraInfo());
+        Optional<Booking> book = bookingRepository.findById(reportDto.getBooking());
+        if (!book.isPresent())
+            return false;
+        Optional<Ad> ad = adRepository.findById(book.get().getId());
+        if (!ad.isPresent())
+            return false;
+        Optional<Car> car = carRepository.findById(ad.get().getCarId());
+        if (!car.isPresent())
+            return false;
+        car.get().setTotalMileage(car.get().getTotalMileage() + report.getAllowedMileage());
+        carRepository.save(car.get());
         reportRepository.save(report);
         return  true;
     }
@@ -137,4 +148,29 @@ public class ReportService {
         return temp;
     }
 
+    public List<StatisticsDTO> getStatistics(String name) {
+        List<StatisticsDTO> statistics = new ArrayList<>();
+
+        List<Car> cars = carRepository.findAllByOwner(name);
+        if (cars == null || cars.isEmpty())
+            return statistics;
+
+        cars.forEach(car -> {
+            StatisticsDTO statisticsDTO = new StatisticsDTO();
+            statisticsDTO.setCarId(car.getId());
+            statisticsDTO.setCarName(car.getBrand() + " " + car.getModel() + " " + car.getCarClass());
+            statisticsDTO.setTotalMileage((long)car.getTotalMileage());
+            statisticsDTO.setRating(0.0);
+            statisticsDTO.setCommNum(0L);
+            rateRepository.findAllByCarId(car.getId()).forEach(rate -> {
+                statisticsDTO.setRating(statisticsDTO.getRating() + rate.getRate());
+                statisticsDTO.setCommNum(statisticsDTO.getCommNum() + 1);
+            });
+            if (statisticsDTO.getRating() > 0)
+                statisticsDTO.setRating(statisticsDTO.getRating() / statisticsDTO.getCommNum());
+            statistics.add(statisticsDTO);
+        });
+
+        return statistics;
+    }
 }

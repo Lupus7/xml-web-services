@@ -1,5 +1,6 @@
 package agentbackend.agentback.service;
 
+import agentbackend.agentback.controller.dto.AdClientDTO;
 import agentbackend.agentback.controller.dto.BookDTO;
 import agentbackend.agentback.controller.dto.BookingDTO;
 import agentbackend.agentback.model.Ad;
@@ -17,8 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class BookingService {
@@ -98,13 +98,7 @@ public class BookingService {
         Optional<Ad> ad = adRepository.findById(bookDTO.getAdId());
         if (!ad.isPresent())
             return false;
-        //DA NE MOZE DA ZAKAZE SVOJ
-        ArrayList<Ad> ads = adRepository.findAllByOwnerId(user.getId());
-        for(Ad add: ads){
-            if(add.getId() == ad.get().getId()){
-                return  false;
-            }
-        }
+
         // OTKAZI PRVO SVE ZAHTEVE
         ArrayList<Booking> bookings = bookingRepo.findAllByAd(ad.get().getId());
         for (Booking b1 : bookings) {
@@ -211,6 +205,26 @@ public class BookingService {
 
     }
 
+    public Set<BookingDTO> getAllBookingRequestsFromClients(String email) {
+        Set<BookingDTO> bookingDTOS = new HashSet<>();
+
+        User user = userRepository.findByEmail(email);
+        if (user == null)
+            return bookingDTOS;
+
+        List<Ad> ads = adRepository.findAllByOwnerId(user.getId());
+
+        if (ads == null || ads.isEmpty())
+            return bookingDTOS;
+
+        ads.forEach(ad -> {
+            bookingRepo.findAllByAd(ad.getId()).forEach(book -> {
+                bookingDTOS.add(new BookingDTO(book));
+            });
+        });
+
+        return bookingDTOS;
+    }
 
     public boolean checkingBookingRequests(String jsonObject, String email) {
 
