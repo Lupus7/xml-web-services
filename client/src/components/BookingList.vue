@@ -95,7 +95,33 @@
                 </div>
             </span>
             <span>
-
+                <span v-if="info.state == 'PAID'">
+                    <div class="form-group">
+                        <label>Distance traveled [km]</label>
+                        <b-input
+                            type="number"
+                            class="form-control"
+                            v-model="mileage"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label>Extra info</label>
+                        <b-form-textarea
+                            type="text"
+                            class="form-control"
+                            v-model="extraInfo"
+                            rows="3"
+                            max-rows="6"
+                        />
+                    </div>
+                    <b-button
+                        class="float-right"
+                        style="background:#b20000; color: white"
+                        @click="report()"
+                    >
+                        Report and end booking
+                    </b-button>
+                </span>
                 <b-button
                     class="float-left"
                     style="width:160px; color: white"
@@ -211,6 +237,15 @@ export default {
             axios
                 .put("/rent/api/booking/" + this.info.id)
                 .then(this.$refs["my-modal"].hide());
+        },
+        report() {
+            axios
+                .post("/community/reports", {
+                    extraInfo: this.extraInfo,
+                    allowedMileage: this.mileage,
+                    booking: this.info.id
+                })
+                .then(this.closeModalAndRefresh());
         },
         startConversation(info){
 
