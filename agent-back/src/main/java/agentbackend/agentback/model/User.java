@@ -43,9 +43,6 @@ public class User {
 //    @Column(name = "authorities", unique = false, nullable = false, columnDefinition="text")
 //    private String authorities;
 
-    @Column(name = "cart", unique = true, nullable = true)
-    private Long cart;
-
     @ElementCollection
     @CollectionTable(name = "user_bookings", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "booking_id")
@@ -137,14 +134,6 @@ public class User {
 
     public void setApproved(Boolean approved) {
         this.approved = approved;
-    }
-
-    public Long getCart() {
-        return cart;
-    }
-
-    public void setCart(Long cart) {
-        this.cart = cart;
     }
 
     public List<Long> getBookings() {

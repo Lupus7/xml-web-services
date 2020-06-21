@@ -33,6 +33,9 @@ public class Booking {
     @Column(name = "loaner", nullable = false)
     private Long loaner;
 
+    @Column()
+    private Long serviceId;
+
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "bundle_id", referencedColumnName = "id")
 //    private Bundle bundle;
@@ -115,5 +118,13 @@ public class Booking {
 
     public void setAd(Long ad) {
         this.ad = ad;
+    }
+
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
     }
 }

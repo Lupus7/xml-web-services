@@ -18,20 +18,8 @@ public class BookingController {
     @Autowired
     BookingService bookingService;
 
-    // Kreiranje bookinga
-    @PostMapping(value = "/api/booking", produces = "application/json", consumes = "application/json")
-   // @PreAuthorize("hasAuthority('CREATE_BOOKING')")
-    public ResponseEntity<String> createBookingRequest(@RequestBody BookDTO bookDto, Principal user) throws JSONException {
-
-        if (bookingService.createBookingRequest(bookDto, user.getName()))
-            return ResponseEntity.ok("Booking request successfully created!");
-        else
-            return ResponseEntity.status(400).body("Could not accept");
-    }
-
     // Samostalno zauzece
-    @PostMapping(value = "/api/booking/reserved", produces = "application/json", consumes = "application/json")
-    //@PreAuthorize("hasAuthority('RESERVE_BOOKING')")
+    @PostMapping(value = "/api/booking")
     public ResponseEntity<String> reserveBookingRequest(@RequestBody BookDTO bookDto, Principal user) throws JSONException {
 
         if (bookingService.reserveBookingRequest(bookDto, user.getName()))
@@ -40,9 +28,8 @@ public class BookingController {
             return ResponseEntity.status(400).body("Could not accept");
     }
 
-    // Prihvatanje bookinga kod clienta
+    // Prihvatanje bookinga kod agenta
     @PutMapping(value = "/api/booking/{id}")
-    //@PreAuthorize("hasAuthority('ACCEPT_BOOKING')")
     public ResponseEntity<String> acceptBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
         if (bookingService.acceptBookingRequest(id, user))
@@ -51,16 +38,6 @@ public class BookingController {
             return ResponseEntity.status(400).body("Could not accept");
     }
 
-    // Otkazivanje booking requesta od strane clienta koje je zatrazio booking
-    @DeleteMapping(value = "/api/booking/{id}")
-    //@PreAuthorize("hasAuthority('CANCEL_BOOKING')")
-    public ResponseEntity<String> cancelBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
-
-        if (bookingService.cancelBookingRequest(id, user.getName()))
-            return ResponseEntity.ok("Booking request canceled!");
-        else
-            return ResponseEntity.status(400).body("Could not accept");
-    }
 
     // Booking check
     @PostMapping(value = "/api/booking/checking")
@@ -79,9 +56,8 @@ public class BookingController {
             return ResponseEntity.status(400).body("Could not accept");
     }
 
-    // Odbijanje booking requesta od strane vlasnika auta
+    // Odbijanje booking requesta od strane agenta
     @DeleteMapping(value = "/api/booking/reject/{id}")
-    //@PreAuthorize("hasAuthority('REJECT_BOOKING')")
     public ResponseEntity<String> rejectBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
         if (bookingService.rejectBookingRequest(id, user))
@@ -90,26 +66,15 @@ public class BookingController {
             return ResponseEntity.status(400).body("Could not accept");
     }
 
-    // Get all client bookings
-    @GetMapping(value = "/api/booking", produces = "application/json")
-    //@PreAuthorize("hasAuthority('READ_BOOKINGS')")
-    public ResponseEntity<ArrayList<BookingDTO>> getAllPersonalBookingRequests(Principal user) throws JSONException {
+    // Get all booking that agent got
+    @GetMapping(value = "/api/booking/request")
+    public ResponseEntity<Set<BookingDTO>> getAllPersonalBookingRequests(Principal user) throws JSONException {
 
-        return ResponseEntity.ok(bookingService.getAllBookingRequests(user.getName()));
-
-    }
-
-    // Get all client booking requests
-    @GetMapping(value = "/api/booking/request", produces = "application/json")
-    //@PreAuthorize("hasAuthority('READ_BOOKINGS')")
-    public ResponseEntity<Set<BookingDTO>> getAllBookingRequests(Principal user) throws JSONException {
-
-        return ResponseEntity.ok(bookingService.getAllBookingRequestsFromClients(user.getName()));
+        return ResponseEntity.ok(bookingService.getAllBookingRequestsFromOthers(user.getName()));
 
     }
 
     @GetMapping(value = "/api/booking/{id}", produces = "application/json")
-    //@PreAuthorize("hasAuthority('READ_BOOKINGS')")
     public ResponseEntity<BookingDTO> getBooking(@PathVariable("id") Long id, Principal user) throws JSONException {
 
         return ResponseEntity.ok((BookingDTO) bookingService.getBooking(id, user.getName()));
