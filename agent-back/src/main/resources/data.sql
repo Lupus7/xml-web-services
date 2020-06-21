@@ -5,16 +5,16 @@ alter sequence image_id_seq RESTART with 2;
 
 -- cars
 insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (1, 1000, 2000, 2, 'Car Description', true, 'user', 'Opel', 'Astra', 'Diesel', 'Automatic', 'Compact');
+        values (1, 1000, 2000, 2, 'Car Description', true, 'agent', 'Opel', 'Astra', 'Diesel', 'Automatic', 'Compact');
 
 insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (2, 8000, 2000, 1, 'Car Description', true, 'user', 'Opel', 'Zafira', 'Diesel', 'Manual', 'Caravan');
+        values (2, 8000, 2000, 1, 'Car Description', true, 'agent', 'Opel', 'Zafira', 'Diesel', 'Manual', 'Caravan');
 
 insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (3, 25060, 8000, 0, 'Car Description', true, 'user', 'Opel', 'Vectra', 'Gasoline', 'Automatic', 'Microcar');
+        values (3, 25060, 8000, 0, 'Car Description', true, 'agent1', 'Opel', 'Vectra', 'Gasoline', 'Automatic', 'Microcar');
 
 insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (4, 5060, 6000, 2, 'Car Description', true, 'user1', 'Audi', 'Q3', 'Gasoline', 'Automatic', 'Microcar');
+        values (4, 5060, 6000, 2, 'Car Description', true, 'agent1', 'Audi', 'Q3', 'Gasoline', 'Automatic', 'Microcar');
 
 alter sequence car_id_seq RESTART with 5;
 
@@ -24,13 +24,13 @@ alter sequence car_id_seq RESTART with 5;
 insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (1, 1, '2020-05-19T00:00:00', '2020-05-30T00:00:00', 'Novi Sad', 1, true);
 insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (2, 2, '2020-07-19T00:00:00', '2020-07-30T00:00:00', 'Beograd', 1, false);
 insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (3, 2, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 1, false);
-insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (4, 3, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Nis', 1, true);
-insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (5, 4, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 4, true);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (4, 3, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Nis', 2, true);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (5, 4, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 2, true);
 
 alter sequence ad_id_seq RESTART with 6;
 
-insert into users(id, cart, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (1, 1, true, false, 'user', 'Joseph', 'Joestar', '1', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
-insert into users(id, cart, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (2, 2, true, false, 'test', 'Nikola', 'DzoniGej', '12', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
+insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (1, true, false, 'agent', 'Agent', 'Agent', '1', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
+insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (2, true, false, 'agent1', 'Agent1', 'Agent1', '12', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
 
 alter sequence user_id_seq RESTART with 3;
 
@@ -38,16 +38,16 @@ alter sequence user_id_seq RESTART with 3;
 -- BOOKINGS
 INSERT INTO booking(
 	id, ad, created, end_date, loaner, place, start_date, state)
-	VALUES (1, 1, '2020-03-02 00:00:00', '2020-08-02 00:00:00', 1, 'Beograd', '2020-07-02 00:00:00', 1);
+	VALUES (1, 1, '2020-03-02 00:00:00', '2020-08-02 00:00:00', -1, 'Beograd', '2020-07-02 00:00:00', 1);
 INSERT INTO booking(
 	id, ad, created, end_date, loaner, place, start_date, state)
-	VALUES (2, 1, '2020-03-02 00:00:00', '2020-08-02 00:00:00', 2, 'Beograd', '2020-07-02 00:00:00', 2);
+	VALUES (2, 1, '2020-03-02 00:00:00', '2020-08-02 00:00:00', -1, 'Beograd', '2020-07-02 00:00:00', 2);
 INSERT INTO booking(
 	id, ad, created, end_date, loaner, place, start_date, state)
-	VALUES (3, 2, '2020-03-02 00:00:00', '2020-08-02 00:00:00', 1, 'Novi Sad', '2020-07-02 00:00:00', 1);
+	VALUES (3, 2, '2020-03-02 00:00:00', '2020-08-02 00:00:00', -1, 'Novi Sad', '2020-07-02 00:00:00', 1);
 INSERT INTO booking(
 	id, ad, created, end_date, loaner, place, start_date, state)
-	VALUES (4, 2, '2020-03-02 00:00:00', '2020-08-02 00:00:00', 1, 'Sabac', '2020-03-07 00:00:00', 1);
+	VALUES (4, 2, '2020-03-02 00:00:00', '2020-08-02 00:00:00', -1, 'Sabac', '2020-03-07 00:00:00', 1);
 
 
 alter sequence booking_id_seq RESTART with 5;
@@ -55,10 +55,10 @@ alter sequence booking_id_seq RESTART with 5;
 --Messages
 INSERT INTO message(
 	id, body, booking, date, reveicer, sender)
-	VALUES (1, 'Bas odlican si', 2, '2020-02-01', 'user', 'test');
+	VALUES (1, 'Bas odlican si', 2, '2020-02-01', 'agent', 'user');
 INSERT INTO public.message(
 	id, body, booking, date, reveicer, sender)
-	VALUES (2, 'Bas ti hvala', 2, '2020-02-02', 'test', 'user');
+	VALUES (2, 'Bas ti hvala', 2, '2020-02-02', 'user', 'agent');
 
 alter sequence message_id_seq RESTART with 5;
 
@@ -70,13 +70,13 @@ INSERT INTO rate(
 	VALUES (1, true, 1, 'very goood', 8, 1 ,'user');
 INSERT INTO rate(
 	id, approved, booking, comment, rate,car_id,rater)
-	VALUES (2, true, 1, 'naaajs', 9, 1, 'test');
+	VALUES (2, true, 1, 'naaajs', 9, 1, 'user1');
 INSERT INTO rate(
 	id, approved, booking, comment, rate,car_id,rater)
-	VALUES (3, true, 2, 'bad', 4, 1,'random');
+	VALUES (3, true, 2, 'bad', 4, 1,'user');
 INSERT INTO rate(
 	id, approved, booking, comment, rate,car_id,rater)
-	VALUES (4, true, 2, ' goood', 7, 2, 'user');
+	VALUES (4, true, 2, ' goood', 7, 2, 'user1');
 
 alter sequence rate_id_seq RESTART with 5;
 
