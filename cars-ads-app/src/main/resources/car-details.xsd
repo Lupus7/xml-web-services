@@ -2,21 +2,105 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
     targetNamespace="http://car-rent.com/agent-api" elementFormDefault="qualified"
     xmlns:cr="http://car-rent.com/agent-api">
-    <xs:element name="putCarDetailsRequest">
+    <xs:element name="createCarRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="CarDetails" type="cr:CarDetails"/>
+                <xs:element name="email" type="xs:string"/>
+                <xs:element name="carDetails" type="cr:CarDetails"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="putCarDetailsResponse">
+    <xs:element name="createCarResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="isOk" type="xs:boolean"/>
+                <xs:element name="id" type="xs:long"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+
+    <xs:element name="getCarsRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="email" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getCarsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="carDetails" type="cr:CarDetails" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="editCarRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+                <xs:element name="updateCarDetails" type="cr:UpdateCarDetails"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="editCarResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="deleteCarRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+                <xs:element name="email" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="deleteCarResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateCarImagesRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+                <xs:element name="images" type="xs:string" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="updateCarImagesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
     <xs:complexType name="CarDetails">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="brand" type="xs:string"/>
+            <xs:element name="model" type="xs:string"/>
+            <xs:element name="carClass" type="xs:string"/>
+            <xs:element name="totalMileage" type="xs:double"/>
+            <xs:element name="allowedMileage" type="xs:double"/>
+            <xs:element name="childrenSeats" type="xs:int"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="colDamProtection" type="xs:boolean"/>
+            <xs:element name="fuel" type="xs:string"/>
+            <xs:element name="transmission" type="xs:string"/>
+            <xs:element name="owner" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" name="images" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="UpdateCarDetails">
         <xs:sequence>
             <xs:element name="id" type="xs:long"/>
             <xs:element name="brand" type="xs:string"/>

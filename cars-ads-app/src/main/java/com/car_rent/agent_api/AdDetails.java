@@ -13,31 +13,38 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
- * <p>Java class for CarDetails complex type.
+ * <p>Java class for AdDetails complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CarDetails">
+ * &lt;complexType name="AdDetails">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="brand" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="model" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="carClass" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="startDate" type="{http://www.w3.org/2001/XMLSchema}date"/>
+ *         &lt;element name="endDate" type="{http://www.w3.org/2001/XMLSchema}date"/>
+ *         &lt;element name="place" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="carId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="adId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="totalMileage" type="{http://www.w3.org/2001/XMLSchema}double"/>
  *         &lt;element name="allowedMileage" type="{http://www.w3.org/2001/XMLSchema}double"/>
  *         &lt;element name="childrenSeats" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="colDamProtection" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="brand" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="model" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="carClass" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="fuel" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="transmission" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="owner" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="advertiser" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="active" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="images" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -48,30 +55,38 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CarDetails", propOrder = {
-    "id",
-    "brand",
-    "model",
-    "carClass",
+@XmlType(name = "AdDetails", propOrder = {
+    "startDate",
+    "endDate",
+    "place",
+    "carId",
+    "adId",
     "totalMileage",
     "allowedMileage",
     "childrenSeats",
     "description",
     "colDamProtection",
+    "brand",
+    "model",
+    "carClass",
     "fuel",
     "transmission",
-    "owner",
+    "advertiser",
+    "active",
     "images"
 })
-public class CarDetails {
+public class AdDetails {
 
-    protected long id;
     @XmlElement(required = true)
-    protected String brand;
+    @XmlSchemaType(name = "date")
+    protected XMLGregorianCalendar startDate;
     @XmlElement(required = true)
-    protected String model;
+    @XmlSchemaType(name = "date")
+    protected XMLGregorianCalendar endDate;
     @XmlElement(required = true)
-    protected String carClass;
+    protected String place;
+    protected long carId;
+    protected long adId;
     protected double totalMileage;
     protected double allowedMileage;
     protected int childrenSeats;
@@ -79,100 +94,123 @@ public class CarDetails {
     protected String description;
     protected boolean colDamProtection;
     @XmlElement(required = true)
+    protected String brand;
+    @XmlElement(required = true)
+    protected String model;
+    @XmlElement(required = true)
+    protected String carClass;
+    @XmlElement(required = true)
     protected String fuel;
     @XmlElement(required = true)
     protected String transmission;
     @XmlElement(required = true)
-    protected String owner;
+    protected String advertiser;
+    protected boolean active;
     @XmlElement(required = true)
     protected List<String> images;
 
     /**
-     * Gets the value of the id property.
+     * Gets the value of the startDate property.
      * 
+     * @return
+     *     possible object is
+     *     {@link XMLGregorianCalendar }
+     *     
      */
-    public long getId() {
-        return id;
+    public XMLGregorianCalendar getStartDate() {
+        return startDate;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the startDate property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link XMLGregorianCalendar }
+     *     
      */
-    public void setId(long value) {
-        this.id = value;
+    public void setStartDate(XMLGregorianCalendar value) {
+        this.startDate = value;
     }
 
     /**
-     * Gets the value of the brand property.
+     * Gets the value of the endDate property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link XMLGregorianCalendar }
+     *     
+     */
+    public XMLGregorianCalendar getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * Sets the value of the endDate property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link XMLGregorianCalendar }
+     *     
+     */
+    public void setEndDate(XMLGregorianCalendar value) {
+        this.endDate = value;
+    }
+
+    /**
+     * Gets the value of the place property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getBrand() {
-        return brand;
+    public String getPlace() {
+        return place;
     }
 
     /**
-     * Sets the value of the brand property.
+     * Sets the value of the place property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setBrand(String value) {
-        this.brand = value;
+    public void setPlace(String value) {
+        this.place = value;
     }
 
     /**
-     * Gets the value of the model property.
+     * Gets the value of the carId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
-    public String getModel() {
-        return model;
+    public long getCarId() {
+        return carId;
     }
 
     /**
-     * Sets the value of the model property.
+     * Sets the value of the carId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
      */
-    public void setModel(String value) {
-        this.model = value;
+    public void setCarId(long value) {
+        this.carId = value;
     }
 
     /**
-     * Gets the value of the carClass property.
+     * Gets the value of the adId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
-    public String getCarClass() {
-        return carClass;
+    public long getAdId() {
+        return adId;
     }
 
     /**
-     * Sets the value of the carClass property.
+     * Sets the value of the adId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
      */
-    public void setCarClass(String value) {
-        this.carClass = value;
+    public void setAdId(long value) {
+        this.adId = value;
     }
 
     /**
@@ -264,6 +302,78 @@ public class CarDetails {
     }
 
     /**
+     * Gets the value of the brand property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getBrand() {
+        return brand;
+    }
+
+    /**
+     * Sets the value of the brand property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setBrand(String value) {
+        this.brand = value;
+    }
+
+    /**
+     * Gets the value of the model property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getModel() {
+        return model;
+    }
+
+    /**
+     * Sets the value of the model property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setModel(String value) {
+        this.model = value;
+    }
+
+    /**
+     * Gets the value of the carClass property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCarClass() {
+        return carClass;
+    }
+
+    /**
+     * Sets the value of the carClass property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCarClass(String value) {
+        this.carClass = value;
+    }
+
+    /**
      * Gets the value of the fuel property.
      * 
      * @return
@@ -312,27 +422,43 @@ public class CarDetails {
     }
 
     /**
-     * Gets the value of the owner property.
+     * Gets the value of the advertiser property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getOwner() {
-        return owner;
+    public String getAdvertiser() {
+        return advertiser;
     }
 
     /**
-     * Sets the value of the owner property.
+     * Sets the value of the advertiser property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setOwner(String value) {
-        this.owner = value;
+    public void setAdvertiser(String value) {
+        this.advertiser = value;
+    }
+
+    /**
+     * Gets the value of the active property.
+     * 
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * Sets the value of the active property.
+     * 
+     */
+    public void setActive(boolean value) {
+        this.active = value;
     }
 
     /**

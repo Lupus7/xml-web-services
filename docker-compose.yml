@@ -105,7 +105,7 @@ services:
         restart: unless-stopped
         environment:
             DB_PATH: jdbc:postgresql://db:5432/
-         networks:
+        networks:
             - static-network
 
     codebook-service:

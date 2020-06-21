@@ -11,7 +11,7 @@ import CarsAdsApp.proxy.RentProxy;
 import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.CarRepository;
 import CarsAdsApp.repository.ImageRepository;
-import com.car_rent.agent_api.car.CarDetails;
+import com.car_rent.agent_api.CarDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class CarService {
     @Autowired
     RentProxy rentProxy;
 
-    public boolean CreateCar(CarDetails carDetails) {
+    public Long CreateCar(CarDetails carDetails) {
         CarDTO carDTO = new CarDTO();
         carDTO.setBrand(carDetails.getBrand());
         carDTO.setModel(carDetails.getModel());
@@ -48,7 +48,8 @@ public class CarService {
         carDTO.setDescription(carDetails.getDescription());
         carDTO.setColDamProtection(carDetails.isColDamProtection());
         carDTO.setImages(carDetails.getImages());
-        return CreateCar(carDTO, carDetails.getOwner());
+        CreateCar(carDTO, carDetails.getOwner());
+        return carDTO.getCarId();
     }
 
     public boolean CreateCar(CarDTO newCarDto, String email) {
@@ -70,6 +71,7 @@ public class CarService {
         car.setTransmission(newCarDto.getTransmission());
 
         carRepository.save(car);
+        newCarDto.setCarId(car.getId());
 
         for (String image : newCarDto.getImages()) {
             Image newImage = new Image(image, car.getId());
