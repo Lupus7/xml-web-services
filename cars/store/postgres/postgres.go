@@ -137,6 +137,14 @@ func (store *Store) FindAllAds() ([]*model.Ad, error) {
 	return ads, nil
 }
 
+func (store *Store) FindAllActiveAds() ([]*model.Ad, error) {
+	ads := []*model.Ad{}
+	if err := store.db.Set("gorm:auto_preload", true).Where("active = true").Find(&ads).Error; err != nil {
+		return nil, err
+	}
+	return ads, nil
+}
+
 func (store *Store) FindAllAdsBetweenDates(start time.Time, end time.Time) ([]*model.Ad, error) {
 	ads := []*model.Ad{}
 	if err := store.db.Set("gorm:auto_preload", true).Where("start_date <= ? and end_date >= ?", start, end).Find(&ads).Error; err != nil {

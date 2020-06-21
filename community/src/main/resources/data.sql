@@ -1,0 +1,1 @@
+insert into rates values(1,7,'commmentar',true,1,1,'user');
