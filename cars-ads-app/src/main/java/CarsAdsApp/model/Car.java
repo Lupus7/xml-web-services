@@ -99,6 +99,7 @@ public class Car {
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String transmission;
 
+
     /**
      * Gets the value of the id property.
      * 

@@ -60,7 +60,8 @@ public class Car {
 
     @XmlElement(namespace = "xml-web-services-cars")
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "car_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "car_id_seq_gen")
+    @SequenceGenerator(name="car_id_seq_gen", sequenceName = "car_id_seq", allocationSize = 1)
     protected long id;
     @Column()
     @XmlElement(namespace = "xml-web-services-cars")
@@ -95,6 +96,8 @@ public class Car {
     @Column()
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String transmission;
+    @Column()
+    private Long serviceId;
 
     /**
      * Gets the value of the id property.
@@ -371,5 +374,13 @@ public class Car {
      */
 
     public Car() {
+    }
+
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
     }
 }

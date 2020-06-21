@@ -141,6 +141,9 @@
 						<schema>
 							<url>http://localhost:8080/codebook/ws/specs.wsdl</url>
 						</schema>
+						<schema>
+							<url>http://localhost:8080/rent/ws/booking.wsdl</url>
+						</schema>
 					</schemas>
 				</configuration>
 			</plugin>

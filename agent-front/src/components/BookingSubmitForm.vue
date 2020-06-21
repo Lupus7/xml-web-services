@@ -124,8 +124,8 @@ export default {
     },
     methods: {
         createBooking() {
-            axios
-            .post("/api/booking/reserved", {
+            axios.post("/api/booking", {
+
                 adId: this.selected,
                 startDate: this.startDate + "T00:00:00",
                 endDate: this.endDate + "T00:00:00",

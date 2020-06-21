@@ -5,8 +5,9 @@ import javax.persistence.*;
 @Entity
 @Table(name = "image")
 public class Image {
-    @javax.persistence.Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "image_id_seq")
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "image_id_seq_gen")
+    @SequenceGenerator(name="image_id_seq_gen", sequenceName = "image_id_seq", allocationSize = 1)
     private Integer Id;
     @Column(name = "encoded64_image",columnDefinition="text")
     private String Encoded64Image;
