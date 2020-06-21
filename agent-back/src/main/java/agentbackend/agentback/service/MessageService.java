@@ -34,7 +34,7 @@ public class MessageService {
         message.setBody(msg.getBody());
         //Proveri da li je booking sa tim IDijem prihvacen
         Booking booking = bookingRepository.getOne(msg.getBooking());
-        if(!(booking.getState() == RequestState.RESERVED || booking.getState() == RequestState.PAID))
+        if(!(booking.getState() == RequestState.PAID))
             return false;
 
         //Ako Oglas sa tim id-em ne postoji, ne moze

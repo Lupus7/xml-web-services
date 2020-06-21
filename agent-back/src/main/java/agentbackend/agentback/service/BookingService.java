@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -121,27 +122,13 @@ public class BookingService {
         if (!booking.isPresent())
             return false;
 
-        booking.get().setState(RequestState.RESERVED);
+        booking.get().setState(RequestState.PAID);
         bookingRepo.save(booking.get());
 
         //Deactivate AD
         Optional<Ad> ad = adRepository.findById(booking.get().getAd());
         ad.get().setActive(false);
         adRepository.save(ad.get());
-        new java.util.Timer().schedule(
-                new java.util.TimerTask() {
-                    @Override
-                    public void run() {
-                        if (booking.get().getState().equals(RequestState.RESERVED)) {
-                            booking.get().setState(RequestState.CANCELED);
-                            bookingRepo.save(booking.get());
-                            cancel();
-                        }
-                    }
-                },
-                12 * 60 * 60 * 1000
-        );
-
 
         return true;
     }
@@ -153,7 +140,7 @@ public class BookingService {
             return false;
 
         Optional<Booking> booking = bookingRepo.findById(id);
-        if (!booking.isPresent() || booking.get().getState() != RequestState.RESERVED || user.getId() != booking.get().getLoaner())
+        if (!booking.isPresent() || booking.get().getState() != RequestState.PAID || booking.get().getState() != RequestState.ENDED || user.getId() != booking.get().getLoaner())
             return false;
 
         booking.get().setState(RequestState.CANCELED);
@@ -276,5 +263,22 @@ public class BookingService {
             return new BookingDTO(booking.get());
 
         return new BookingDTO();
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void checkingEndedState() {
+
+        List<Booking> bookings = bookingRepo.findAllByState(RequestState.PAID);
+        LocalDateTime today = LocalDateTime.now();
+
+        for (Booking booking : bookings) {
+
+            if (booking.getEndDate().isBefore(today) || booking.getEndDate().equals(today)) {
+                booking.setState(RequestState.ENDED);
+                bookingRepo.save(booking);
+            }
+
+        }
+
     }
 }

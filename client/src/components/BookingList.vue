@@ -112,7 +112,7 @@
                     style="width:160px; color: white"
                     variant="dark"
                     @click="startConversation(info)"
-                    v-if="this.mode=='personal' && info.state == 'RESERVED'"
+                    v-if="this.mode=='personal' && info.state == 'PAID'"
                 >
                     Start Conversation
                 </b-button>
