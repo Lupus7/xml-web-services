@@ -1,4 +1,4 @@
-package CarsAdsApp.service;
+package CarsAdsApp.service.soap;
 
 import CarsAdsApp.model.Ad;
 import CarsAdsApp.model.Car;
@@ -9,15 +9,14 @@ import CarsAdsApp.proxy.UserProxy;
 import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.CarRepository;
 import CarsAdsApp.repository.ImageRepository;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.car_rent.agent_api.AdDetails;
+import com.car_rent.agent_api.AdFormDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AdService {
+public class SoapAdService {
 
     @Autowired
     private AdRepository adRepo;
@@ -40,111 +39,83 @@ public class AdService {
     @Autowired
     UserProxy userProxy;
 
-    public int createAd(AdDTO adDTO, String email) {
+    public Long createAdSoap(AdDTO adDTO, String email) {
 
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
         if (userIdResponse == null || userIdResponse.getBody() == null)
-            return 400;
+            return (long) -1;
         Long userId = userIdResponse.getBody();
-
-        // provera za 3 ad-a
-        boolean active = true;
-        ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
-        if (ads.size() == 3)
-            active = false;
 
         if (adDTO == null)
-            return 400;
+            return (long) -1;
         if (adDTO.getPlace() == null || adDTO.getStartDate() == null || adDTO.getEndDate() == null || adDTO.getCarId() == null)
-            return 400;
+            return (long) -1;
         if (adDTO.getPlace().equals("") || adDTO.getStartDate().equals("") || adDTO.getEndDate().equals(""))
-            return 400;
+            return (long) -1;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        Ad ad = new Ad(LocalDateTime.parse(adDTO.getStartDate(), formatter), LocalDateTime.parse(adDTO.getEndDate(), formatter), adDTO.getPlace(), adDTO.getCarId(), userId, active);
+        Ad ad = new Ad(LocalDateTime.parse(adDTO.getStartDate(), formatter), LocalDateTime.parse(adDTO.getEndDate(), formatter), adDTO.getPlace(), adDTO.getCarId(), userId, true);
         adRepo.save(ad);
 
-        return 200;
+        return ad.getId();
     }
 
-
-    public boolean checkAds(JSONObject object, String email) throws JSONException {
+    public HashMap<Long, Boolean> activateAdSoap(Long id, String email) {
 
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
         if (userIdResponse == null || userIdResponse.getBody() == null)
-            return false;
-
-        Long userId = userIdResponse.getBody();
-
-        if (object == null || object.get("array") == null)
-            return false;
-
-        JSONArray array = (JSONArray) object.get("array");
-
-        for (int i = 0; i < array.length(); i++) {
-            Long id = array.getLong(i);
-            Optional<Ad> ad = adRepo.findById(id);
-            if (!ad.isPresent() || ad.get().getOwnerId() != userId)
-                return false;
-        }
-
-
-        return true;
-    }
-
-    public int activateAd(Long id, String email) {
-
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
-        if (userIdResponse == null || userIdResponse.getBody() == null)
-            return 400;
+            return new HashMap<>();
 
         Long userId = userIdResponse.getBody();
 
         Optional<Ad> ad = adRepo.findById(id);
         if (!ad.isPresent() || ad.get().getOwnerId() != userId || ad.get().isActive())
-            return 400;
-
-        ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
-        if (ads.size() == 3)
-            return 402;
-
+            return new HashMap<>();
 
         ad.get().setActive(true);
         adRepo.save(ad.get());
 
-        return 200;
+        HashMap<Long, Boolean> response = new HashMap<>();
+        response.put(ad.get().getId(), ad.get().isActive());
+
+        return response;
     }
 
-    public boolean deactivateAd(Long id, String email) {
+    public HashMap<Long, Boolean> deactivateAdSoap(long id, String email) {
 
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
         if (userIdResponse == null || userIdResponse.getBody() == null)
-            return false;
+            return new HashMap<>();
 
         Long userId = userIdResponse.getBody();
 
         Optional<Ad> ad = adRepo.findById(id);
-        if (!ad.isPresent() || ad.get().getOwnerId() != userId || !ad.get().isActive())
-            return false;
+        if (!ad.isPresent() || ad.get().getOwnerId() != userId || ad.get().isActive())
+            return new HashMap<>();
 
         ad.get().setActive(false);
         adRepo.save(ad.get());
 
-        return true;
+        HashMap<Long, Boolean> response = new HashMap<>();
+        response.put(ad.get().getId(), ad.get().isActive());
+
+        return response;
     }
 
-    public boolean editAd(Long id, AdDTO adDTO, String email) {
+    public Long editAd(long id, AdFormDetails adDTO, String email) {
 
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
         if (userIdResponse == null || userIdResponse.getBody() == null)
-            return false;
+            return (long) -1;
 
         Long userId = userIdResponse.getBody();
 
         Optional<Ad> ad = adRepo.findById(id);
         if (!ad.isPresent() || ad.get().getOwnerId() != userId)
-            return false;
+            return (long) -1;
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         if (adDTO.getStartDate() != null) {
             ad.get().setStartDate(LocalDateTime.parse(adDTO.getStartDate(), formatter));
         }
@@ -158,69 +129,58 @@ public class AdService {
 
         adRepo.save(ad.get());
 
-        return true;
+        return ad.get().getId();
     }
 
-    // bojanovo
-    public List<Ad> getAll() {
-        List<Ad> ads = adRepo.findAll();
-        return ads;
-    }
-
-    public List<AdClientDTO> getClientAds(String email) {
+    public List<AdDetails> getAds(String email) throws DatatypeConfigurationException {
 
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return new ArrayList<>();
 
         Long userId = userIdResponse.getBody();
-        List<AdClientDTO> adClientDTOS = new ArrayList<>();
+        List<AdDetails> adClientDTOS = new ArrayList<>();
 
         List<Ad> ads = adRepo.findAllByOwnerId(userId);
         for (Ad ad : ads) {
             Optional<Car> car = carRepo.findById(ad.getCarId());
             if (car.isPresent()) {
                 List<Image> images = imageRepo.findAllByCarId(car.get().getId());
+                List<String> imagesString = new ArrayList<>();
                 if (images == null)
                     images = new ArrayList<>();
-                AdClientDTO adClientDTO = new AdClientDTO(ad, car.get(), images);
+                else {
+                    for (Image image : images)
+                        imagesString.add(image.getEncoded64Image());
+                }
+
+                AdDetails adClientDTO = new AdDetails();
+                adClientDTO.setActive(ad.isActive());
+                adClientDTO.setAdId(ad.getId());
+                adClientDTO.setAdvertiser(car.get().getOwner());
+                adClientDTO.setAllowedMileage(car.get().getAllowedMileage());
+                adClientDTO.setTotalMileage(car.get().getTotalMileage());
+                adClientDTO.setChildrenSeats(car.get().getChildrenSeats());
+                adClientDTO.setCarId(car.get().getId());
+                adClientDTO.setBrand(car.get().getBrand());
+                adClientDTO.setModel(car.get().getModel());
+                adClientDTO.setCarClass(car.get().getCarClass());
+                adClientDTO.setFuel(car.get().getFuel());
+                adClientDTO.setTransmission(car.get().getTransmission());
+                adClientDTO.getImages().addAll(imagesString);
+                adClientDTO.setDescription(car.get().getDescription());
+                adClientDTO.setColDamProtection(car.get().isColDamProtection());
+                adClientDTO.setPlace(ad.getPlace());
+                adClientDTO.setStartDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(ad.getStartDate().toString()));
+                adClientDTO.setEndDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(ad.getEndDate().toString()));
+
+
                 adClientDTOS.add(adClientDTO);
             }
         }
 
         return adClientDTOS;
     }
-
-    public AdClientDTO getAdById(Long id) {
-        Optional<Ad> ad = adRepo.findById(id);
-        if (!ad.isPresent())
-            return null;
-        Optional<Car> car = carRepo.findById(ad.get().getCarId());
-        if (!car.isPresent())
-            return null;
-        List<Image> images = imageRepo.findAllByCarId(car.get().getId());
-        if (images == null)
-            return null;
-        // TODO: ADD ADVERTIZER
-        return new AdClientDTO(ad.get(), car.get(), images);
-    }
-
-    public Boolean getCheckAd(Long id) {
-        Optional<Ad> ad = adRepo.findById(id);
-        if (!ad.isPresent())
-            return false;
-        return true;
-    }
-
-    public Long getOwnerId(Long id) {
-        Optional<Ad> ad = adRepo.findById(id);
-        if (ad.isPresent())
-            return ad.get().getOwnerId();
-        return null;
-    }
-
-
-    ///// SOAP
 
 
 }
