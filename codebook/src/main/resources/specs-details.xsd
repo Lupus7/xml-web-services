@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cr="http://car-rent.com/agent-api"
+    targetNamespace="http://car-rent.com/agent-api" elementFormDefault="qualified">
+    <xs:element name="getAllSpecsRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="email" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getAllSpecsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" name="brands" type="cr:BrandDetails"/>
+                <xs:element maxOccurs="unbounded" name="carClasses" type="xs:string"/>
+                <xs:element maxOccurs="unbounded" name="fuels" type="xs:string"/>
+                <xs:element maxOccurs="unbounded" name="transmissions" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="BrandDetails">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" name="models" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

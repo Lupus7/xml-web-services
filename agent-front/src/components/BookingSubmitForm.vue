@@ -124,11 +124,16 @@ export default {
     },
     methods: {
         createBooking() {
-            axios.post("/api/booking/reserved", {
+            axios
+            .post("/api/booking/reserved", {
                 adId: this.selected,
                 startDate: this.startDate + "T00:00:00",
                 endDate: this.endDate + "T00:00:00",
                 place: this.place,
+            })
+            .then(() => {
+                this.$router.push({ path: '/dashboard/book' });
+                this.$router.go({ path: '/dashboard/book' });
             });
         },
     },

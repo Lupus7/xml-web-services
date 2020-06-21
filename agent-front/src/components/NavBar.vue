@@ -138,7 +138,7 @@
                     <b-button
                         style="margin-left:2rem;border-radius:20px;;width:150px;height:45px;"
                         class="float-left"
-                        variant="outline-danger"
+                        variant="outline-primary"
                         @click="register()"
                     >
                         <b-icon
@@ -150,7 +150,7 @@
                     <b-button
                         style="margin-right:2rem;border-radius:20px;width:150px;height:45px;"
                         class="float-right"
-                        variant="danger"
+                        variant="primary"
                         @click="login()"
                     >
                         <b-icon

@@ -1,6 +1,7 @@
 package agentbackend.agentback.controller;
 
 
+import agentbackend.agentback.controller.dto.CarRateDTO;
 import agentbackend.agentback.controller.dto.RateDto;
 import agentbackend.agentback.model.Rate;
 import agentbackend.agentback.service.RateService;
@@ -12,12 +13,18 @@ import javax.websocket.server.PathParam;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 public class RateController {
 
     @Autowired
     RateService rateService;
+
+    @GetMapping("/rate")
+    public ResponseEntity<List<CarRateDTO>> getRates(Principal user){
+        return ResponseEntity.ok(rateService.getRates(user));
+    }
 
     @PostMapping("/rates")
     public ResponseEntity<String> leaveRate(@RequestBody RateDto rateDto, Principal user) {
