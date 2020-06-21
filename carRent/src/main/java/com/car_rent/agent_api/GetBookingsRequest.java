@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="object" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="email" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -37,40 +36,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "object",
     "email"
 })
-@XmlRootElement(name = "checkingBookingRequest")
-public class CheckingBookingRequest {
+@XmlRootElement(name = "getBookingsRequest")
+public class GetBookingsRequest {
 
-    @XmlElement(required = true)
-    protected String object;
     @XmlElement(required = true)
     protected String email;
-
-    /**
-     * Gets the value of the object property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getObject() {
-        return object;
-    }
-
-    /**
-     * Sets the value of the object property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setObject(String value) {
-        this.object = value;
-    }
 
     /**
      * Gets the value of the email property.

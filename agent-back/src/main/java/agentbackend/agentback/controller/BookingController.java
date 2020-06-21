@@ -20,7 +20,6 @@ public class BookingController {
 
     // Samostalno zauzece
     @PostMapping(value = "/api/booking")
-    //@PreAuthorize("hasAuthority('RESERVE_BOOKING')")
     public ResponseEntity<String> reserveBookingRequest(@RequestBody BookDTO bookDto, Principal user) throws JSONException {
 
         if (bookingService.reserveBookingRequest(bookDto, user.getName()))
@@ -31,7 +30,6 @@ public class BookingController {
 
     // Prihvatanje bookinga kod agenta
     @PutMapping(value = "/api/booking/{id}")
-    //@PreAuthorize("hasAuthority('ACCEPT_BOOKING')")
     public ResponseEntity<String> acceptBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
         if (bookingService.acceptBookingRequest(id, user))
@@ -60,7 +58,6 @@ public class BookingController {
 
     // Odbijanje booking requesta od strane agenta
     @DeleteMapping(value = "/api/booking/reject/{id}")
-    //@PreAuthorize("hasAuthority('REJECT_BOOKING')")
     public ResponseEntity<String> rejectBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
         if (bookingService.rejectBookingRequest(id, user))
@@ -71,15 +68,13 @@ public class BookingController {
 
     // Get all booking that agent got
     @GetMapping(value = "/api/booking/request")
-    //@PreAuthorize("hasAuthority('READ_BOOKINGS')")
-    public ResponseEntity<ArrayList<BookingDTO>> getAllPersonalBookingRequests(Principal user) throws JSONException {
+    public ResponseEntity<Set<BookingDTO>> getAllPersonalBookingRequests(Principal user) throws JSONException {
 
         return ResponseEntity.ok(bookingService.getAllBookingRequestsFromOthers(user.getName()));
 
     }
 
     @GetMapping(value = "/api/booking/{id}", produces = "application/json")
-    //@PreAuthorize("hasAuthority('READ_BOOKINGS')")
     public ResponseEntity<BookingDTO> getBooking(@PathVariable("id") Long id, Principal user) throws JSONException {
 
         return ResponseEntity.ok((BookingDTO) bookingService.getBooking(id, user.getName()));

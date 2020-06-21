@@ -12,6 +12,7 @@ import agentbackend.agentback.repository.AdRepository;
 import agentbackend.agentback.repository.BookingRepository;
 import agentbackend.agentback.repository.UserRepository;
 import agentbackend.agentback.soapClient.BookingSoapClient;
+import com.car_rent.agent_api.wsdl.ReserveBookingResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +36,10 @@ public class BookingService {
     @Autowired
     BookingSoapClient bookingSoapClient;
 
-    public boolean reserveBookingRequest(BookDTO bookDTO , String email) throws JSONException {
+    public boolean reserveBookingRequest(BookDTO bookDTO, String email) throws JSONException {
 
-        User user  = userRepository.findByEmail(email);
-        if (user == null )
+        User user = userRepository.findByEmail(email);
+        if (user == null)
             return false;
 
         if (bookDTO == null || bookDTO.getAdId() == null || bookDTO.getEndDate() == null || bookDTO.getStartDate() == null || bookDTO.getPlace() == null)
@@ -61,18 +62,19 @@ public class BookingService {
             bookingRepo.save(b1);
         }
         //SACUVAJ OVAJ ZAHTEV SA STATUSOM PAID
-        Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), bookDTO.getAdId(), (long)-1);
-        bookingRepo.save(booking);
-
+        Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), bookDTO.getAdId(), (long) -1);
         BundleDTO bundleDTO = new BundleDTO();
         bundleDTO.getBooks().add(bookDTO);
-        bookingSoapClient.reserveBooking(bundleDTO, email);
+        ReserveBookingResponse response = bookingSoapClient.reserveBooking(bundleDTO, email);
+        booking.setServiceId(response.getId());
+        bookingRepo.save(booking);
+
 
         return true;
     }
 
     public boolean acceptBookingRequest(Long id, Principal user) throws JSONException {
-        User userr  = userRepository.findByEmail(user.getName());
+        User userr = userRepository.findByEmail(user.getName());
         if (userr == null)
             return false;
 
@@ -88,14 +90,14 @@ public class BookingService {
         ad.get().setActive(false);
         adRepository.save(ad.get());
 
-        bookingSoapClient.acceptBooking(id,user.getName());
+        bookingSoapClient.acceptBooking(id, user.getName());
 
         return true;
     }
 
     public boolean rejectBookingRequest(Long id, Principal user) throws JSONException {
 
-        User userr  = userRepository.findByEmail(user.getName());
+        User userr = userRepository.findByEmail(user.getName());
         if (userr == null)
             return false;
 
@@ -104,18 +106,18 @@ public class BookingService {
             return false;
 
         Ad ad = adRepository.getOne(booking.get().getAd());
-        if(ad == null){
+        if (ad == null) {
             return false;
         }
 
-        if(ad.getOwnerId() == userr.getId()){
-            return  false;
+        if (ad.getOwnerId() == userr.getId()) {
+            return false;
         }
 
         booking.get().setState(RequestState.CANCELED);
         bookingRepo.save(booking.get());
 
-        bookingSoapClient.rejectBooking(id,user.getName());
+        bookingSoapClient.rejectBooking(id, user.getName());
 
 
         return true;
@@ -139,30 +141,10 @@ public class BookingService {
         return bookingDTOS;
     }
 
-    public Set<BookingDTO> getAllBookingRequestsFromClients(String email) {
-        Set<BookingDTO> bookingDTOS = new HashSet<>();
-
-        User user = userRepository.findByEmail(email);
-        if (user == null)
-            return bookingDTOS;
-
-        List<Ad> ads = adRepository.findAllByOwnerId(user.getId());
-
-        if (ads == null || ads.isEmpty())
-            return bookingDTOS;
-
-        ads.forEach(ad -> {
-            bookingRepo.findAllByAd(ad.getId()).forEach(book -> {
-                bookingDTOS.add(new BookingDTO(book));
-            });
-        });
-
-        return bookingDTOS;
-    }
 
     public boolean checkingBookingRequests(String jsonObject, String email) {
 
-        User user  = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
         if (user == null)
             return false;
 
@@ -183,7 +165,7 @@ public class BookingService {
 
     public boolean deleteCarsBookings(String id, String email) {
 
-        User user  = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
         if (user == null)
             return false;
 
@@ -201,7 +183,7 @@ public class BookingService {
     }
 
     public BookingDTO getBooking(Long id, String email) {
-        User user  = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
         if (user == null)
             return null;
 

@@ -17,7 +17,19 @@ insert into car(id, total_mileage, allowed_mileage, children_seats, description,
 insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
         values (4, 5060, 6000, 2, 'Car Description', true, 'user1', 'Audi', 'Q3', 'Gasoline', 'Automatic', 'Microcar');
 
-alter sequence car_id_seq RESTART with 5;
+insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
+        values (5, 1000, 2000, 2, 'Car Description', true, 'agent', 'Opel', 'Astra', 'Diesel', 'Automatic', 'Compact');
+
+insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
+        values (6, 8000, 2000, 1, 'Car Description', true, 'agent', 'Opel', 'Zafira', 'Diesel', 'Manual', 'Caravan');
+
+insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
+        values (7, 25060, 8000, 0, 'Car Description', true, 'agent1', 'Opel', 'Vectra', 'Gasoline', 'Automatic', 'Microcar');
+
+insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
+        values (8, 5060, 6000, 2, 'Car Description', true, 'agent1', 'Audi', 'Q3', 'Gasoline', 'Automatic', 'Microcar');
+
+alter sequence car_id_seq RESTART with 9;
 
 
 

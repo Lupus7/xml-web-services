@@ -11,7 +11,10 @@ import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+
+import javax.xml.datatype.DatatypeConfigurationException;
 import java.util.HashMap;
+import java.util.Set;
 
 @Endpoint
 public class SoapBookingController {
@@ -62,6 +65,16 @@ public class SoapBookingController {
         RejectBookingResponse response = new RejectBookingResponse();
         bookingService.rejectBookingRequest(request.getId(), request.getEmail());
         response.setResponse("Booking request rejected!");
+        return response;
+    }
+
+    @PayloadRoot(namespace = SoapProperties.NAMESPACE_URI, localPart = "getBookingsRequest")
+    @ResponsePayload
+    public GetBookingsResponse getBooking(@RequestPayload GetBookingsRequest request) throws DatatypeConfigurationException {
+        GetBookingsResponse response = new GetBookingsResponse();
+        Set<BookingDTO> bookings = bookingService.getAllBookingRequestsFromOthers(request.getEmail());
+        Set<BookingDetails> bookingDetails = bookingService.mappingDtoArray(bookings);
+        response.getResponse().addAll(bookingDetails);
         return response;
     }
 

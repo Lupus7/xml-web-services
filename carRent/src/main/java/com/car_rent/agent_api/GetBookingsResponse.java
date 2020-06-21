@@ -8,8 +8,11 @@
 
 package com.car_rent.agent_api;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -24,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="response" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="response" type="{http://car-rent.com/agent-api}BookingDetails" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,25 +40,39 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "response"
 })
-@XmlRootElement(name = "checkingBookingResponse")
-public class CheckingBookingResponse {
+@XmlRootElement(name = "getBookingsResponse")
+public class GetBookingsResponse {
 
-    protected boolean response;
+    @XmlElement(required = true)
+    protected List<BookingDetails> response;
 
     /**
      * Gets the value of the response property.
      * 
-     */
-    public boolean isResponse() {
-        return response;
-    }
-
-    /**
-     * Sets the value of the response property.
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the response property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getResponse().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link BookingDetails }
+     * 
      * 
      */
-    public void setResponse(boolean value) {
-        this.response = value;
+    public List<BookingDetails> getResponse() {
+        if (response == null) {
+            response = new ArrayList<BookingDetails>();
+        }
+        return this.response;
     }
 
 }

@@ -96,6 +96,8 @@ public class Car {
     @Column()
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String transmission;
+    @Column()
+    private Long serviceId;
 
     /**
      * Gets the value of the id property.
@@ -372,5 +374,13 @@ public class Car {
      */
 
     public Car() {
+    }
+
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
     }
 }

@@ -4,17 +4,17 @@ alter sequence image_id_seq RESTART with 2;
 
 
 -- cars
-insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (1, 1000, 2000, 2, 'Car Description', true, 'agent', 'Opel', 'Astra', 'Diesel', 'Automatic', 'Compact');
+insert into car(id, service_id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
+        values (1, 5, 1000, 2000, 2, 'Car Description', true, 'agent', 'Opel', 'Astra', 'Diesel', 'Automatic', 'Compact');
 
-insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (2, 8000, 2000, 1, 'Car Description', true, 'agent', 'Opel', 'Zafira', 'Diesel', 'Manual', 'Caravan');
+insert into car(id, service_id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
+        values (2, 6, 8000, 2000, 1, 'Car Description', true, 'agent', 'Opel', 'Zafira', 'Diesel', 'Manual', 'Caravan');
 
-insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (3, 25060, 8000, 0, 'Car Description', true, 'agent1', 'Opel', 'Vectra', 'Gasoline', 'Automatic', 'Microcar');
+insert into car(id, service_id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
+        values (3, 7,  25060, 8000, 0, 'Car Description', true, 'agent1', 'Opel', 'Vectra', 'Gasoline', 'Automatic', 'Microcar');
 
-insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (4, 5060, 6000, 2, 'Car Description', true, 'agent1', 'Audi', 'Q3', 'Gasoline', 'Automatic', 'Microcar');
+insert into car(id, service_id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
+        values (4, 8, 5060, 6000, 2, 'Car Description', true, 'agent1', 'Audi', 'Q3', 'Gasoline', 'Automatic', 'Microcar');
 
 alter sequence car_id_seq RESTART with 5;
 
@@ -29,8 +29,8 @@ insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values
 
 alter sequence ad_id_seq RESTART with 6;
 
-insert into users(id, cart, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (1, 1, true, false, 'user', 'Joseph', 'Joestar', '1', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
-insert into users(id, cart, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (2, 2, true, false, 'user1', 'Nikola', 'DzoniGej', '12', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
+insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (1, true, false, 'agent', 'Agent', 'Agent', '1', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
+insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (2, true, false, 'agent1', 'Agent', 'Agent1', '12', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
 
 alter sequence user_id_seq RESTART with 3;
 

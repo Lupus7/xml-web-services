@@ -160,13 +160,6 @@ public class BookingService {
 
         Long userId = userIdResponse.getBody();
 
-        if (bundleDTO.getLoaner().equals(""))
-            return new HashMap<>();
-
-        ResponseEntity<Long> loanerIdRes = userProxy.getUserId(bundleDTO.getLoaner());
-        if (loanerIdRes == null || loanerIdRes.getBody() == null)
-            return new HashMap<>();
-
         Bundle bundle = new Bundle();
         if (bundleDTO.getBooks().size() > 1) {
             for (BookDTO bookDTO : bundleDTO.getBooks()) {
