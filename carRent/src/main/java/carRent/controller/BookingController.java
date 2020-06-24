@@ -126,4 +126,14 @@ public class BookingController {
         BookingDTO bookingDto = (BookingDTO) bookingService.getBooking(id, user.getName());
         return ResponseEntity.ok(bookingDto.getAd());
     }
+
+    @PutMapping(value = "/api/booking/{id}/end")
+    @PreAuthorize("hasAuthority('MASTER')")
+    public ResponseEntity<String> endBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
+
+        if (bookingService.endBookingRequest(id, user.getName()))
+            return ResponseEntity.ok("Booking request reserved!");
+        else
+            return ResponseEntity.status(400).body("Could not accept");
+    }
 }

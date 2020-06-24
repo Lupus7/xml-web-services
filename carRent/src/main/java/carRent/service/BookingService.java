@@ -108,14 +108,13 @@ public class BookingService {
 
             if (bundleDTO.getBooks().get(0).getStartDate().isAfter(bundleDTO.getBooks().get(0).getEndDate()))
                 return false;
-
             ResponseEntity<Boolean> check = carsAdsProxy.getAdById(bundleDTO.getBooks().get(0).getAdId(), email + ";MASTER");
             if (check == null || check.getBody() == null || !check.getBody())
                 return false;
 
             // provera da client nmz sam svoje da rezervise
             ResponseEntity<Long> ownerId = carsAdsProxy.getOwnerById(bundleDTO.getBooks().get(0).getAdId(), email + ";MASTER");
-            if (ownerId == null || ownerId.getBody() == null || ownerId.getBody().longValue() == userId)
+            if (ownerId == null || ownerId.getBody() == null || ownerId.getBody() == userId)
                 return false;
 
             Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PENDING, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), bundleDTO.getBooks().get(0).getAdId(), userId);
@@ -474,5 +473,20 @@ public class BookingService {
 
         return  bookingDetails;
 
+    }
+
+    public boolean endBookingRequest(Long id, String user) {
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(user);
+        if (userIdResponse == null || userIdResponse.getBody() == null)
+            return false;
+
+        Optional<Booking> booking = bookingRepo.findById(id);
+        if (!booking.isPresent())
+            return false;
+
+        booking.get().setState(RequestState.ENDED);
+        bookingRepo.save(booking.get());
+
+        return true;
     }
 }

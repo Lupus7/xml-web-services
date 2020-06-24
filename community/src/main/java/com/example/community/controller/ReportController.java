@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.ArrayList;
 
 @RestController
@@ -19,8 +20,8 @@ public class ReportController {
     private ReportService reportService;
 
     @PostMapping("/reports")
-    public ResponseEntity<String> createReport(@RequestBody ReportDto reportDto){
-        if(reportService.createReport(reportDto)){
+    public ResponseEntity<String> createReport(@RequestBody ReportDto reportDto, Principal user){
+        if(reportService.createReport(reportDto, user.getName())){
             return ResponseEntity.ok("Successfully created...");
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
