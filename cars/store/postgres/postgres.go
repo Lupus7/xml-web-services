@@ -51,7 +51,6 @@ func OpenWithUrl(config Config) (*Store, error) {
 	return store, nil
 }
 
-
 func (store *Store) AutoMigrate() error {
 	store.db.SingularTable(true)
 	return store.db.AutoMigrate(&model.Image{}, &model.Ad{}, &model.Brand{}, &model.Model{}, &model.Class{}, &model.Transmission{}, &model.Fuel{}, &model.Car{}).Error
@@ -89,13 +88,13 @@ func (s *Store) DB() *gorm.DB {
 	return s.db
 }
 
-func(s *Store)FindImagesByCarId(id int64)([]*model.Image,error){
+func (s *Store) FindImagesByCarId(id int64) ([]*model.Image, error) {
 	images := []*model.Image{}
-	err := s.db.Find(&images,"car_id = ?", id).Error
+	err := s.db.Find(&images, "car_id = ?", id).Error
 	if err != nil {
 		return nil, err
 	}
-	return images,nil
+	return images, nil
 }
 
 func (store *Store) CreateBrand(brand *model.Brand) error {
@@ -147,7 +146,7 @@ func (store *Store) FindAllActiveAds() ([]*model.Ad, error) {
 
 func (store *Store) FindAllAdsBetweenDates(start time.Time, end time.Time) ([]*model.Ad, error) {
 	ads := []*model.Ad{}
-	if err := store.db.Set("gorm:auto_preload", true).Where("start_date <= ? and end_date >= ?", start, end).Find(&ads).Error; err != nil {
+	if err := store.db.Set("gorm:auto_preload", true).Where("start_date <= ? and end_date >= ? and active = true", start, end).Find(&ads).Error; err != nil {
 		return nil, err
 	}
 	return ads, nil
@@ -201,17 +200,17 @@ func (store *Store) FindAdById(id int) (*model.Ad, error) {
 	return ad, nil
 }
 
-func(store *Store)FindCarById(id int64)(*model.Car,error){
+func (store *Store) FindCarById(id int64) (*model.Car, error) {
 	car := &model.Car{}
-	if err := store.db.Find(&car, id).Error; err != nil{
+	if err := store.db.Find(&car, id).Error; err != nil {
 		return nil, err
 	}
 	return car, nil
 }
 
-func(store *Store)FindModelsByBrandID(id int64)[]*model.Model{
+func (store *Store) FindModelsByBrandID(id int64) []*model.Model {
 	models := []*model.Model{}
-	if err := store.db.Find(&models,"brand_id = ?",id).Error;err != nil{
+	if err := store.db.Find(&models, "brand_id = ?", id).Error; err != nil {
 		return nil
 	}
 	return models

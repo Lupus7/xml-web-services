@@ -109,7 +109,8 @@ public class AdService {
         ad.get().setActive(true);
         adRepo.save(ad.get());
 
-        adSoapClient.activateAd(ad.get().getServiceId(),email);
+        if (ad.get().getServiceId() != null)
+            adSoapClient.activateAd(ad.get().getServiceId(),email);
 
         return 200;
     }
@@ -133,7 +134,8 @@ public class AdService {
         ad.get().setActive(false);
         adRepo.save(ad.get());
 
-        adSoapClient.deactivateAd(ad.get().getServiceId(),email);
+        if (ad.get().getServiceId() != null)
+            adSoapClient.deactivateAd(ad.get().getServiceId(),email);
 
 
         return true;
@@ -167,7 +169,8 @@ public class AdService {
 
         adRepo.save(ad.get());
 
-        adSoapClient.editAd(ad.get().getServiceId(),adDTO,email);
+        if (ad.get().getServiceId() != null)
+            adSoapClient.editAd(ad.get().getServiceId(),adDTO,email);
 
         return true;
     }

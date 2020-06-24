@@ -90,7 +90,8 @@ public class BookingService {
         ad.get().setActive(false);
         adRepository.save(ad.get());
 
-        bookingSoapClient.acceptBooking(id, user.getName());
+        if (booking.get().getServiceId() != null)
+            bookingSoapClient.acceptBooking(booking.get().getServiceId(), user.getName());
 
         return true;
     }
@@ -117,7 +118,9 @@ public class BookingService {
         booking.get().setState(RequestState.CANCELED);
         bookingRepo.save(booking.get());
 
-        bookingSoapClient.rejectBooking(id, user.getName());
+
+        if (booking.get().getServiceId() != null)
+            bookingSoapClient.rejectBooking(booking.get().getServiceId(), user.getName());
 
 
         return true;
@@ -177,8 +180,11 @@ public class BookingService {
                 bookingRepo.save(b);
             }
         }
-
-        bookingSoapClient.deleteBooking(id, email);
+        try {
+            bookingSoapClient.deleteBooking(id, email);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
         return true;
     }
 

@@ -95,7 +95,7 @@
                 </div>
             </span>
             <span>
-                <span v-if="info.state == 'PAID'">
+                <span v-if="(canReport || info.state == 'PAID') && mode == 'requests'">
                     <div class="form-group">
                         <label>Distance traveled [km]</label>
                         <b-input
@@ -127,18 +127,17 @@
                     style="width:160px; color: white"
                     variant="danger"
                     @click="leaveRate(info)"
-                    v-if="this.mode=='personal' && info.state == 'ENDED'"
+                    v-if="this.mode == 'personal' && info.state == 'ENDED'"
                 >
                     Leave Rate
                 </b-button>
-
 
                 <b-button
                     class="float-left"
                     style="width:160px; color: white"
                     variant="dark"
                     @click="startConversation(info)"
-                    v-if="this.mode=='personal' && info.state == 'PAID'"
+                    v-if="this.mode == 'personal' && info.state == 'PAID'"
                 >
                     Start Conversation
                 </b-button>
@@ -147,7 +146,7 @@
                     class="float-left"
                     style="background:#b20000; width:150px; color: white"
                     @click="approve()"
-                    v-if="this.mode=='requests' && info.state == 'PENDING'"
+                    v-if="this.mode == 'requests' && info.state == 'PENDING'"
                 >
                     Approve
                 </b-button>
@@ -180,6 +179,7 @@ export default {
             bookings: [],
             info: null,
             canCancel: true,
+            canReport: false,
         };
     },
     props: ["mode"],
@@ -206,6 +206,7 @@ export default {
         },
         showOptions(row) {
             console.log(row);
+            this.getReports(row);
             if (
                 row.state == "CANCELED" ||
                 row.state == "PAID" ||
@@ -243,25 +244,36 @@ export default {
                 .post("/community/reports", {
                     extraInfo: this.extraInfo,
                     allowedMileage: this.mileage,
-                    booking: this.info.id
+                    booking: this.info.id,
                 })
                 .then(this.closeModalAndRefresh());
         },
-        startConversation(info){
-
-            axios.post("/community/message/conversation",{
-                "receiver":info.advertiser,
-                "bookingId":info.id
-
-            }).then(
-                this.$router.push("/messages")
-            );
-
-         
+        getReports(row) {
+            axios.get("/community/reports").then((response) => {
+                if (
+                    response.data.filter(
+                        (report) => report.booking == this.info.id
+                    ).length > 0
+                ) {
+                    this.canReport = false;
+                } else if (row.state == "ENDED") {
+                    this.canReport = true;
+                } else {
+                    this.canReport = false;
+                }
+            });
         },
-        leaveRate(info){
-            this.$router.push({name:"LeaveRate", params:{booking:info}})
-        }
+        startConversation(info) {
+            axios
+                .post("/community/message/conversation", {
+                    receiver: info.advertiser,
+                    bookingId: info.id,
+                })
+                .then(this.$router.push("/messages"));
+        },
+        leaveRate(info) {
+            this.$router.push({ name: "LeaveRate", params: { booking: info } });
+        },
     },
     created() {
         if (this.mode == "personal") this.getBookings();

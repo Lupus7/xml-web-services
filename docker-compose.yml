@@ -160,15 +160,15 @@ services:
     #        - "8082:8081"
     #    restart: unless-stopped
 
-    agent-front:
-        image: agent-front
-        build:
-            context: ./agent-front
-            dockerfile: Dockerfile
-        tty: true
-        ports:
-            - "8083:8081"
-        restart: unless-stopped
+    # agent-front:
+    #     image: agent-front
+    #     build:
+    #         context: ./agent-front
+    #         dockerfile: Dockerfile
+    #     tty: true
+    #     ports:
+    #         - "8083:8081"
+    #     restart: unless-stopped
 
 networks:
     static-network:

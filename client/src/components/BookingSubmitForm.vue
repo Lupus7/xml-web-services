@@ -125,11 +125,15 @@ export default {
     methods: {
         createBooking() {
             axios.post("/rent/api/booking", {
-
-                adId: this.selected,
-                startDate: this.startDate + "T00:00:00",
-                endDate: this.endDate + "T00:00:00",
-                place: this.place,
+                loaner: "NONE",
+                books: [
+                    {
+                        adId: this.selected,
+                        startDate: this.startDate + "T00:00:00",
+                        endDate: this.endDate + "T00:00:00",
+                        place: this.place,
+                    },
+                ],
             });
         },
     },
