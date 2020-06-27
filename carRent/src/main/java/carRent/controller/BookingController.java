@@ -47,10 +47,21 @@ public class BookingController {
     // Prihvatanje bookinga kod clienta
     @PutMapping(value = "/api/booking/{id}")
     @PreAuthorize("hasAuthority('ACCEPT_BOOKING')")
-    public ResponseEntity<String> acceptBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
+    public ResponseEntity<String> acceptBookingRequest(@PathVariable(value = "id") Long id, Principal user) {
 
         if (bookingService.acceptBookingRequest(id, user.getName()))
             return ResponseEntity.ok("Booking request reserved!");
+        else
+            return ResponseEntity.status(400).body("Could not accept");
+    }
+
+    // Prihvatanje bundlea kod clienta
+    @PutMapping(value = "/api/bundle/{id}")
+    @PreAuthorize("hasAuthority('ACCEPT_BOOKING')")
+    public ResponseEntity<String> acceptBundleRequest(@PathVariable(value = "id") Long id, Principal user) {
+
+        if (bookingService.acceptBundleRequest(id, user.getName()))
+            return ResponseEntity.ok("Bundle request reserved!");
         else
             return ResponseEntity.status(400).body("Could not accept");
     }

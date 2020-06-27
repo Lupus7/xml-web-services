@@ -124,7 +124,7 @@ export default {
     },
     methods: {
         createBooking() {
-            axios.post("/rent/api/booking", {
+            axios.post("/rent/api/booking/reserved", {
                 loaner: "NONE",
                 books: [
                     {
@@ -134,7 +134,14 @@ export default {
                         place: this.place,
                     },
                 ],
-            });
+            }).then(response => {
+                if(response.status === 200)
+                    this.$bvToast.toast(response.data, {
+                        title: "Reserve Booking",
+                        variant: "success",
+                        solid: true
+                    });
+            });;
         },
     },
     created() {

@@ -2,7 +2,6 @@ package carRent.proxy;
 
 import carRent.model.dto.AdClientDTO;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,9 +23,12 @@ public interface CarsAdsProxy {
     @DeleteMapping(value = "/api/ad/deactivate/{id}")
     ResponseEntity<String> deactivateAd(@PathVariable(value = "id") Long id, @RequestHeader("Authorization") String auth);
 
-    @PostMapping(value = "/api/ad/check", produces = "application/json", consumes = "application/json")
-    Boolean checking(@RequestBody JSONObject object, @RequestHeader("Authorization") String auth) throws JSONException;
+    @PostMapping("/api/ad/check")
+    Boolean checking(@RequestBody String object, @RequestHeader("Authorization") String auth) throws JSONException;
 
     @GetMapping(value = "/api/ad/{id}")
     ResponseEntity<AdClientDTO> getAd(@PathVariable("id") Long id, @RequestHeader("Authorization") String auth);
+
+    @GetMapping(value = "/api/ad/active/{id}")
+    ResponseEntity<Boolean> getStatus(@PathVariable(value = "id") Long id, @RequestHeader("Authorization") String auth);
 }

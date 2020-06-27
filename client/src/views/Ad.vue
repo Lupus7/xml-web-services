@@ -4,7 +4,7 @@
             <div class="col-6">
                 <b-carousel
                     v-model="slide"
-                    :interval="4000"
+                    :interval="0"
                     controls
                     indicators
                     background="#ababab"
@@ -211,8 +211,16 @@ export default {
                         place: this.info.place,
                     },
                 ],
+            }).then(response => {
+                if(response.status === 200)
+                    this.$bvToast.toast(response.data, {
+                        title: "Creating Booking",
+                        variant: "success",
+                        solid: true
+                    });
             });
             this.$refs["my-modal"].hide();
+          
         },
         openDiag() {
             this.$refs["my-modal"].show();
