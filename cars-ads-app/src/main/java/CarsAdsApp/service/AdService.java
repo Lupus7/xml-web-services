@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -68,8 +69,9 @@ public class AdService {
     }
 
 
-    public boolean checkAds(JSONObject object, String email) throws JSONException {
-
+    public boolean checkAds(String obj, String email) throws JSONException {
+        System.out.println(obj);
+        JSONObject object = new JSONObject(obj);
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
@@ -216,6 +218,13 @@ public class AdService {
         Optional<Ad> ad = adRepo.findById(id);
         if (ad.isPresent())
             return ad.get().getOwnerId();
+        return null;
+    }
+
+    public Boolean getStatus(Long id) {
+        Optional<Ad> ad = adRepo.findById(id);
+        if (ad.isPresent())
+            return ad.get().isActive();
         return null;
     }
 

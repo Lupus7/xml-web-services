@@ -67,13 +67,15 @@ public class BookingService {
                 if (bookDTO.getStartDate().isAfter(bookDTO.getEndDate()))
                     return false;
 
-                ResponseEntity<Boolean> check = carsAdsProxy.getAdById(bookDTO.getAdId(), email + ";MASTER");
+                // provera da li ad postoji odnosno da li je aktivan
+                ResponseEntity<Boolean> check = carsAdsProxy.getStatus(bundleDTO.getBooks().get(0).getAdId(), email + ";MASTER");
                 if (check == null || check.getBody() == null || !check.getBody())
                     return false;
 
+
                 // provera da client nmz sam svoje da rezervise
                 ResponseEntity<Long> ownerId = carsAdsProxy.getOwnerById(bookDTO.getAdId(), email + ";MASTER");
-                if (ownerId == null || ownerId.getBody() == null || ownerId.getBody().longValue() == userId)
+                if (ownerId == null || ownerId.getBody() == null || ownerId.getBody() == userId)
                     return false;
 
                 Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PENDING, bookDTO.getPlace(), LocalDateTime.now(), bookDTO.getAdId(), userId);
@@ -108,9 +110,12 @@ public class BookingService {
 
             if (bundleDTO.getBooks().get(0).getStartDate().isAfter(bundleDTO.getBooks().get(0).getEndDate()))
                 return false;
-            ResponseEntity<Boolean> check = carsAdsProxy.getAdById(bundleDTO.getBooks().get(0).getAdId(), email + ";MASTER");
+
+            // provera da li ad postoji odnosno da li je aktivan
+            ResponseEntity<Boolean> check = carsAdsProxy.getStatus(bundleDTO.getBooks().get(0).getAdId(), email + ";MASTER");
             if (check == null || check.getBody() == null || !check.getBody())
                 return false;
+
 
             // provera da client nmz sam svoje da rezervise
             ResponseEntity<Long> ownerId = carsAdsProxy.getOwnerById(bundleDTO.getBooks().get(0).getAdId(), email + ";MASTER");
@@ -157,7 +162,6 @@ public class BookingService {
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return new HashMap<>();
 
-        Long userId = userIdResponse.getBody();
 
         Bundle bundle = new Bundle();
         if (bundleDTO.getBooks().size() > 1) {
@@ -172,14 +176,11 @@ public class BookingService {
                 if (bookDTO.getStartDate().isAfter(bookDTO.getEndDate()))
                     return new HashMap<>();
 
-                ResponseEntity<Boolean> check = carsAdsProxy.getAdById(bookDTO.getAdId(), email + ";MASTER");
+                // provera da li ad postoji odnosno da li je aktivan
+                ResponseEntity<Boolean> check = carsAdsProxy.getStatus(bundleDTO.getBooks().get(0).getAdId(), email + ";MASTER");
                 if (check == null || check.getBody() == null || !check.getBody())
                     return new HashMap<>();
 
-                // provera da client nmz sam svoje da rezervise
-                ResponseEntity<Long> ownerId = carsAdsProxy.getOwnerById(bookDTO.getAdId(), email + ";MASTER");
-                if (ownerId == null || ownerId.getBody() == null || ownerId.getBody().longValue() == userId)
-                    return new HashMap<>();
 
                 Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), bookDTO.getAdId(), (long) -1);
                 bundle.getBookings().add(booking);
@@ -200,25 +201,22 @@ public class BookingService {
             if (bundleDTO.getBooks().get(0).getStartDate().isAfter(bundleDTO.getBooks().get(0).getEndDate()))
                 return new HashMap<>();
 
-            ResponseEntity<Boolean> check = carsAdsProxy.getAdById(bundleDTO.getBooks().get(0).getAdId(), email + ";MASTER");
+            // provera da li ad postoji odnosno da li je aktivan
+
+            ResponseEntity<Boolean> check = carsAdsProxy.getStatus(bundleDTO.getBooks().get(0).getAdId(), email + ";MASTER");
             if (check == null || check.getBody() == null || !check.getBody())
                 return new HashMap<>();
 
-            // provera da client nmz sam svoje da rezervise
-            ResponseEntity<Long> ownerId = carsAdsProxy.getOwnerById(bundleDTO.getBooks().get(0).getAdId(), email + ";MASTER");
-            if (ownerId == null || ownerId.getBody() == null || ownerId.getBody().longValue() == userId)
-                return new HashMap<>();
-
             Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PAID, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), bundleDTO.getBooks().get(0).getAdId(), (long) -1);
-            bundle.getBookings().add(booking);
             bookingRepo.save(booking);
             reservedBookings.put(booking.getId(), booking);
 
         }
 
         //canceluj sve ostale bookinge koju su vezani za taj ad
-
-        for (Booking b : bundle.getBookings()) {
+        Long adId = null;
+        for (Booking b : reservedBookings.values()) {
+            adId = b.getAd();
             ArrayList<Booking> bookings = bookingRepo.findAllByAd(b.getAd());
             for (Booking b1 : bookings) {
                 if (reservedBookings.containsKey(b1.getId()))
@@ -228,10 +226,13 @@ public class BookingService {
             }
         }
 
+        carsAdsProxy.deactivateAd(adId, email + ";MASTER");
+
+
         return reservedBookings;
     }
 
-    public boolean acceptBookingRequest(Long id, String user) throws JSONException {
+    public boolean acceptBookingRequest(Long id, String user) {
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(user);
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
@@ -243,11 +244,19 @@ public class BookingService {
         booking.get().setState(RequestState.PAID);
         bookingRepo.save(booking.get());
 
+        List<Booking> bookings = bookingRepo.findAllByAd(booking.get().getAd());
+
+        for (Booking b : bookings) {
+            if (booking.get().getId() != b.getId()) {
+                b.setState(RequestState.CANCELED);
+                bookingRepo.save(b);
+            }
+
+        }
         carsAdsProxy.deactivateAd(booking.get().getAd(), user + ";MASTER");
 
         return true;
     }
-
     public boolean cancelBookingRequest(Long id, String email) {
 
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
@@ -282,7 +291,9 @@ public class BookingService {
         JSONObject object = new JSONObject();
         object.put("array", array);
 
-        Boolean check = carsAdsProxy.checking(object, user + ";MASTER");
+        System.out.println(object);
+
+        Boolean check = carsAdsProxy.checking(object.toString(), user + ";MASTER");
 
         if (check == null || !check)
             return false;
@@ -293,6 +304,7 @@ public class BookingService {
 
         return true;
     }
+
 
     public ArrayList<BookingDTO> getAllBookingRequests(String email) {
         ArrayList<BookingDTO> bookingDTOS = new ArrayList<>();
@@ -410,7 +422,6 @@ public class BookingService {
     }
 
 
-
     public List<BookingDetails> mappingDtoList(ArrayList<BookingDTO> bookings) throws DatatypeConfigurationException {
         List<BookingDetails> bookingDetails = new ArrayList<>();
         for (BookingDTO bookingDTO : bookings) {
@@ -471,7 +482,7 @@ public class BookingService {
 
         BookingDetails bookingDetails = new BookingDetails();
 
-        return  bookingDetails;
+        return bookingDetails;
 
     }
 
@@ -489,4 +500,6 @@ public class BookingService {
 
         return true;
     }
+
+
 }

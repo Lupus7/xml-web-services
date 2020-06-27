@@ -47,13 +47,14 @@ public class BookingController {
     // Prihvatanje bookinga kod clienta
     @PutMapping(value = "/api/booking/{id}")
     @PreAuthorize("hasAuthority('ACCEPT_BOOKING')")
-    public ResponseEntity<String> acceptBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
+    public ResponseEntity<String> acceptBookingRequest(@PathVariable(value = "id") Long id, Principal user) {
 
         if (bookingService.acceptBookingRequest(id, user.getName()))
             return ResponseEntity.ok("Booking request reserved!");
         else
             return ResponseEntity.status(400).body("Could not accept");
     }
+
 
     // Otkazivanje booking requesta od strane clienta koje je zatrazio booking
     @DeleteMapping(value = "/api/booking/{id}")
@@ -93,6 +94,7 @@ public class BookingController {
         else
             return ResponseEntity.status(400).body("Could not accept");
     }
+
 
     // Get all booking request ye send
     @GetMapping(value = "/api/booking", produces = "application/json")

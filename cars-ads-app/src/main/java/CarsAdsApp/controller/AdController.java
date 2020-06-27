@@ -33,9 +33,9 @@ public class AdController {
     }
 
     // Provera da li je ad userov
-    @PostMapping(value = "/api/ad/check", produces = "application/json", consumes = "application/json")
+    @PostMapping("/api/ad/check")
     @PreAuthorize("hasAuthority('MASTER')")
-    public Boolean checking(@RequestBody JSONObject object, Principal user) throws JSONException {
+    public Boolean checking(@RequestBody String object, Principal user) throws JSONException {
 
         if (adService.checkAds(object, user.getName()))
             return true;
@@ -88,6 +88,14 @@ public class AdController {
     public ResponseEntity<List<AdClientDTO>> getClientAds(Principal user){
         List<AdClientDTO> ads = adService.getClientAds(user.getName());
         return ResponseEntity.ok(ads);
+    }
+
+    // Ad Active or Not?
+    @GetMapping(value = "/api/ad/active/{id}")
+    @PreAuthorize("hasAuthority('READ_ADS') or hasAuthority('MASTER')")
+    public ResponseEntity<Boolean> getStatus(@PathVariable(value = "id") Long id){
+
+        return ResponseEntity.ok(adService.getStatus(id));
     }
 
     @GetMapping(value = "/api/ad")
