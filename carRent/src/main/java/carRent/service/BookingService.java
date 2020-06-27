@@ -257,42 +257,6 @@ public class BookingService {
 
         return true;
     }
-
-    public boolean acceptBundleRequest(Long id, String name) {
-
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(name);
-        if (userIdResponse == null || userIdResponse.getBody() == null)
-            return false;
-
-        Optional<Bundle> bundle = bundleRepository.findById(id);
-        if (!bundle.isPresent())
-            return false;
-
-        List<Long> ads = new ArrayList<>();
-
-        for (Booking b : bundle.get().getBookings()) {
-            b.setState(RequestState.PAID);
-            bookingRepo.save(b);
-            carsAdsProxy.deactivateAd(b.getAd(), name + ";MASTER");
-            ads.add(b.getAd());
-        }
-
-
-        for (Long adId : ads) {
-            List<Booking> bookings = bookingRepo.findAllByAd(adId);
-            for (Booking b : bookings) {
-                if (!bundle.get().getBookings().contains(b)) {
-                    b.setState(RequestState.CANCELED);
-                    bookingRepo.save(b);
-                }
-
-            }
-
-        }
-
-        return true;
-    }
-
     public boolean cancelBookingRequest(Long id, String email) {
 
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
@@ -340,6 +304,7 @@ public class BookingService {
 
         return true;
     }
+
 
     public ArrayList<BookingDTO> getAllBookingRequests(String email) {
         ArrayList<BookingDTO> bookingDTOS = new ArrayList<>();
