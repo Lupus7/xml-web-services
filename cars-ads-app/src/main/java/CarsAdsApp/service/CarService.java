@@ -12,6 +12,9 @@ import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.CarRepository;
 import CarsAdsApp.repository.ImageRepository;
 import com.car_rent.agent_api.CarDetails;
+import com.google.gson.JsonObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,7 +38,7 @@ public class CarService {
     @Autowired
     RentProxy rentProxy;
 
-    public Long CreateCar(CarDetails carDetails) {
+    public Long CreateCarSoap(CarDetails carDetails) {
         CarDTO carDTO = new CarDTO();
         carDTO.setBrand(carDetails.getBrand());
         carDTO.setModel(carDetails.getModel());
@@ -52,9 +55,9 @@ public class CarService {
         return carDTO.getCarId();
     }
 
-    public boolean CreateCar(CarDTO newCarDto, String email) {
+    public Long CreateCar(CarDTO newCarDto, String email) {
         if (newCarDto.getBrand() == null || newCarDto.getModel() == null || newCarDto.getFuel() == null || newCarDto.getCarClass() == null || newCarDto.getTransmission() == null) {
-            return false;
+            return null;
         }
         ObjectFactory factory = new ObjectFactory();
         Car car = factory.createCar();
@@ -73,12 +76,7 @@ public class CarService {
         carRepository.save(car);
         newCarDto.setCarId(car.getId());
 
-        for (String image : newCarDto.getImages()) {
-            Image newImage = new Image(image, car.getId());
-            imageRepository.save(newImage);
-        }
-
-        return true;
+        return car.getId();
     }
 
     public List<Car> getAll() {
@@ -89,7 +87,7 @@ public class CarService {
         return carRepository.findById(id);
     }
 
-    public boolean update(UpdateCarDTO updateCarDTO, Long id) {
+    public Long update(UpdateCarDTO updateCarDTO, Long id) {
 
         Optional<Car> car = carRepository.findById(id);
         if (car.isPresent()) {
@@ -112,34 +110,48 @@ public class CarService {
                 car.get().setTransmission(updateCarDTO.getTransmission());
 
             carRepository.save(car.get());
-            return true;
+            return car.get().getId();
         }
-        return false;
+        return null;
     }
 
-    public boolean delete(Long id, Principal user) {
+    public boolean delete(Long id, String user) throws JSONException {
 
+        System.out.println(id);
 
         Optional<Car> car = carRepository.findById(id);
         if (!car.isPresent()) {
             return false;
         }
+        System.out.println(car.get());
 
         List<Ad> ads = adRepository.findAllByCarId(car.get().getId());
         String adsIds = "";
-        for (Ad ad : ads) {
-            adsIds += ad.getId() + ";";
-        }
+        if (ads.size() > 0)
+            for (Ad ad : ads)
+                adsIds += ad.getId() + ";";
+        else
+            adsIds = "NONE";
 
-        ResponseEntity<Boolean> check = rentProxy.checkingBookingRequests(adsIds, user.getName() + ";MASTER");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("ads", adsIds);
+
+        System.out.println(adsIds);
+
+
+        ResponseEntity<Boolean> check = rentProxy.checkingBookingRequests(jsonObject.toString(), user + ";MASTER");
 
         if (check == null || !check.getBody())
             return false;
 
         for (Ad ad : ads) {
-            rentProxy.deleteCarsBookings(adsIds, user.getName() + ";MASTER");
+            rentProxy.deleteCarsBookings(jsonObject.toString(), user + ";MASTER");
             adRepository.delete(ad);
         }
+
+        List<Image> images = imageRepository.findAllByCarId(id);
+        for(Image i:images)
+            imageRepository.delete(i);
 
         carRepository.deleteById(id);
         return true;
@@ -208,21 +220,22 @@ public class CarService {
         return carDTOS;
     }
 
-    public Boolean updateImages(ImageDTO imagedto, Long id) {
+    public List<Long> updateImages(ImageDTO imagedto, Long id) {
         //first find all images for specific car
-
-        if(imagedto.getImages().size() == 0)
-            return false;
+        List<Long> imgIds = new ArrayList<>();
+        if (imagedto.getImages().size() == 0)
+            return imgIds;
 
         ArrayList<Image> carsImgs = (ArrayList<Image>) imageRepository.findAllByCarId(id);
         //delete all of them, then update
-        for(Image image: carsImgs){
+        for (Image image : carsImgs) {
             imageRepository.delete(image);
         }
-        for(String imageEnc64: imagedto.getImages()){
+        for (String imageEnc64 : imagedto.getImages()) {
             Image image = new Image(imageEnc64, id);
             imageRepository.save(image);
+            imgIds.add(image.getId());
         }
-        return true;
+        return imgIds;
     }
 }

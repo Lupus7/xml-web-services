@@ -12,10 +12,12 @@ import agentbackend.agentback.repository.CarRepository;
 import agentbackend.agentback.repository.ImageRepository;
 import agentbackend.agentback.repository.UserRepository;
 import agentbackend.agentback.soapClient.AdSoapClient;
+import com.car_rent.agent_api.wsdl.CreateAdResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -46,7 +48,7 @@ public class AdService {
     public int createAd(AdDTO adDTO, String email) {
         Long userId = 0L;
         User user = userRepository.findByEmail(email);
-        if (user != null){
+        if (user != null) {
             userId = user.getId();
         }
 
@@ -58,10 +60,15 @@ public class AdService {
             return 400;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        Ad ad = new Ad(LocalDateTime.parse(adDTO.getStartDate(), formatter), LocalDateTime.parse(adDTO.getEndDate(), formatter), adDTO.getPlace(), adDTO.getCarId(), userId);
-        adRepo.save(ad);
 
-        adSoapClient.createAd(adDTO,email);
+        Optional<Car> car = carRepo.findById(adDTO.getCarId());
+        if (!car.isPresent())
+            return 400;
+
+        CreateAdResponse response = adSoapClient.createAd(adDTO, email);
+        Ad ad = new Ad(LocalDateTime.parse(adDTO.getStartDate(), formatter), LocalDateTime.parse(adDTO.getEndDate(), formatter), adDTO.getPlace(), car.get(), user.getEmail());
+        ad.setServiceId(response.getId());
+        adRepo.save(ad);
 
         return 200;
     }
@@ -71,7 +78,7 @@ public class AdService {
         // provera da li user sa name postoji, provera da li je ad userov
         Long userId = 0L;
         User user = userRepository.findByEmail(email);
-        if (user != null){
+        if (user != null) {
             userId = user.getId();
         }
         if (object == null || object.get("array") == null)
@@ -82,7 +89,8 @@ public class AdService {
         for (int i = 0; i < array.length(); i++) {
             Long id = array.getLong(i);
             Optional<Ad> ad = adRepo.findById(id);
-            if (!ad.isPresent() || ad.get().getOwnerId() != userId)
+            User owner = userRepository.findByEmail(ad.get().getOwner());
+            if (!ad.isPresent() || owner.getId() != userId)
                 return false;
         }
 
@@ -99,18 +107,20 @@ public class AdService {
 //            return 400;
         Long userId = 0L;
         User user = userRepository.findByEmail(email);
-        if (user != null){
+        if (user != null) {
             userId = user.getId();
         }
         Optional<Ad> ad = adRepo.findById(id);
-        if (!ad.isPresent() || ad.get().getOwnerId() != userId || ad.get().isActive())
+        User owner = userRepository.findByEmail(ad.get().getOwner());
+
+        if (!ad.isPresent() || owner.getId() != userId || ad.get().isActive())
             return 400;
 
         ad.get().setActive(true);
         adRepo.save(ad.get());
 
         if (ad.get().getServiceId() != null)
-            adSoapClient.activateAd(ad.get().getServiceId(),email);
+            adSoapClient.activateAd(ad.get().getServiceId(), email);
 
         return 200;
     }
@@ -124,18 +134,19 @@ public class AdService {
 //            return false;
         Long userId = 0L;
         User user = userRepository.findByEmail(email);
-        if (user != null){
+        if (user != null) {
             userId = user.getId();
         }
         Optional<Ad> ad = adRepo.findById(id);
-        if (!ad.isPresent() || ad.get().getOwnerId() != userId || !ad.get().isActive())
+        User owner = userRepository.findByEmail(ad.get().getOwner());
+        if (!ad.isPresent() || owner.getId() != userId || !ad.get().isActive())
             return false;
 
         ad.get().setActive(false);
         adRepo.save(ad.get());
 
         if (ad.get().getServiceId() != null)
-            adSoapClient.deactivateAd(ad.get().getServiceId(),email);
+            adSoapClient.deactivateAd(ad.get().getServiceId(), email);
 
 
         return true;
@@ -149,11 +160,12 @@ public class AdService {
 //            return false;
         Long userId = 0L;
         User user = userRepository.findByEmail(email);
-        if (user != null){
+        if (user != null) {
             userId = user.getId();
         }
         Optional<Ad> ad = adRepo.findById(id);
-        if (!ad.isPresent() || ad.get().getOwnerId() != userId || !ad.get().isActive())
+        User owner = userRepository.findByEmail(ad.get().getOwner());
+        if (!ad.isPresent() || owner.getId() != userId || !ad.get().isActive())
             return false;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (adDTO.getStartDate() != null) {
@@ -170,7 +182,7 @@ public class AdService {
         adRepo.save(ad.get());
 
         if (ad.get().getServiceId() != null)
-            adSoapClient.editAd(ad.get().getServiceId(),adDTO,email);
+            adSoapClient.editAd(ad.get().getServiceId(), adDTO, email);
 
         return true;
     }
@@ -189,14 +201,14 @@ public class AdService {
 //            return new ArrayList<>();
         Long userId = 0L;
         User user = userRepository.findByEmail(email);
-        if (user != null){
+        if (user != null) {
             userId = user.getId();
         }
         List<AdClientDTO> adClientDTOS = new ArrayList<>();
 
-        List<Ad> ads = adRepo.findAllByOwnerId(userId);
+        List<Ad> ads = adRepo.findAllByOwner(user.getEmail());
         for (Ad ad : ads) {
-            Optional<Car> car = carRepo.findById(ad.getCarId());
+            Optional<Car> car = carRepo.findById(ad.getCar().getId());
             if (car.isPresent()) {
                 List<Image> images = imageRepo.findAllByCarId(car.get().getId());
                 if (images == null)
@@ -213,7 +225,7 @@ public class AdService {
         Optional<Ad> ad = adRepo.findById(id);
         if (!ad.isPresent())
             return null;
-        Optional<Car> car = carRepo.findById(ad.get().getCarId());
+        Optional<Car> car = carRepo.findById(ad.get().getCar().getId());
         if (!car.isPresent())
             return null;
         List<Image> images = imageRepo.findAllByCarId(car.get().getId());
@@ -227,5 +239,22 @@ public class AdService {
         if (!ad.isPresent())
             return false;
         return true;
+    }
+
+    public Boolean getStatus(Long id) {
+        Optional<Ad> ad = adRepo.findById(id);
+        if (ad.isPresent())
+            return ad.get().isActive();
+        return null;
+    }
+
+
+    public Long getOwnerId(Long id) {
+        Optional<Ad> ad = adRepo.findById(id);
+        if (ad.isPresent()) {
+            User owner = userRepository.findByEmail(ad.get().getOwner());
+            return owner.getId();
+        }
+        return null;
     }
 }

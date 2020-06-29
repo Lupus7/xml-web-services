@@ -85,7 +85,7 @@ public class RateService {
         while(itr.hasNext()){
             Rate rate = (Rate) itr.next();
             Booking booking = bookingRepository.getOne(rate.getBooking());
-            if(booking.getAd() != adId){
+            if(booking.getAd().getId() != adId){
                 itr.remove();
             }
         }

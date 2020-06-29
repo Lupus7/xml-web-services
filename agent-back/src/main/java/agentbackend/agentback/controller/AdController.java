@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -109,5 +110,11 @@ public class AdController {
     @GetMapping(value = "/ad/check/{id}")
     public ResponseEntity<Boolean> getAdById(@PathVariable("id") Long id){
         return ResponseEntity.ok(adService.getCheckAd(id));
+    }
+
+    @GetMapping(value = "/api/ad/active/{id}")
+    public ResponseEntity<Boolean> getStatus(@PathVariable(value = "id") Long id){
+
+        return ResponseEntity.ok(adService.getStatus(id));
     }
 }

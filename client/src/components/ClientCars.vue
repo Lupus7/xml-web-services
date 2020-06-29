@@ -765,25 +765,26 @@ export default {
                     colDamProtection: this.collision_damageF,
                     childrenSeats: this.seats_numberF,
                     description: this.descriptionF,
-                    images: this.images,
                 })
-                .then(response => {
-                    this.resetForm();
-                    this.getClientCars();
+                .then(response => {         
+                     axios
+                        .put("/cars-ads/cars/"+response.data+"/images", {
+                            images:this.images
+                        })
+                        .then(response => {
+                            if (response.status === 200) {
+                                this.$bvToast.toast("Car added!", {
+                                    title: "New Car",
+                                    variant: "success",
+                                    solid: true
+                                });
+                                this.resetForm();
+                                this.getClientCars();
+                            }
+                        });
                     
-                    if (response.status === 200) {
-                        this.$bvToast.toast(response.data, {
-                            title: "New Car",
-                            variant: "success",
-                            solid: true
-                        });
-                    } else {
-                        this.$bvToast.toast(response.data, {
-                            title: "New Car",
-                            variant: "warning",
-                            solid: true
-                        });
-                    }
+                    
+                 
                 });
         }
 

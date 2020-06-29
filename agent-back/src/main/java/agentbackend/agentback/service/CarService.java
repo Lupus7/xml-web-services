@@ -4,16 +4,13 @@ package agentbackend.agentback.service;
 import agentbackend.agentback.controller.dto.CarDTO;
 import agentbackend.agentback.controller.dto.ImageDTO;
 import agentbackend.agentback.controller.dto.UpdateCarDTO;
-import agentbackend.agentback.model.Ad;
-import agentbackend.agentback.model.Car;
-import agentbackend.agentback.model.Image;
+import agentbackend.agentback.model.*;
 import agentbackend.agentback.model.ObjectFactory;
-import agentbackend.agentback.repository.AdRepository;
-import agentbackend.agentback.repository.CarRepository;
-import agentbackend.agentback.repository.ImageRepository;
+import agentbackend.agentback.repository.*;
+import agentbackend.agentback.soapClient.BookingSoapClient;
 import agentbackend.agentback.soapClient.CarSoapClient;
 import agentbackend.agentback.soapClient.SpecSoapClient;
-import com.car_rent.agent_api.wsdl.GetAllSpecsResponse;
+import com.car_rent.agent_api.wsdl.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +34,20 @@ public class CarService {
     CarSoapClient carSoapClient;
 
     @Autowired
+    BookingSoapClient bookingSoapClient;
+
+    @Autowired
     SpecSoapClient specSoapClient;
 
-    //MEthod for creating new car in dataabse
-    public boolean CreateCar(CarDTO newCarDto, String email) {
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    BookingRepository bookingRepository;
+
+    public Long CreateCar(CarDTO newCarDto, String email) {
         if (newCarDto.getBrand() == null || newCarDto.getModel() == null || newCarDto.getFuel() == null || newCarDto.getCarClass() == null || newCarDto.getTransmission() == null) {
-            return false;
+            return null;
         }
         ObjectFactory factory = new ObjectFactory();
         Car car = factory.createCar();
@@ -51,36 +56,18 @@ public class CarService {
         car.setChildrenSeats(newCarDto.getChildrenSeats());
         car.setDescription(newCarDto.getDescription());
         car.setColDamProtection(newCarDto.isColDamProtection());
-        car.setOwner(email);
         car.setBrand(newCarDto.getBrand());
         car.setModel(newCarDto.getModel());
         car.setCarClass(newCarDto.getCarClass());
         car.setFuel(newCarDto.getFuel());
         car.setTransmission(newCarDto.getTransmission());
+        car.setOwner(email);
 
-        //Save car in database
+        CreateCarResponse response = carSoapClient.createCar(car);
+        car.setServiceId(response.getId());
         carRepository.save(car);
 
-        List<Image> imageList = new ArrayList<>();
-
-        for(String image: newCarDto.getImages()){
-            Image newImage = new Image(image, car.getId());
-            imageRepository.save(newImage);
-            imageList.add(newImage);
-        }
-
-        carSoapClient.createCar(car, imageList);
-
-        return true;
-    }
-
-    //Method for retrieving all cars from database
-    public List<Car> getAll() {
-        return carRepository.findAll();
-    }
-
-    public Optional<Car> findOneById(Long id) {
-        return carRepository.findById(id);
+        return car.getId();
     }
 
     public boolean update(UpdateCarDTO updateCarDTO, Long id) {
@@ -95,41 +82,78 @@ public class CarService {
             car.get().setCarClass(updateCarDTO.getCarClass());
             car.get().setFuel(updateCarDTO.getFuel());
             car.get().setTransmission(updateCarDTO.getTransmission());
+            car.get().setChildrenSeats(updateCarDTO.getChildrenSeats());
             carRepository.save(car.get());
+            carSoapClient.editCar(updateCarDTO, car.get().getServiceId());
+
             return true;
         }
         return false;
     }
 
-    public boolean delete(Long id) throws JSONException {
+    public Boolean updateImages(ImageDTO imagedto, Long id) {
+
+        if (imagedto.getImages().size() == 0 || imagedto.getImages().size() > 6)
+            return false;
+
+        Optional<Car> car = carRepository.findById(id);
+        if (!car.isPresent())
+            return false;
+
+        UpdateCarImagesResponse response = carSoapClient.updateCarImages(imagedto, car.get().getServiceId());
+
+        ArrayList<Image> carsImgs = (ArrayList<Image>) imageRepository.findAllByCarId(id);
+        for (Image image : carsImgs)
+            imageRepository.delete(image);
+
+        for (int i = 0; i < imagedto.getImages().size(); i++) {
+            Image image = new Image();
+            image.setEncoded64Image(imagedto.getImages().get(i));
+            image.setCar(car.get());
+            image.setServiceId(response.getImages().get(i));
+            imageRepository.save(image);
+        }
+        return true;
+    }
+
+
+    public boolean delete(Long id, String email) throws JSONException {
         Optional<Car> car = carRepository.findById(id);
         if (!car.isPresent()) {
             return false;
         }
 
-        List<Ad> ads = adRepository.findAllByCarId(car.get().getId());
+
+
+        List<Ad> ads = adRepository.findAllByCar(car.get());
         String adsIds = "";
+        if (ads.size() > 0)
+            for (Ad ad : ads)
+                adsIds += ad.getId() + ";";
+        else
+            adsIds = "NONE";
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("ads", adsIds);
+
+        CheckingBookingResponse check = bookingSoapClient.checkingBooking(jsonObject.toString(),email);
+        if(!check.isResponse())
+            return false;
+
         for (Ad ad : ads) {
-            adsIds += ad.getId() + ";";
+            bookingSoapClient.deleteBooking(jsonObject.toString(), email);
+            adRepository.delete(ad);
         }
 
-        JSONObject object = new JSONObject();
-        object.put("array", adsIds);
+        DeleteCarResponse response = carSoapClient.deleteCar(car.get().getServiceId(), email);
+        if(!response.isResponse())
+            return false;
 
-//        String rentServiceIp = discoveryClient.getInstances("rent").get(0).getHost();
-//        Boolean check = new RestTemplate().postForObject("http://" + rentServiceIp + ":8080/api/booking/checking", object, Boolean.class);
-//
-//        if (!check)
-//            return false;
+        List<Image> images = imageRepository.findAllByCar(car.get());
+        for(Image i:images)
+            imageRepository.delete(i);
 
-//        for (Ad ad : ads) {
-//            Map<String, String> params = new HashMap<String, String>();
-//            params.put("id", adsIds);
-//            new RestTemplate().delete("http://" + rentServiceIp + ":8080/api/booking/checking/remove/{id}", params);
-//            adRepository.delete(ad);
-//        }
-
-        carRepository.deleteById(id);
+        carRepository.delete(car.get());
         return true;
     }
 
@@ -137,10 +161,10 @@ public class CarService {
         List<CarDTO> carDTOS = new ArrayList<>();
         List<Car> cars = carRepository.findAllByOwner(email);
 
-        for (Car car : cars){
+        for (Car car : cars) {
             List<Image> images = imageRepository.findAllByCarId(car.getId());
             CarDTO carDTO = new CarDTO(car);
-            for(Image image: images){
+            for (Image image : images) {
                 carDTO.getImages().add(image.getEncoded64Image());
             }
             carDTOS.add(carDTO);
@@ -200,21 +224,12 @@ public class CarService {
         return specSoapClient.getAllSpecs(name);
     }
 
-    public Boolean updateImages(ImageDTO imagedto, Long id) {
-        //first find all images for specific car
+    //Method for retrieving all cars from database
+    public List<Car> getAll() {
+        return carRepository.findAll();
+    }
 
-        if(imagedto.getImages().size() == 0)
-            return false;
-
-        ArrayList<Image> carsImgs = (ArrayList<Image>) imageRepository.findAllByCarId(id);
-        //delete all of them, then update
-        for(Image image: carsImgs){
-            imageRepository.delete(image);
-        }
-        for(String imageEnc64: imagedto.getImages()){
-            Image image = new Image(imageEnc64, id);
-            imageRepository.save(image);
-        }
-        return true;
+    public Optional<Car> findOneById(Long id) {
+        return carRepository.findById(id);
     }
 }

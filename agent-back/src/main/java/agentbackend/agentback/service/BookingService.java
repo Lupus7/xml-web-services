@@ -4,12 +4,10 @@ import agentbackend.agentback.controller.dto.AdClientDTO;
 import agentbackend.agentback.controller.dto.BookDTO;
 import agentbackend.agentback.controller.dto.BookingDTO;
 import agentbackend.agentback.controller.dto.BundleDTO;
-import agentbackend.agentback.model.Ad;
-import agentbackend.agentback.model.Booking;
-import agentbackend.agentback.model.RequestState;
-import agentbackend.agentback.model.User;
+import agentbackend.agentback.model.*;
 import agentbackend.agentback.repository.AdRepository;
 import agentbackend.agentback.repository.BookingRepository;
+import agentbackend.agentback.repository.BundleRepository;
 import agentbackend.agentback.repository.UserRepository;
 import agentbackend.agentback.soapClient.BookingSoapClient;
 import com.car_rent.agent_api.wsdl.ReserveBookingResponse;
@@ -34,43 +32,98 @@ public class BookingService {
     @Autowired
     private AdRepository adRepository;
     @Autowired
+    private AdService adService;
+    @Autowired
     BookingSoapClient bookingSoapClient;
+    @Autowired
+    BundleRepository bundleRepository;
 
-    public boolean reserveBookingRequest(BookDTO bookDTO, String email) throws JSONException {
+    public HashMap<Long, Booking> reserveBookingRequest(BundleDTO bundleDTO, String email) {
 
         User user = userRepository.findByEmail(email);
         if (user == null)
-            return false;
+            return new HashMap<Long, Booking>();
 
-        if (bookDTO == null || bookDTO.getAdId() == null || bookDTO.getEndDate() == null || bookDTO.getStartDate() == null || bookDTO.getPlace() == null)
-            return false;
-
-        if (bookDTO.getPlace().equals(""))
-            return false;
-
-        if (bookDTO.getStartDate().isAfter(bookDTO.getEndDate()))
-            return false;
-
-        Optional<Ad> ad = adRepository.findById(bookDTO.getAdId());
-        if (!ad.isPresent())
-            return false;
-
-        // OTKAZI PRVO SVE ZAHTEVE
-        ArrayList<Booking> bookings = bookingRepo.findAllByAd(ad.get().getId());
-        for (Booking b1 : bookings) {
-            b1.setState(RequestState.CANCELED);
-            bookingRepo.save(b1);
-        }
-        //SACUVAJ OVAJ ZAHTEV SA STATUSOM PAID
-        Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), bookDTO.getAdId(), (long) -1);
-        BundleDTO bundleDTO = new BundleDTO();
-        bundleDTO.getBooks().add(bookDTO);
         ReserveBookingResponse response = bookingSoapClient.reserveBooking(bundleDTO, email);
-        booking.setServiceId(response.getId());
-        bookingRepo.save(booking);
+        int i = 0;
+
+        HashMap<Long, Booking> reservedBookings = new HashMap<>();
 
 
-        return true;
+        Bundle bundle = new Bundle();
+        bundle.setLoaner(null);
+        bundle.setServiceId(response.getBundleId());
+        if (bundleDTO.getBooks().size() > 1) {
+            for (BookDTO bookDTO : bundleDTO.getBooks()) {
+
+                if (bookDTO == null || bookDTO.getAdId() == null || bookDTO.getEndDate() == null || bookDTO.getStartDate() == null || bookDTO.getPlace() == null)
+                    return new HashMap<>();
+
+                if (bookDTO.getPlace().equals(""))
+                    return new HashMap<>();
+
+                if (bookDTO.getStartDate().isAfter(bookDTO.getEndDate()))
+                    return new HashMap<>();
+
+                Optional<Ad> ad = adRepository.findById(bookDTO.getAdId());
+                if (!ad.isPresent())
+                    return new HashMap<>();
+                if (!ad.get().isActive())
+                    return new HashMap<>();
+
+                Booking booking = new Booking(bookDTO.getStartDate(), bookDTO.getEndDate(), RequestState.PAID, bookDTO.getPlace(), LocalDateTime.now(), ad.get(), null);
+                booking.setServiceId(response.getBookings().get(i));
+                ++i;
+                bundle.getBookings().add(booking);
+                bookingRepo.save(booking);
+                reservedBookings.put(booking.getId(), booking);
+
+            }
+
+            bundleRepository.save(bundle);
+        } else {
+
+            if (bundleDTO.getBooks().get(0) == null || bundleDTO.getBooks().get(0).getAdId() == null || bundleDTO.getBooks().get(0).getEndDate() == null || bundleDTO.getBooks().get(0).getStartDate() == null || bundleDTO.getBooks().get(0).getPlace() == null)
+                return new HashMap<>();
+
+            if (bundleDTO.getBooks().get(0).getPlace().equals(""))
+                return new HashMap<>();
+
+            if (bundleDTO.getBooks().get(0).getStartDate().isAfter(bundleDTO.getBooks().get(0).getEndDate()))
+                return new HashMap<>();
+
+            // provera da li ad postoji odnosno da li je aktivan
+
+            Optional<Ad> ad = adRepository.findById(bundleDTO.getBooks().get(0).getAdId());
+            if (!ad.isPresent())
+                return new HashMap<>();
+            if (!ad.get().isActive())
+                return new HashMap<>();
+
+            Booking booking = new Booking(bundleDTO.getBooks().get(0).getStartDate(), bundleDTO.getBooks().get(0).getEndDate(), RequestState.PAID, bundleDTO.getBooks().get(0).getPlace(), LocalDateTime.now(), ad.get(), null);
+            booking.setServiceId(response.getBookings().get(0));
+            bookingRepo.save(booking);
+            reservedBookings.put(booking.getId(), booking);
+
+        }
+
+        //canceluj sve ostale bookinge koju su vezani za taj ad
+        Long adId = null;
+        for (Booking b : reservedBookings.values()) {
+            adId = b.getAd().getId();
+            ArrayList<Booking> bookings = bookingRepo.findAllByAd(b.getAd().getId());
+            for (Booking b1 : bookings) {
+                if (reservedBookings.containsKey(b1.getId()))
+                    continue;
+                b1.setState(RequestState.CANCELED);
+                bookingRepo.save(b1);
+            }
+        }
+
+        adService.deactivateAd(adId, email + ";MASTER");
+
+
+        return reservedBookings;
     }
 
     public boolean acceptBookingRequest(Long id, Principal user) throws JSONException {
@@ -86,7 +139,7 @@ public class BookingService {
         bookingRepo.save(booking.get());
 
         //Deactivate AD
-        Optional<Ad> ad = adRepository.findById(booking.get().getAd());
+        Optional<Ad> ad = adRepository.findById(booking.get().getAd().getId());
         ad.get().setActive(false);
         adRepository.save(ad.get());
 
@@ -106,12 +159,13 @@ public class BookingService {
         if (!booking.isPresent() || booking.get().getState() != RequestState.PENDING)
             return false;
 
-        Ad ad = adRepository.getOne(booking.get().getAd());
+        Ad ad = adRepository.getOne(booking.get().getAd().getId());
         if (ad == null) {
             return false;
         }
 
-        if (ad.getOwnerId() == userr.getId()) {
+        User owner = userRepository.findByEmail(ad.getOwner());
+        if (owner.getId() == userr.getId()) {
             return false;
         }
 
@@ -131,7 +185,7 @@ public class BookingService {
 
         User user = userRepository.findByEmail(email);
 
-        List<Ad> ads = adRepository.findAllByOwnerId(user.getId());
+        List<Ad> ads = adRepository.findAllByOwner(user.getEmail());
         if (ads == null)
             return bookingDTOS;
 
@@ -150,8 +204,6 @@ public class BookingService {
         User user = userRepository.findByEmail(email);
         if (user == null)
             return false;
-
-        Long userId = user.getId();
 
         String adsIds = jsonObject;
         String[] str = adsIds.split(";");
@@ -182,7 +234,7 @@ public class BookingService {
         }
         try {
             bookingSoapClient.deleteBooking(id, email);
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return true;
