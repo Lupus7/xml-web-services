@@ -28,9 +28,10 @@ public class CarController {
 
     @PostMapping("/cars")
     @PreAuthorize("hasAuthority('CREATE_CAR')")
-    public ResponseEntity<String> postCar(@RequestBody CarDTO newCarDto, Principal user) {
-        if (carService.CreateCar(newCarDto, user.getName()))
-            return ResponseEntity.ok("Successfully created");
+    public ResponseEntity<Long> postCar(@RequestBody CarDTO newCarDto, Principal user) {
+        Long id = carService.CreateCar(newCarDto, user.getName());
+        if (id != null)
+            return ResponseEntity.ok(id);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
@@ -55,7 +56,7 @@ public class CarController {
     @PutMapping(value = "cars/{id}")
     @PreAuthorize("hasAuthority('EDIT_CAR')  or hasAuthority('MASTER')")
     public ResponseEntity<String>updateCar(@RequestBody UpdateCarDTO updateCarDTO, @PathVariable Long id){
-        if(carService.update(updateCarDTO, id))
+        if(carService.update(updateCarDTO, id) != null)
             return ResponseEntity.ok("Successfully updated");
         return ResponseEntity.badRequest().body("Oops..try again");
     }
@@ -63,7 +64,7 @@ public class CarController {
     @DeleteMapping(value = "cars/{id}", produces = "application/json")
     @PreAuthorize("hasAuthority('DELETE_CAR') or hasAuthority('MASTER')")
     public ResponseEntity<String> deleteCar(@PathVariable Long id, Principal user) throws JSONException {
-        if (carService.delete(id, user))
+        if (carService.delete(id, user.getName()))
             return ResponseEntity.ok("Successfully deleted car from database");
         return ResponseEntity.badRequest().body("Oops.. try again");
     }
@@ -124,8 +125,8 @@ public class CarController {
     @PutMapping("/cars/{id}/images")
     @PreAuthorize("hasAuthority('EDIT_CAR') or hasAuthority('MASTER')")
     public ResponseEntity<String> updateCarImages(@RequestBody ImageDTO imagedto, @PathVariable("id") Long id){
-        Boolean updated = carService.updateImages(imagedto, id);
-        if(updated)
+        List<Long> images = carService.updateImages(imagedto, id);
+        if(images.size() > 0)
             return ResponseEntity.ok("Successfully updated images");
         return ResponseEntity.badRequest().build();
     }

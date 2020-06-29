@@ -32,7 +32,7 @@ public class BookingDTO {
         this.state = booking.getState();
         this.place = booking.getPlace();
         this.created = booking.getCreated();
-        this.ad = booking.getAd();
+        this.ad = booking.getAd().getId();
 
     }
 

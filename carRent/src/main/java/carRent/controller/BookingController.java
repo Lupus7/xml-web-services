@@ -21,7 +21,7 @@ public class BookingController {
     @Autowired
     BookingService bookingService;
 
-    // Kreiranje bookinga
+    // Kreiranje bookinga/bundla
     @PostMapping(value = "/api/booking", produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasAuthority('CREATE_BOOKING')")
     public ResponseEntity<String> createBookingRequest(@RequestBody BundleDTO bundleDTO, Principal user) throws JSONException {
@@ -32,12 +32,12 @@ public class BookingController {
             return ResponseEntity.status(400).body("Could not accept");
     }
 
-    // Samostalno zauzece
+    // Samostalno zauzece bookinga/bundla
     @PostMapping(value = "/api/booking/reserved", produces = "application/json", consumes = "application/json")
     @PreAuthorize("hasAuthority('RESERVE_BOOKING')")
     public ResponseEntity<String> reserveBookingRequest(@RequestBody BundleDTO bundleDTO, Principal user) throws JSONException {
 
-        HashMap<Long, Booking> bookings =  bookingService.reserveBookingRequest(bundleDTO, user.getName());
+        HashMap<Long, Booking> bookings = bookingService.reserveBookingRequest(bundleDTO, user.getName());
         if(bookings.size() > 0)
             return ResponseEntity.ok("Booking request successfully created!");
         else
@@ -69,14 +69,14 @@ public class BookingController {
 
     // Booking check
     @PostMapping(value = "/api/booking/checking")
-    public ResponseEntity<Boolean> checkingBookingRequests(@RequestBody String jsonObject, Principal user)  {
+    public ResponseEntity<Boolean> checkingBookingRequests(@RequestBody String jsonObject, Principal user) throws JSONException {
         return ResponseEntity.ok(bookingService.checkingBookingRequests(jsonObject, user.getName()));
 
     }
 
     // Odbijanje booking requesta kod brisanja car-a
     @PostMapping(value = "/api/booking/checking/remove")
-    public ResponseEntity<String> deleteCarsBookings(@RequestBody String id, Principal user){
+    public ResponseEntity<String> deleteCarsBookings(@RequestBody String id, Principal user) throws JSONException {
 
         if (bookingService.deleteCarsBookings(id, user.getName()))
             return ResponseEntity.ok("Booking request canceled!");
@@ -96,27 +96,27 @@ public class BookingController {
     }
 
 
-    // Get all booking request ye send
+    // Get all booking request client sent
     @GetMapping(value = "/api/booking", produces = "application/json")
     @PreAuthorize("hasAuthority('READ_BOOKINGS')")
-    public ResponseEntity<ArrayList<BookingDTO>> getAllBookingRequests(Principal user) throws JSONException {
+    public ResponseEntity<ArrayList<BookingDTO>> getAllSentBookingRequests(Principal user) {
 
-        return ResponseEntity.ok((ArrayList<BookingDTO>) bookingService.getAllBookingRequests(user.getName()));
+        return ResponseEntity.ok((ArrayList<BookingDTO>) bookingService.getAllSentBookingRequests(user.getName()));
 
     }
 
-    // Get all booking request ye got
+    // Get all booking request client received
     @GetMapping(value = "/api/booking/request", produces = "application/json")
     @PreAuthorize("hasAuthority('READ_BOOKINGS')")
-    public ResponseEntity<Set<BookingDTO>> getAllBookingRequestsFromOthers(Principal user) throws JSONException {
+    public ResponseEntity<Set<BookingDTO>> getAllReceivedBookingRequests(Principal user) {
 
-        return ResponseEntity.ok(bookingService.getAllBookingRequestsFromOthers(user.getName()));
+        return ResponseEntity.ok(bookingService.getAllReceivedBookingRequests(user.getName()));
 
     }
 
     @GetMapping(value = "/api/booking/{id}", produces = "application/json")
     @PreAuthorize("hasAuthority('READ_BOOKINGS')")
-    public ResponseEntity<BookingDTO> getBooking(@PathVariable("id") Long id, Principal user) throws JSONException {
+    public ResponseEntity<BookingDTO> getBooking(@PathVariable("id") Long id, Principal user) {
 
         return ResponseEntity.ok((BookingDTO) bookingService.getBooking(id, user.getName()));
 
@@ -124,14 +124,14 @@ public class BookingController {
 
     @GetMapping(value = "/api/booking/{id}/ad", produces = "application/json")
     @PreAuthorize("hasAuthority('READ_BOOKINGS')")
-    public ResponseEntity<Long> getBookingsAd(@PathVariable("id") Long id, Principal user) throws JSONException {
+    public ResponseEntity<Long> getBookingsAd(@PathVariable("id") Long id, Principal user) {
         BookingDTO bookingDto = (BookingDTO) bookingService.getBooking(id, user.getName());
         return ResponseEntity.ok(bookingDto.getAd());
     }
 
     @PutMapping(value = "/api/booking/{id}/end")
     @PreAuthorize("hasAuthority('MASTER')")
-    public ResponseEntity<String> endBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
+    public ResponseEntity<String> endBookingRequest(@PathVariable(value = "id") Long id, Principal user){
 
         if (bookingService.endBookingRequest(id, user.getName()))
             return ResponseEntity.ok("Booking request reserved!");

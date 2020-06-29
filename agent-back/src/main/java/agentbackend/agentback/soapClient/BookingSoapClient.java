@@ -95,4 +95,28 @@ public class BookingSoapClient extends WebServiceGatewaySupport {
                         new SoapActionCallback(SoapProperties.NAMESPACE_URI + "/getBookingsRequest"));
     }
 
+    // Bundle
+
+    public AcceptBundleResponse acceptBundle(Long id, String email) {
+
+        AcceptBundleRequest request = new ObjectFactory().createAcceptBundleRequest();
+        request.setId(id);
+        request.setEmail(email);
+
+        return (AcceptBundleResponse) getWebServiceTemplate()
+                .marshalSendAndReceive(SoapProperties.BOOKING_WSDL, request,
+                        new SoapActionCallback(SoapProperties.NAMESPACE_URI + "/acceptBundleRequest"));
+    }
+
+    public RejectBundleResponse rejectBundle(Long id, String email) {
+
+        RejectBundleRequest request = new ObjectFactory().createRejectBundleRequest();
+        request.setId(id);
+        request.setEmail(email);
+
+        return (RejectBundleResponse) getWebServiceTemplate()
+                .marshalSendAndReceive(SoapProperties.BOOKING_WSDL, request,
+                        new SoapActionCallback(SoapProperties.NAMESPACE_URI + "/rejectBundleRequest"));
+    }
+
 }

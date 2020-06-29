@@ -60,7 +60,7 @@
     <xs:element name="deleteCarResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="id" type="xs:long"/>
+                <xs:element name="response" type="xs:boolean"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -77,6 +77,8 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="id" type="xs:long"/>
+                <xs:element name="images" type="xs:long" maxOccurs="unbounded"/>
+
             </xs:sequence>
         </xs:complexType>
     </xs:element>

@@ -42,14 +42,14 @@ public class ReportService {
         Optional<Ad> ad = adRepository.findById(book.get().getId());
         if (!ad.isPresent())
             return false;
-        Optional<Car> car = carRepository.findById(ad.get().getCarId());
-        if (!car.isPresent())
+        Car car = ad.get().getCar();
+        if (car == null)
             return false;
-        car.get().setTotalMileage(car.get().getTotalMileage() + report.getAllowedMileage());
+        car.setTotalMileage(car.getTotalMileage() + report.getAllowedMileage());
 
         booking.setState(RequestState.ENDED);
         bookingRepository.save(booking);
-        carRepository.save(car.get());
+        carRepository.save(car);
         reportRepository.save(report);
         return  true;
     }
@@ -63,11 +63,11 @@ public class ReportService {
             Booking booking =  bookingRepository.getOne(r.getBooking());
             if(booking == null)
                 return null;
-            Ad ad = adRepository.getOne(booking.getAd());
+            Ad ad = booking.getAd();
             if (ad == null)
                 return null;
             //Uzmi auto oglasa i proveri da li je ID onaj sto trazimo
-            Car car = carRepository.getOne(ad.getCarId());
+            Car car = ad.getCar();
             if (car == null)
                 return null;
             if(car.getId() == id)
@@ -94,12 +94,12 @@ public class ReportService {
             if(booking == null)
                 return null;
 
-            Ad ad = adRepository.getOne(booking.getAd());
+            Ad ad = booking.getAd();
             if (ad == null)
                 return null;
 
             //Uzmi auto oglasa i proveri da li je ID onaj sto trazimo
-            Car car = carRepository.getOne(ad.getCarId());
+            Car car = ad.getCar();
             if (car == null)
                 return null;
 

@@ -2,6 +2,8 @@ package agentbackend.agentback.controller;
 
 import agentbackend.agentback.controller.dto.BookDTO;
 import agentbackend.agentback.controller.dto.BookingDTO;
+import agentbackend.agentback.controller.dto.BundleDTO;
+import agentbackend.agentback.model.Booking;
 import agentbackend.agentback.service.BookingService;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 @RestController
@@ -20,9 +23,9 @@ public class BookingController {
 
     // Samostalno zauzece
     @PostMapping(value = "/api/booking")
-    public ResponseEntity<String> reserveBookingRequest(@RequestBody BookDTO bookDto, Principal user) throws JSONException {
-
-        if (bookingService.reserveBookingRequest(bookDto, user.getName()))
+    public ResponseEntity<String> reserveBookingRequest(@RequestBody BundleDTO bundleDTO, Principal user) {
+        HashMap<Long, Booking> map = bookingService.reserveBookingRequest(bundleDTO, user.getName());
+        if (map.size() > 0)
             return ResponseEntity.ok("Booking request successfully created!");
         else
             return ResponseEntity.status(400).body("Could not accept");

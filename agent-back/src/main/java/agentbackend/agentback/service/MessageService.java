@@ -38,18 +38,18 @@ public class MessageService {
             return false;
 
         //Ako Oglas sa tim id-em ne postoji, ne moze
-        Ad ad = adRepository.getOne(booking.getAd());
+        Ad ad = adRepository.getOne(booking.getAd().getId());
         if(ad == null)
             return false;
 
         //Uzmi usera koji je kreirao oglas, on je receiver
-        User receiver = userRepository.getOne(ad.getOwnerId());
+        User receiver = userRepository.findByEmail(ad.getOwner());
         if(receiver == null)
             return false;
         message.setReceiver(receiver.getEmail());
 
         //Proveri da li user koji je trenutno ulogovan, je onaj koji je poslao booking request, ako nije ne moze da chatuje
-        User loaner = userRepository.getOne(booking.getLoaner());
+        User loaner = userRepository.findByEmail(booking.getLoaner());
         if(!loaner.getEmail().equals(user.getName()))
             return false;
 

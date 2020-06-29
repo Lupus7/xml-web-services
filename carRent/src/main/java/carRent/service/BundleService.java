@@ -3,6 +3,8 @@ package carRent.service;
 import carRent.model.Booking;
 import carRent.model.Bundle;
 import carRent.model.RequestState;
+import carRent.model.dto.BookingDTO;
+import carRent.model.dto.GetBundleDTO;
 import carRent.proxy.CarsAdsProxy;
 import carRent.proxy.UserProxy;
 import carRent.repository.BookingRepository;
@@ -37,7 +39,7 @@ public class BundleService {
             return false;
 
         Optional<Bundle> bundle = bundleRepository.findById(id);
-        if (!bundle.isPresent())
+        if (!bundle.isPresent() || userIdResponse.getBody() != bundle.get().getLoaner())
             return false;
 
         List<Long> ads = new ArrayList<>();
@@ -73,7 +75,7 @@ public class BundleService {
             return false;
 
         Optional<Bundle> bundle = bundleRepository.findById(id);
-        if (!bundle.isPresent())
+        if (!bundle.isPresent() || userIdResponse.getBody() != bundle.get().getLoaner())
             return false;
 
         for (Booking b : bundle.get().getBookings()) {
@@ -95,7 +97,7 @@ public class BundleService {
         Long userId = userIdResponse.getBody();
 
         Optional<Bundle> bundle = bundleRepository.findById(id);
-        if (bundle == null || !bundle.isPresent())
+        if (!bundle.isPresent() || userId != bundle.get().getLoaner())
             return false;
 
         for (Booking booking : bundle.get().getBookings()) {
@@ -108,4 +110,28 @@ public class BundleService {
 
         return true;
     }
+
+    public List<GetBundleDTO> getAllSentBundleRequests(String email) {
+
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        if (userIdResponse == null || userIdResponse.getBody() == null)
+            return new ArrayList<>();
+
+        List<GetBundleDTO> bundleDTOS = new ArrayList<>();
+        List<Bundle> bundles = bundleRepository.findAllByLoaner(userIdResponse.getBody());
+        for (Bundle bundle : bundles) {
+            GetBundleDTO bundleDTO = new GetBundleDTO();
+            bundleDTO.setId(bundle.getId());
+            bundleDTO.setLoaner(userIdResponse.getBody());
+            bundleDTO.setLoanerEmail(email);
+            for (Booking booking : bundle.getBookings())
+                bundleDTO.getBookings().add(new BookingDTO(booking));
+
+            bundleDTOS.add(bundleDTO);
+        }
+
+        return bundleDTOS;
+
+    }
+
 }

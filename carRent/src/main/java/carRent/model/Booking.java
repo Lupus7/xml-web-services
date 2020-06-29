@@ -116,4 +116,12 @@ public class Booking {
     public void setAd(Long ad) {
         this.ad = ad;
     }
+
+    public Bundle getBundle() {
+        return bundle;
+    }
+
+    public void setBundle(Bundle bundle) {
+        this.bundle = bundle;
+    }
 }

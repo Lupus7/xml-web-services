@@ -5,7 +5,7 @@ import CarsAdsApp.model.Image;
 import java.util.ArrayList;
 
 public class ImageDTO {
-    private ArrayList<String> images;
+    private ArrayList<String> images = new ArrayList<>();
 
     public ImageDTO(){
 

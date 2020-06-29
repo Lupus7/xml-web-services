@@ -27,24 +27,25 @@ public class Booking {
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
 
-    @Column(name = "ad")
-    private Long ad;
+    @ManyToOne
+    @JoinColumn(name = "ad", nullable = false)
+    private Ad ad;
 
-    @Column(name = "loaner", nullable = false)
-    private Long loaner;
+    @Column(name = "loaner")
+    private String loaner;
 
     @Column()
     private Long serviceId;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "bundle_id", referencedColumnName = "id")
-//    private Bundle bundle;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bundle_id", referencedColumnName = "id")
+    private Bundle bundle;
 
     public Booking() {
 
     }
 
-    public Booking(LocalDateTime startDate, LocalDateTime endDate, RequestState requestState, String place, LocalDateTime created, Long ad, Long user) {
+    public Booking(LocalDateTime startDate, LocalDateTime endDate, RequestState requestState, String place, LocalDateTime created, Ad ad, String user) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.state = requestState;
@@ -103,28 +104,35 @@ public class Booking {
         this.created = created;
     }
 
-
-    public Long getLoaner() {
-        return loaner;
-    }
-
-    public void setLoaner(Long loaner) {
-        this.loaner = loaner;
-    }
-
-    public Long getAd() {
-        return ad;
-    }
-
-    public void setAd(Long ad) {
-        this.ad = ad;
-    }
-
     public Long getServiceId() {
         return serviceId;
     }
 
     public void setServiceId(Long serviceId) {
         this.serviceId = serviceId;
+    }
+
+    public Bundle getBundle() {
+        return bundle;
+    }
+
+    public void setBundle(Bundle bundle) {
+        this.bundle = bundle;
+    }
+
+    public Ad getAd() {
+        return ad;
+    }
+
+    public void setAd(Ad ad) {
+        this.ad = ad;
+    }
+
+    public String getLoaner() {
+        return loaner;
+    }
+
+    public void setLoaner(String loaner) {
+        this.loaner = loaner;
     }
 }

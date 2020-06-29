@@ -44,7 +44,7 @@ public class BookingService {
     @Autowired
     CarsAdsProxy carsAdsProxy;
 
-    public boolean createBookingRequest(BundleDTO bundleDTO, String email) throws JSONException {
+    public boolean createBookingRequest(BundleDTO bundleDTO, String email) {
 
 
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
@@ -54,7 +54,7 @@ public class BookingService {
         Long userId = userIdResponse.getBody();
 
         Bundle bundle = new Bundle();
-
+        bundle.setLoaner(userId);
         if (bundleDTO.getBooks().size() > 1) {
             for (BookDTO bookDTO : bundleDTO.getBooks()) {
 
@@ -68,7 +68,7 @@ public class BookingService {
                     return false;
 
                 // provera da li ad postoji odnosno da li je aktivan
-                ResponseEntity<Boolean> check = carsAdsProxy.getStatus(bundleDTO.getBooks().get(0).getAdId(), email + ";MASTER");
+                ResponseEntity<Boolean> check = carsAdsProxy.getStatus(bookDTO.getAdId(), email + ";MASTER");
                 if (check == null || check.getBody() == null || !check.getBody())
                     return false;
 
@@ -154,7 +154,7 @@ public class BookingService {
         return true;
     }
 
-    public HashMap<Long, Booking> reserveBookingRequest(BundleDTO bundleDTO, String email) throws JSONException {
+    public HashMap<Long, Booking> reserveBookingRequest(BundleDTO bundleDTO, String email) {
 
         HashMap<Long, Booking> reservedBookings = new HashMap<>();
 
@@ -164,6 +164,7 @@ public class BookingService {
 
 
         Bundle bundle = new Bundle();
+        bundle.setLoaner((long) -1);
         if (bundleDTO.getBooks().size() > 1) {
             for (BookDTO bookDTO : bundleDTO.getBooks()) {
 
@@ -237,14 +238,14 @@ public class BookingService {
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
-        Optional<Booking> booking = bookingRepo.findById(id);
+        Optional<Booking> booking = bookingRepo.findByIdAndBundleId(id, null);
         if (!booking.isPresent())
             return false;
 
         booking.get().setState(RequestState.PAID);
         bookingRepo.save(booking.get());
 
-        List<Booking> bookings = bookingRepo.findAllByAd(booking.get().getAd());
+        List<Booking> bookings = bookingRepo.findAllByAdAndBundleId(booking.get().getAd(), null);
 
         for (Booking b : bookings) {
             if (booking.get().getId() != b.getId()) {
@@ -257,6 +258,7 @@ public class BookingService {
 
         return true;
     }
+
     public boolean cancelBookingRequest(Long id, String email) {
 
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
@@ -265,7 +267,7 @@ public class BookingService {
 
         Long userId = userIdResponse.getBody();
 
-        Optional<Booking> booking = bookingRepo.findById(id);
+        Optional<Booking> booking = bookingRepo.findByIdAndBundleId(id, null);
         if (!booking.isPresent() || booking.get().getState() == RequestState.PAID || booking.get().getState() == RequestState.ENDED || userId != booking.get().getLoaner())
             return false;
 
@@ -282,7 +284,7 @@ public class BookingService {
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
-        Optional<Booking> booking = bookingRepo.findById(id);
+        Optional<Booking> booking = bookingRepo.findByIdAndBundleId(id, null);
         if (!booking.isPresent() || booking.get().getState() != RequestState.PENDING)
             return false;
 
@@ -306,7 +308,7 @@ public class BookingService {
     }
 
 
-    public ArrayList<BookingDTO> getAllBookingRequests(String email) {
+    public ArrayList<BookingDTO> getAllSentBookingRequests(String email) {
         ArrayList<BookingDTO> bookingDTOS = new ArrayList<>();
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
         if (userIdResponse == null || userIdResponse.getBody() == null)
@@ -314,7 +316,7 @@ public class BookingService {
 
         Long userId = userIdResponse.getBody();
 
-        ArrayList<Booking> bookings = bookingRepo.findAllByLoaner(userId);
+        ArrayList<Booking> bookings = bookingRepo.findAllByLoanerAndBundleId(userId, null);
         for (Booking booking : bookings) {
             ResponseEntity<AdClientDTO> ad = carsAdsProxy.getAd(booking.getAd(), email + ";MASTER");
             if (ad != null && ad.getBody() != null) {
@@ -329,7 +331,7 @@ public class BookingService {
 
     }
 
-    public Set<BookingDTO> getAllBookingRequestsFromOthers(String email) {
+    public Set<BookingDTO> getAllReceivedBookingRequests(String email) {
         Set<BookingDTO> bookingDTOS = new HashSet<>();
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
         if (userIdResponse == null || userIdResponse.getBody() == null) // provera da li postoji
@@ -340,7 +342,7 @@ public class BookingService {
             return bookingDTOS;
 
         adsResponse.getBody().forEach(ad -> {
-            bookingRepo.findAllByAd(ad.getAdId()).forEach(book -> {
+            bookingRepo.findAllByIdAndBundleId(ad.getAdId(), null).forEach(book -> {
                 bookingDTOS.add(new BookingDTO(book));
             });
         });
@@ -348,18 +350,24 @@ public class BookingService {
         return bookingDTOS;
     }
 
-    public boolean checkingBookingRequests(String jsonObject, String email) {
+    public boolean checkingBookingRequests(String jsonObject, String email) throws JSONException {
+
+        if (jsonObject.equals(""))
+            return true;
+
+        JSONObject object = new JSONObject(jsonObject);
 
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
-        Long userId = userIdResponse.getBody();
+        String adsIds = (String) object.get("ads");
+        if(adsIds.equals("NONE"))
+            return true;
 
-        String adsIds = jsonObject;
         String[] str = adsIds.split(";");
         for (String s : str) {
-            for (Booking b : bookingRepo.findAllByAd(Long.parseLong(s))) {
+            for (Booking b : bookingRepo.findAllByAdAndBundleId(Long.parseLong(s), null)) {
                 if (!b.getState().equals(RequestState.CANCELED) && !b.getState().equals(RequestState.PENDING))
                     return false;
             }
@@ -369,13 +377,21 @@ public class BookingService {
         return true;
     }
 
-    public boolean deleteCarsBookings(String id, String email) {
+    public boolean deleteCarsBookings(String id, String email) throws JSONException {
+
+        if (id.equals(""))
+            return true;
 
         ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
-        String[] str = id.split(";");
+        JSONObject object = new JSONObject(id);
+        String idd = (String) object.get("ads");
+        if(idd.equals("NONE"))
+            return true;
+
+        String[] str = idd.split(";");
         for (String s : str) {
             for (Booking b : bookingRepo.findAllByAd(Long.parseLong(s))) {
                 b.setState(RequestState.CANCELED);
@@ -392,7 +408,7 @@ public class BookingService {
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return new BookingDTO();
 
-        Optional<Booking> booking = bookingRepo.findById(id);
+        Optional<Booking> booking = bookingRepo.findByIdAndBundleId(id, null);
         if (booking.isPresent())
             return new BookingDTO(booking.get());
 
@@ -414,6 +430,21 @@ public class BookingService {
 
         }
 
+    }
+
+    public boolean endBookingRequest(Long id, String user) {
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(user);
+        if (userIdResponse == null || userIdResponse.getBody() == null)
+            return false;
+
+        Optional<Booking> booking = bookingRepo.findByIdAndBundleId(id, null);
+        if (!booking.isPresent())
+            return false;
+
+        booking.get().setState(RequestState.ENDED);
+        bookingRepo.save(booking.get());
+
+        return true;
     }
 
     // MAPPING
@@ -484,21 +515,6 @@ public class BookingService {
 
         return bookingDetails;
 
-    }
-
-    public boolean endBookingRequest(Long id, String user) {
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(user);
-        if (userIdResponse == null || userIdResponse.getBody() == null)
-            return false;
-
-        Optional<Booking> booking = bookingRepo.findById(id);
-        if (!booking.isPresent())
-            return false;
-
-        booking.get().setState(RequestState.ENDED);
-        bookingRepo.save(booking.get());
-
-        return true;
     }
 
 

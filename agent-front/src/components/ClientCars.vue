@@ -425,7 +425,7 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-0.5">
                                         <b-form-checkbox
-                                            v-model="collision_damageEF"
+                                            v-model="collision_damageF"
                                             style="width:20px; height:25px"
                                             type="checkbox"
                                         />
@@ -652,7 +652,7 @@ export default {
                 .then(response => {
                     let responseString = response.data;
                      axios
-                        .put("/cars/"+this.editCarId+"/images", {
+                        .put("/cars/images/"+this.editCarId, {
                             images:this.imagesE
                         })
                         .then(response => {
@@ -759,25 +759,27 @@ export default {
                     colDamProtection: this.collision_damageF,
                     childrenSeats: this.seats_numberF,
                     description: this.descriptionF,
-                    images: this.images,
                 })
                 .then(response => {
-                    this.resetForm();
-                    this.getClientCars();
+                
+                       axios
+                        .put("/cars/images/"+response.data, {
+                            images:this.images
+                        })
+                        .then(response => {
+                            if (response.status === 200) {
+                                this.$bvToast.toast('Car added!', {
+                                    title: "New Car",
+                                    variant: "success",
+                                    solid: true
+                                });
+                                this.resetForm();
+                                this.getClientCars();
+
+                            }
+                        });
                     
-                    if (response.status === 200) {
-                        this.$bvToast.toast(response.data, {
-                            title: "New Car",
-                            variant: "success",
-                            solid: true
-                        });
-                    } else {
-                        this.$bvToast.toast(response.data, {
-                            title: "New Car",
-                            variant: "warning",
-                            solid: true
-                        });
-                    }
+                   
                 });
         }
 

@@ -141,7 +141,7 @@ export default {
                         variant: "success",
                         solid: true
                     });
-            });;
+            });
         },
     },
     created() {

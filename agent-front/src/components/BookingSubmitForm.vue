@@ -125,15 +125,23 @@ export default {
     methods: {
         createBooking() {
             axios.post("/api/booking", {
-
-                adId: this.selected,
-                startDate: this.startDate + "T00:00:00",
-                endDate: this.endDate + "T00:00:00",
-                place: this.place,
+                loaner: "NONE",
+                books: [
+                        {
+                            adId: this.selected,
+                            startDate: this.startDate + "T00:00:00",
+                            endDate: this.endDate + "T00:00:00",
+                            place: this.place
+                        }
+                ]
             })
-            .then(() => {
-                this.$router.push({ path: '/dashboard/book' });
-                this.$router.go({ path: '/dashboard/book' });
+            .then((response) => {
+                if(response.status === 200)
+                    this.$bvToast.toast(response.data, {
+                        title: "Reserve Booking",
+                        variant: "success",
+                        solid: true
+                });
             });
         },
     },

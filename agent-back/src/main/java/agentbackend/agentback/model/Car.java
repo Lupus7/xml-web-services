@@ -78,7 +78,7 @@ public class Car {
     @Column()
     @XmlElement(namespace = "xml-web-services-cars")
     protected boolean colDamProtection;
-    @Column()
+    @Column(name = "owner", nullable = false)
     @XmlElement(namespace = "xml-web-services-cars", required = true)
     protected String owner;
     @Column()
@@ -203,29 +203,7 @@ public class Car {
         this.colDamProtection = value;
     }
 
-    /**
-     * Gets the value of the owner property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getOwner() {
-        return owner;
-    }
 
-    /**
-     * Sets the value of the owner property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setOwner(String value) {
-        this.owner = value;
-    }
 
     /**
      * Gets the value of the brand property.
@@ -347,9 +325,6 @@ public class Car {
         this.transmission = value;
     }
 
-    public void printCar(Car car){
-        System.out.println("Brand: " + car.getBrand() + " \nModel: " + car.getModel() + " \nClass:" +car.getCarClass() + " \nOwner: " +car.getOwner() + " \nDesc: " + car.getDescription() + " \nFuel: " + car.getFuel() + " \nTrans: " +car.getTransmission() + " \nCDP : " + car.isColDamProtection() + " \nSEATS: "+car.getChildrenSeats() + " \nallowedkm: "+car.getAllowedMileage() + " \ntotal km : " + car.getTotalMileage());
-    }
     /**
      * Gets the value of the bookings property.
      * 
@@ -382,5 +357,13 @@ public class Car {
 
     public void setServiceId(Long serviceId) {
         this.serviceId = serviceId;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }
