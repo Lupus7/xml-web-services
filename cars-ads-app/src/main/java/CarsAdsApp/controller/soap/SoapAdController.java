@@ -40,9 +40,8 @@ public class SoapAdController {
     public ActivateAdResponse activateAd(@RequestPayload ActivateAdRequest request) {
         ActivateAdResponse response = new ObjectFactory().createActivateAdResponse();
 
-        HashMap<Long,Boolean> responseService = adService.activateAdSoap(request.getId(),request.getEmail());
-        response.setId(responseService.keySet().stream().findFirst().get());
-        response.setActive(responseService.values().stream().findFirst().get());
+        boolean responseService = adService.activateAdSoap(request.getId(),request.getEmail());
+        response.setResponse(responseService);
         return response;
     }
 
@@ -51,9 +50,8 @@ public class SoapAdController {
     public DeactivateAdResponse deactivateAd(@RequestPayload DeactivateAdRequest request) {
         DeactivateAdResponse response = new ObjectFactory().createDeactivateAdResponse();
 
-        HashMap<Long,Boolean> responseService = adService.deactivateAdSoap(request.getId(),request.getEmail());
-        response.setId(responseService.keySet().stream().findFirst().get());
-        response.setActive(responseService.values().stream().findFirst().get());
+        boolean responseService = adService.deactivateAdSoap(request.getId(),request.getEmail());
+        response.setResponse(responseService);
         return response;
     }
 
@@ -68,7 +66,7 @@ public class SoapAdController {
 
     @PayloadRoot(namespace = SoapProperties.NAMESPACE_URI, localPart = "getAdsRequest")
     @ResponsePayload
-    public GetAdsResponse editAd(@RequestPayload GetAdsRequest request) throws DatatypeConfigurationException {
+    public GetAdsResponse getAds(@RequestPayload GetAdsRequest request) throws DatatypeConfigurationException {
         GetAdsResponse response = new ObjectFactory().createGetAdsResponse();
         List<AdDetails> ads  = adService.getAds(request.getEmail());
         response.getAdDetails().addAll(ads);
