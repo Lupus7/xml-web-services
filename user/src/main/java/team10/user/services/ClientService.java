@@ -149,11 +149,5 @@ public class ClientService {
         return null;
     }
 
-    public String getUserEmail(Long id) {
 
-        Optional<User> user = userRepository.findById(id);
-        if (user.isPresent())
-            return user.get().getEmail();
-        return null;
-    }
 }

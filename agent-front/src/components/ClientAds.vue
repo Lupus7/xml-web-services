@@ -88,11 +88,11 @@
                     <hr />
                     <b-card-sub-title class="mb-2">
                         <b-icon icon="calendar" aria-hidden="true" variant="dark" />
-                        Start Date: {{ad.startDate}}
+                        Start Date: {{ad.startDate.split("T")[0]}}
                     </b-card-sub-title>
                     <b-card-sub-title class="mb-2">
                         <b-icon icon="calendar-fill" aria-hidden="true" variant="dark" />
-                        End Date: {{ad.endDate}}
+                        End Date: {{ad.endDate.split("T")[0]}}
                     </b-card-sub-title>
 
                     <div class="modal-footer">

@@ -47,16 +47,16 @@ public class AdSoapClient extends WebServiceGatewaySupport {
                         new SoapActionCallback(SoapProperties.NAMESPACE_URI + "/deactivateAdRequest"));
     }
 
-    public EditAdResponse editAd(Long id, AdDTO adDTO, String email) {
+    public EditAdResponse editAd(Long carServiceId, Long adServiceId, AdDTO adDTO, String email) {
         EditAdRequest request = new EditAdRequest();
         AdFormDetails adDetails = new AdFormDetails();
-        adDetails.setCarId(adDTO.getCarId());
+        adDetails.setCarId(carServiceId);
         adDetails.setPlace(adDTO.getPlace());
         adDetails.setStartDate(adDTO.getStartDate());
         adDetails.setEndDate(adDTO.getEndDate());
 
         request.setEmail(email);
-        request.setId(id);
+        request.setId(adServiceId);
         request.setAdDetails(adDetails);
 
         return (EditAdResponse) getWebServiceTemplate()

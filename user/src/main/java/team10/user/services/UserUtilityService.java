@@ -7,6 +7,8 @@ import team10.user.models.dto.UserAuthInfo;
 import team10.user.repositories.UserRepository;
 import team10.user.util.UserAuthInfoMapper;
 
+import java.util.Optional;
+
 @Service
 public class UserUtilityService {
     @Autowired
@@ -23,5 +25,13 @@ public class UserUtilityService {
             return null;
 
         return UserAuthInfoMapper.toDTO(user);
+    }
+
+    public String getUserEmail(Long id) {
+
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent())
+            return user.get().getEmail();
+        return null;
     }
 }

@@ -10,4 +10,7 @@ public interface UserProxy {
 
     @GetMapping(value = "/client-control/user/{email}")
     ResponseEntity<Long> getUserId(@PathVariable("email") String email);
+
+    @GetMapping(value = "/util/user/{id}")
+    ResponseEntity<String> getUserEmail(@PathVariable("id") Long id);
 }

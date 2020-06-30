@@ -12,7 +12,9 @@ import agentbackend.agentback.repository.CarRepository;
 import agentbackend.agentback.repository.ImageRepository;
 import agentbackend.agentback.repository.UserRepository;
 import agentbackend.agentback.soapClient.AdSoapClient;
+import com.car_rent.agent_api.wsdl.ActivateAdResponse;
 import com.car_rent.agent_api.wsdl.CreateAdResponse;
+import com.car_rent.agent_api.wsdl.DeactivateAdResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,11 +48,10 @@ public class AdService {
     private AdSoapClient adSoapClient;
 
     public int createAd(AdDTO adDTO, String email) {
-        Long userId = 0L;
         User user = userRepository.findByEmail(email);
-        if (user != null) {
-            userId = user.getId();
-        }
+        if (user == null)
+           return 400;
+
 
         if (adDTO == null)
             return 400;
@@ -98,74 +99,62 @@ public class AdService {
         return true;
     }
 
-    public int activateAd(Long id, String email) {
+    public boolean activateAd(Long id, String email) {
 
-        // provera da li user sa name postoji, provera da li je ad userov
-//        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
-//        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-//        if (userId == null)
-//            return 400;
-        Long userId = 0L;
         User user = userRepository.findByEmail(email);
-        if (user != null) {
-            userId = user.getId();
-        }
+        if (user == null)
+           return false;
+
         Optional<Ad> ad = adRepo.findById(id);
         User owner = userRepository.findByEmail(ad.get().getOwner());
 
-        if (!ad.isPresent() || owner.getId() != userId || ad.get().isActive())
-            return 400;
+        if (!ad.isPresent() || !owner.getEmail().equals(user.getEmail()) || ad.get().isActive())
+            return false;
 
         ad.get().setActive(true);
         adRepo.save(ad.get());
 
-        if (ad.get().getServiceId() != null)
-            adSoapClient.activateAd(ad.get().getServiceId(), email);
+        if (ad.get().getServiceId() != null) {
+            ActivateAdResponse response = adSoapClient.activateAd(ad.get().getServiceId(), email);
+            if(!response.isResponse())
+                return false;
+        }
 
-        return 200;
+        return true;
     }
 
     public boolean deactivateAd(Long id, String email) {
 
-        // provera da li user sa name postoji, provera da li je ad userov
-//        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
-//        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-//        if (userId == null)
-//            return false;
-        Long userId = 0L;
         User user = userRepository.findByEmail(email);
-        if (user != null) {
-            userId = user.getId();
-        }
+        if (user == null)
+            return false;
+
         Optional<Ad> ad = adRepo.findById(id);
         User owner = userRepository.findByEmail(ad.get().getOwner());
-        if (!ad.isPresent() || owner.getId() != userId || !ad.get().isActive())
+        if (!ad.isPresent() || !owner.getEmail().equals(user.getEmail()) || !ad.get().isActive())
             return false;
 
         ad.get().setActive(false);
         adRepo.save(ad.get());
 
-        if (ad.get().getServiceId() != null)
-            adSoapClient.deactivateAd(ad.get().getServiceId(), email);
+        if (ad.get().getServiceId() != null) {
+            DeactivateAdResponse response = adSoapClient.deactivateAd(ad.get().getServiceId(), email);
+            if(!response.isResponse())
+                return false;
+        }
 
 
         return true;
     }
 
     public boolean editAd(Long id, AdDTO adDTO, String email) {
-        // provera da li user sa name postoji, provera da li je ad userov
-//        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
-//        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-//        if (userId == null)
-//            return false;
-        Long userId = 0L;
         User user = userRepository.findByEmail(email);
-        if (user != null) {
-            userId = user.getId();
-        }
+        if (user == null)
+            return false;
+
         Optional<Ad> ad = adRepo.findById(id);
         User owner = userRepository.findByEmail(ad.get().getOwner());
-        if (!ad.isPresent() || owner.getId() != userId || !ad.get().isActive())
+        if (!ad.isPresent() || !owner.getEmail().equals(user.getEmail()) || !ad.get().isActive())
             return false;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (adDTO.getStartDate() != null) {
@@ -182,7 +171,7 @@ public class AdService {
         adRepo.save(ad.get());
 
         if (ad.get().getServiceId() != null)
-            adSoapClient.editAd(ad.get().getServiceId(), adDTO, email);
+            adSoapClient.editAd(ad.get().getCar().getServiceId(), ad.get().getServiceId(), adDTO, email);
 
         return true;
     }
@@ -194,16 +183,10 @@ public class AdService {
     }
 
     public List<AdClientDTO> getClientAds(String email) {
-
-//        String userServiceIp = discoveryClient.getInstances("user").get(0).getHost();
-//        Long userId = new RestTemplate().getForObject("http://" + userServiceIp + ":8080/client-control/user/" + email, Long.class);
-//        if (userId == null)
-//            return new ArrayList<>();
-        Long userId = 0L;
         User user = userRepository.findByEmail(email);
-        if (user != null) {
-            userId = user.getId();
-        }
+        if (user == null)
+            return new ArrayList<>();
+
         List<AdClientDTO> adClientDTOS = new ArrayList<>();
 
         List<Ad> ads = adRepo.findAllByOwner(user.getEmail());

@@ -60,46 +60,33 @@ public class SoapAdService {
         return ad.getId();
     }
 
-    public HashMap<Long, Boolean> activateAdSoap(Long id, String email) {
-
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
-        if (userIdResponse == null || userIdResponse.getBody() == null)
-            return new HashMap<>();
-
-        Long userId = userIdResponse.getBody();
+    public boolean activateAdSoap(Long id, String email) {
 
         Optional<Ad> ad = adRepo.findById(id);
-        if (!ad.isPresent() || ad.get().getOwnerId() != userId || ad.get().isActive())
-            return new HashMap<>();
+        if (!ad.isPresent() || ad.get().isActive())
+            return false;
+        ResponseEntity<String> userEmail = userProxy.getUserEmail(ad.get().getOwnerId());
+        if (userEmail == null || !email.equals(userEmail.getBody()))
+            return false;
 
         ad.get().setActive(true);
         adRepo.save(ad.get());
 
-        HashMap<Long, Boolean> response = new HashMap<>();
-        response.put(ad.get().getId(), ad.get().isActive());
-
-        return response;
+        return true;
     }
 
-    public HashMap<Long, Boolean> deactivateAdSoap(long id, String email) {
-
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
-        if (userIdResponse == null || userIdResponse.getBody() == null)
-            return new HashMap<>();
-
-        Long userId = userIdResponse.getBody();
-
+    public boolean deactivateAdSoap(Long id, String email) {
         Optional<Ad> ad = adRepo.findById(id);
-        if (!ad.isPresent() || ad.get().getOwnerId() != userId || ad.get().isActive())
-            return new HashMap<>();
+        if (!ad.isPresent() || !ad.get().isActive())
+            return false;
+        ResponseEntity<String> userEmail = userProxy.getUserEmail(ad.get().getOwnerId());
+        if (userEmail == null || !email.equals(userEmail.getBody()))
+            return false;
 
         ad.get().setActive(false);
         adRepo.save(ad.get());
 
-        HashMap<Long, Boolean> response = new HashMap<>();
-        response.put(ad.get().getId(), ad.get().isActive());
-
-        return response;
+        return true;
     }
 
     public Long editAd(long id, AdFormDetails adDTO, String email) {

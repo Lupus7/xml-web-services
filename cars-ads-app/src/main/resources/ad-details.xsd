@@ -28,8 +28,7 @@
     <xs:element name="activateAdResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="id" type="xs:long"/>
-                <xs:element name="active" type="xs:boolean"/>
+                <xs:element name="response" type="xs:boolean"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -45,8 +44,7 @@
     <xs:element name="deactivateAdResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="id" type="xs:long"/>
-                <xs:element name="active" type="xs:boolean"/>
+                <xs:element name="response" type="xs:boolean"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

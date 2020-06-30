@@ -27,4 +27,12 @@ public class UserUtilityController {
             return ResponseEntity.badRequest().body(null);
         return ResponseEntity.ok(userAuthInfo);
     }
+
+    @GetMapping(value = "/user/{id}")
+    public ResponseEntity<String> getUserEmail(@PathVariable("id") Long id) {
+        String email = userUtilityService.getUserEmail(id);
+        if (email != null)
+            return ResponseEntity.ok(email);
+        return ResponseEntity.badRequest().body(null);
+    }
 }
