@@ -25,7 +25,9 @@ func NewCarHandler(cs *service.CarService) *CarHandler {
 }
 
 func (ch *CarHandler) FindAll(c echo.Context) error {
+	api := os.Getenv("API_GATEWAY")
 	ads, err := ch.CarService.FindAll()
+	client := &http.Client{}
 	if err != nil {
 		return err
 	}
@@ -36,7 +38,29 @@ func (ch *CarHandler) FindAll(c echo.Context) error {
 			return err
 		}
 		images, err := ch.CarService.FindImagesByCarId(car.Id)
-		carsDto = append(carsDto, toResponse(ad, car, images, 0))
+
+		url := fmt.Sprintf("http://%s:8080/community/rate/%v",api,car.Id)
+		fmt.Println(url)
+
+		resp, err := client.Get(url)
+		if err != nil{
+			fmt.Errorf(err.Error())
+			return err
+		}
+
+		respString, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println(err.Error())
+			return err
+		}
+
+		rateFloat, err := strconv.ParseFloat(string(respString), 32)
+		if err != nil {
+			return err
+		}
+
+
+		carsDto = append(carsDto, toResponse(ad, car, images, float32(rateFloat)))
 	}
 
 	return c.JSON(http.StatusOK, carsDto)
