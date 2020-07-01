@@ -12,7 +12,8 @@
                 <th style="width:30%" colspan="1">
                     <center>
                     <b-button
-                        class="btn btn-danger"
+                        class="btn btn-primary"
+                        variant="primary"
                         href="#"
                         data-toggle="modal"
                         data-target="#newad"

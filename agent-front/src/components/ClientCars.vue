@@ -12,8 +12,9 @@
                 <th style="width:30%" colspan="1">
                     <center>
                     <b-button
-                        class="btn btn-danger"
+                        class="btn btn-primary"
                         href="#"
+                        variant="primary"
                         data-toggle="modal"
                         data-target="#newcar"
                     >
@@ -651,6 +652,9 @@ export default {
                 })
                 .then(response => {
                     let responseString = response.data;
+
+                      if(this.imagesE.length === 0)
+                        return;
                      axios
                         .put("/cars/images/"+this.editCarId, {
                             images:this.imagesE
@@ -761,6 +765,9 @@ export default {
                     description: this.descriptionF,
                 })
                 .then(response => {
+
+                        if(this.images.length === 0)
+                        return;
                 
                        axios
                         .put("/cars/images/"+response.data, {

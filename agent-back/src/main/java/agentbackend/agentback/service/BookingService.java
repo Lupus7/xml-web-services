@@ -111,7 +111,7 @@ public class BookingService {
         Long adId = null;
         for (Booking b : reservedBookings.values()) {
             adId = b.getAd().getId();
-            ArrayList<Booking> bookings = bookingRepo.findAllByAd(b.getAd().getId());
+            List<Booking> bookings = bookingRepo.findAllByAd(b.getAd());
             for (Booking b1 : bookings) {
                 if (reservedBookings.containsKey(b1.getId()))
                     continue;
@@ -120,7 +120,7 @@ public class BookingService {
             }
         }
 
-        adService.deactivateAd(adId, email + ";MASTER");
+        adService.deactivateAd(adId, email);
 
 
         return reservedBookings;
@@ -180,20 +180,23 @@ public class BookingService {
         return true;
     }
 
-    public Set<BookingDTO> getAllBookingRequestsFromOthers(String email) {
+    public Set<BookingDTO> getAllReceivedBookingRequests(String email) {
         Set<BookingDTO> bookingDTOS = new HashSet<>();
 
         User user = userRepository.findByEmail(email);
+
+        if(user == null)
+            return bookingDTOS;
 
         List<Ad> ads = adRepository.findAllByOwner(user.getEmail());
         if (ads == null)
             return bookingDTOS;
 
-        ads.forEach(ad -> {
-            bookingRepo.findAllByAd(ad.getId()).forEach(book -> {
-                bookingDTOS.add(new BookingDTO(book));
-            });
-        });
+        for(Ad ad:ads){
+            List<Booking> bookings = bookingRepo.findAllByAd(ad);
+            for(Booking b:bookings)
+                bookingDTOS.add(new BookingDTO(b));
+        }
 
         return bookingDTOS;
     }
