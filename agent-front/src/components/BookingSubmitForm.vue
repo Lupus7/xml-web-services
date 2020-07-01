@@ -145,7 +145,7 @@ export default {
             });
         },
     },
-    created() {
+    mounted() {
         axios.get("/api/ad/client").then((response) => {
             response.data.forEach((element) => {
                 this.options.push({

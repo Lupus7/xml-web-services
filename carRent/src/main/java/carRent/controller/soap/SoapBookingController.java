@@ -26,6 +26,7 @@ public class SoapBookingController {
     @Autowired
     BundleService bundleService;
 
+    // Rezervisanje bookinga/bundla
     @PayloadRoot(namespace = SoapProperties.NAMESPACE_URI, localPart = "reserveBookingRequest")
     @ResponsePayload
     public ReserveBookingResponse reserveBooking(@RequestPayload ReserveBookingRequest request) {
@@ -43,6 +44,7 @@ public class SoapBookingController {
         return response;
     }
 
+    // Prihvatanje bookinga
     @PayloadRoot(namespace = SoapProperties.NAMESPACE_URI, localPart = "acceptBookingRequest")
     @ResponsePayload
     public AcceptBookingResponse acceptBooking(@RequestPayload AcceptBookingRequest request) throws JSONException {
@@ -51,7 +53,6 @@ public class SoapBookingController {
         response.setResponse("Booking accepted!");
         return response;
     }
-
 
     @PayloadRoot(namespace = SoapProperties.NAMESPACE_URI, localPart = "checkingBookingRequest")
     @ResponsePayload
@@ -62,6 +63,7 @@ public class SoapBookingController {
         return response;
     }
 
+    //  nece trebati ne salje agent zahteve
     @PayloadRoot(namespace = SoapProperties.NAMESPACE_URI, localPart = "deleteBookingRequest")
     @ResponsePayload
     public DeleteBookingResponse deleteBooking(@RequestPayload DeleteBookingRequest request) throws JSONException {
@@ -71,6 +73,7 @@ public class SoapBookingController {
         return response;
     }
 
+    // Odbijanje Bookinga
     @PayloadRoot(namespace = SoapProperties.NAMESPACE_URI, localPart = "rejectBookingRequest")
     @ResponsePayload
     public RejectBookingResponse rejectBooking(@RequestPayload RejectBookingRequest request) throws JSONException {
@@ -80,6 +83,7 @@ public class SoapBookingController {
         return response;
     }
 
+    // Pokupi sve bookinge
     @PayloadRoot(namespace = SoapProperties.NAMESPACE_URI, localPart = "getBookingsRequest")
     @ResponsePayload
     public GetBookingsResponse getBookings(@RequestPayload GetBookingsRequest request) throws DatatypeConfigurationException {
@@ -91,7 +95,7 @@ public class SoapBookingController {
     }
 
     // za bundle
-
+    // Prihvatanje bundla
     @PayloadRoot(namespace = SoapProperties.NAMESPACE_URI, localPart = "acceptBundleRequest")
     @ResponsePayload
     public AcceptBundleResponse acceptBundle(@RequestPayload AcceptBundleRequest request) {
@@ -100,7 +104,7 @@ public class SoapBookingController {
         response.setResponse("Bundle request accepted!");
         return response;
     }
-
+    // Odbijanje bundla
     @PayloadRoot(namespace = SoapProperties.NAMESPACE_URI, localPart = "rejectBundleRequest")
     @ResponsePayload
     public RejectBundleResponse rejectBundle(@RequestPayload RejectBundleRequest request) {

@@ -657,6 +657,8 @@ export default {
                 })
                 .then(response => {
                     let responseString = response.data;
+                      if(this.imagesE.length === 0)
+                        return;
                      axios
                         .put("/cars-ads/cars/"+this.editCarId+"/images", {
                             images:this.imagesE
@@ -766,7 +768,10 @@ export default {
                     childrenSeats: this.seats_numberF,
                     description: this.descriptionF,
                 })
-                .then(response => {         
+                .then(response => {    
+
+                    if(this.images.length === 0)
+                        return;     
                      axios
                         .put("/cars-ads/cars/"+response.data+"/images", {
                             images:this.images

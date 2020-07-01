@@ -2,17 +2,28 @@ package agentbackend.agentback.soapClient;
 
 import agentbackend.agentback.config.SoapProperties;
 import agentbackend.agentback.controller.dto.AdDTO;
+import agentbackend.agentback.model.Car;
+import agentbackend.agentback.repository.CarRepository;
 import com.car_rent.agent_api.wsdl.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 
+import java.util.Optional;
+
 public class AdSoapClient extends WebServiceGatewaySupport {
+
+    @Autowired
+    CarRepository carRepository;
 
     public CreateAdResponse createAd(AdDTO adDTO, String email) {
         CreateAdRequest request = new CreateAdRequest();
 
+        Optional<Car> car = carRepository.findById(adDTO.getCarId());
+
         AdFormDetails adDetails = new AdFormDetails();
-        adDetails.setCarId(adDTO.getCarId());
+        if(car.isPresent())
+            adDetails.setCarId(car.get().getServiceId());
         adDetails.setPlace(adDTO.getPlace());
         adDetails.setStartDate(adDTO.getStartDate());
         adDetails.setEndDate(adDTO.getEndDate());

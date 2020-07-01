@@ -2,14 +2,21 @@ package agentbackend.agentback.soapClient;
 
 import agentbackend.agentback.config.SoapProperties;
 import agentbackend.agentback.controller.dto.BundleDTO;
+import agentbackend.agentback.model.Ad;
+import agentbackend.agentback.repository.AdRepository;
 import com.car_rent.agent_api.wsdl.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class BookingSoapClient extends WebServiceGatewaySupport {
+
+    @Autowired
+    AdRepository adRepository;
 
     public ReserveBookingResponse reserveBooking(BundleDTO bundleDTO, String email) {
 
@@ -18,7 +25,9 @@ public class BookingSoapClient extends WebServiceGatewaySupport {
         bundleDetails.setLoaner(bundleDTO.getLoaner());
         bundleDetails.getBooksDetails().addAll(bundleDTO.getBooks().stream().map(bookDTO -> {
             BookDetails bookDetails = new BookDetails();
-            bookDetails.setAdId(bookDTO.getAdId());
+            Optional<Ad> ad = adRepository.findById(bookDTO.getAdId());
+            if(ad.isPresent())
+                bookDetails.setAdId(ad.get().getServiceId());
             try {
                 bookDetails.setEndDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(bookDTO.getEndDate().toString()+":00"));
                 bookDetails.setStartDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(bookDTO.getStartDate().toString()+":00"));

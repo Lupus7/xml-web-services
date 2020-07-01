@@ -191,16 +191,12 @@ public class AdService {
 
         List<Ad> ads = adRepo.findAllByOwner(user.getEmail());
         for (Ad ad : ads) {
-            Optional<Car> car = carRepo.findById(ad.getCar().getId());
-            if (car.isPresent()) {
-                List<Image> images = imageRepo.findAllByCarId(car.get().getId());
-                if (images == null)
-                    images = new ArrayList<>();
-                AdClientDTO adClientDTO = new AdClientDTO(ad, car.get(), images);
-                adClientDTOS.add(adClientDTO);
-            }
-        }
+            List<Image> images = imageRepo.findAllByCar(ad.getCar());
+            if (images == null)
+                images = new ArrayList<>();
+            adClientDTOS.add(new AdClientDTO(ad, ad.getCar(), images));
 
+        }
         return adClientDTOS;
     }
 

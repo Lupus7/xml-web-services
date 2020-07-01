@@ -71,9 +71,9 @@ public class BookingController {
 
     // Get all booking that agent got
     @GetMapping(value = "/api/booking/request")
-    public ResponseEntity<Set<BookingDTO>> getAllPersonalBookingRequests(Principal user) throws JSONException {
+    public ResponseEntity<Set<BookingDTO>> getAllReceivedBookingRequests(Principal user) throws JSONException {
 
-        return ResponseEntity.ok(bookingService.getAllBookingRequestsFromOthers(user.getName()));
+        return ResponseEntity.ok(bookingService.getAllReceivedBookingRequests(user.getName()));
 
     }
 
