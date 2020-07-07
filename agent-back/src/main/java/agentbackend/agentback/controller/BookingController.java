@@ -35,7 +35,7 @@ public class BookingController {
     @PutMapping(value = "/api/booking/{id}")
     public ResponseEntity<String> acceptBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
-        if (bookingService.acceptBookingRequest(id, user))
+        if (bookingService.acceptBookingRequest(id, user.getName()))
             return ResponseEntity.ok("Booking request reserved!");
         else
             return ResponseEntity.status(400).body("Could not accept");
@@ -63,7 +63,7 @@ public class BookingController {
     @DeleteMapping(value = "/api/booking/reject/{id}")
     public ResponseEntity<String> rejectBookingRequest(@PathVariable(value = "id") Long id, Principal user) throws JSONException {
 
-        if (bookingService.rejectBookingRequest(id, user))
+        if (bookingService.rejectBookingRequest(id, user.getName()))
             return ResponseEntity.ok("Booking request canceled!");
         else
             return ResponseEntity.status(400).body("Could not accept");

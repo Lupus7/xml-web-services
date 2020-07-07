@@ -27,7 +27,7 @@ public class AdClientDTO {
     private String carClass;
     private String fuel;
     private String transmission;
-    private List<String> images;
+    private List<String> images = new ArrayList<>();
     private boolean active;
     private String advertiser;
 

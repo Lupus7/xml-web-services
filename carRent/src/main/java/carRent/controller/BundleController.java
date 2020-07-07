@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class BundleController {
@@ -52,12 +53,12 @@ public class BundleController {
     }
 
 
-    /*// Get all bundle request client received
+    //Get all bundle request client received
     @GetMapping(value = "/api/bundle/request", produces = "application/json")
     @PreAuthorize("hasAuthority('READ_BOOKINGS')")
     public ResponseEntity<Set<GetBundleDTO>> getAllReceivedBundleRequests(Principal user){
         return ResponseEntity.ok(bundleService.getAllReceivedBundleRequests(user.getName()));
-    }*/
+    }
 
     // Get all bundle request client send
     @GetMapping(value = "/api/bundle", produces = "application/json")

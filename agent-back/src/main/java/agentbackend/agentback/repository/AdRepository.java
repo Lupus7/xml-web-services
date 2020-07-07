@@ -18,4 +18,6 @@ public interface AdRepository extends JpaRepository<Ad,Long> {
     List<Ad> findAllByActive(boolean b);
 
     List<Ad> findAllByCar(Car car);
+
+    Ad findByServiceId(Long ad);
 }

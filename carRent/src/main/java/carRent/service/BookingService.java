@@ -3,10 +3,7 @@ package carRent.service;
 import carRent.model.Booking;
 import carRent.model.Bundle;
 import carRent.model.RequestState;
-import carRent.model.dto.AdClientDTO;
-import carRent.model.dto.BookDTO;
-import carRent.model.dto.BookingDTO;
-import carRent.model.dto.BundleDTO;
+import carRent.model.dto.*;
 import carRent.proxy.CarsAdsProxy;
 import carRent.proxy.UserProxy;
 import carRent.repository.BookingRepository;
@@ -51,6 +48,8 @@ public class BookingService {
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
+        List<Booking> bookingInBundle = new ArrayList<>();
+
         Long userId = userIdResponse.getBody();
 
         Bundle bundle = new Bundle();
@@ -82,7 +81,7 @@ public class BookingService {
                 bundle.getBookings().add(booking);
 
                 bookingRepo.save(booking);
-
+                bookingInBundle.add(booking);
 
                 new java.util.Timer().schedule(
                         new java.util.TimerTask() {
@@ -101,6 +100,10 @@ public class BookingService {
 
             }
             bundleRepository.save(bundle);
+            for (Booking b : bookingInBundle) {
+                b.setBundle(bundle);
+                bookingRepo.save(b);
+            }
         } else {
             if (bundleDTO.getBooks().get(0) == null || bundleDTO.getBooks().get(0).getAdId() == null || bundleDTO.getBooks().get(0).getEndDate() == null || bundleDTO.getBooks().get(0).getStartDate() == null || bundleDTO.getBooks().get(0).getPlace() == null)
                 return false;
@@ -222,8 +225,10 @@ public class BookingService {
             for (Booking b1 : bookings) {
                 if (reservedBookings.containsKey(b1.getId()))
                     continue;
-                b1.setState(RequestState.CANCELED);
-                bookingRepo.save(b1);
+                if (b1.getState().equals(RequestState.PENDING)) {
+                    b1.setState(RequestState.CANCELED);
+                    bookingRepo.save(b1);
+                }
             }
         }
 
@@ -248,7 +253,7 @@ public class BookingService {
         List<Booking> bookings = bookingRepo.findAllByAdAndBundleId(booking.get().getAd(), null);
 
         for (Booking b : bookings) {
-            if (booking.get().getId() != b.getId()) {
+            if (booking.get().getId() != b.getId() && booking.get().getState().equals(RequestState.PENDING)) {
                 b.setState(RequestState.CANCELED);
                 bookingRepo.save(b);
             }
@@ -341,11 +346,11 @@ public class BookingService {
         if (adsResponse == null || adsResponse.getStatusCode().isError() || adsResponse.getBody() == null)
             return bookingDTOS;
 
-        adsResponse.getBody().forEach(ad -> {
-            bookingRepo.findAllByIdAndBundleId(ad.getAdId(), null).forEach(book -> {
+        for (AdClientDTO ad : adsResponse.getBody()) {
+            List<Booking> bookings = bookingRepo.findAllByAdAndBundleId(ad.getAdId(), null);
+            for (Booking book : bookings)
                 bookingDTOS.add(new BookingDTO(book));
-            });
-        });
+        }
 
         return bookingDTOS;
     }
@@ -362,7 +367,7 @@ public class BookingService {
             return false;
 
         String adsIds = (String) object.get("ads");
-        if(adsIds.equals("NONE"))
+        if (adsIds.equals("NONE"))
             return true;
 
         String[] str = adsIds.split(";");
@@ -388,7 +393,7 @@ public class BookingService {
 
         JSONObject object = new JSONObject(id);
         String idd = (String) object.get("ads");
-        if(idd.equals("NONE"))
+        if (idd.equals("NONE"))
             return true;
 
         String[] str = idd.split(";");
@@ -413,6 +418,16 @@ public class BookingService {
             return new BookingDTO(booking.get());
 
         return new BookingDTO();
+    }
+
+    public Boolean checkStates(Long id, String name) {
+
+        List<Booking> bookings = bookingRepo.findAllByAd(id);
+        for (Booking b : bookings)
+            if (b.getState().equals(RequestState.PAID) || b.getState().equals(RequestState.ENDED))
+                return false;
+
+        return true;
     }
 
     @Scheduled(cron = "0 0 0 * * *")
@@ -447,52 +462,50 @@ public class BookingService {
         return true;
     }
 
+    // soap bookings
+    public Set<SoapBookingDTO> getAllReceivedBookingRequestsSoap(String email) {
+        Set<SoapBookingDTO> bookingDTOS = new HashSet<>();
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        if (userIdResponse == null || userIdResponse.getBody() == null) // provera da li postoji
+            return bookingDTOS;
+
+        ResponseEntity<List<AdClientDTO>> adsResponse = carsAdsProxy.getClientAds(email + ";MASTER");
+        if (adsResponse == null || adsResponse.getStatusCode().isError() || adsResponse.getBody() == null)
+            return bookingDTOS;
+
+        for (AdClientDTO ad : adsResponse.getBody()) {
+            System.out.println("Ad id: " + ad.getAdId());
+            List<Booking> bookings = bookingRepo.findAllByAdAndBundleId(ad.getAdId(), null);
+            for (Booking book : bookings) {
+                ResponseEntity<String> loaner = userProxy.getUserEmail(book.getLoaner());
+                if (loaner != null && loaner.getBody() != null && !loaner.getBody().equals(""))
+                    bookingDTOS.add(new SoapBookingDTO(book, loaner.getBody()));
+            }
+        }
+
+        return bookingDTOS;
+    }
+
     // MAPPING
     public BundleDTO mappingDto(BundleDetails bundleDetails) {
         return new BundleDTO(bundleDetails);
     }
 
 
-    public List<BookingDetails> mappingDtoList(ArrayList<BookingDTO> bookings) throws DatatypeConfigurationException {
-        List<BookingDetails> bookingDetails = new ArrayList<>();
-        for (BookingDTO bookingDTO : bookings) {
-            BookingDetails bookingDetail = new BookingDetails();
-            bookingDetail.setAd(bookingDTO.getAd());
-            bookingDetail.setAdvertiser(bookingDTO.getAdvertiser());
-            bookingDetail.setCreated(DatatypeFactory.newInstance().newXMLGregorianCalendar(bookingDTO.getCreated().toString()));
-            bookingDetail.setStartDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(bookingDTO.getStartDate().toString()));
-            bookingDetail.setEndDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(bookingDTO.getEndDate().toString()));
-            bookingDetail.setId(bookingDTO.getId());
-            bookingDetail.setPlace(bookingDTO.getPlace());
-
-            if (bookingDTO.getState().equals(RequestState.PENDING))
-                bookingDetail.setState(0);
-            else if (bookingDTO.getState().equals(RequestState.PAID))
-                bookingDetail.setState(1);
-            else if (bookingDTO.getState().equals(RequestState.CANCELED))
-                bookingDetail.setState(2);
-            else if (bookingDTO.getState().equals(RequestState.ENDED))
-                bookingDetail.setState(3);
-
-            bookingDetails.add(bookingDetail);
-        }
-
-        return bookingDetails;
-    }
-
-
-    public Set<BookingDetails> mappingDtoArray(Set<BookingDTO> bookings) throws DatatypeConfigurationException {
-
+    public Set<BookingDetails> mappingDtoArray(Set<SoapBookingDTO> bookings) throws DatatypeConfigurationException {
         Set<BookingDetails> bookingDetails = new HashSet<>();
-        for (BookingDTO bookingDTO : new ArrayList<>(bookings)) {
+        List<SoapBookingDTO> bookingDTOList = new ArrayList<>();
+        bookingDTOList.addAll(bookings);
+        for (SoapBookingDTO bookingDTO : bookingDTOList) {
             BookingDetails bookingDetail = new BookingDetails();
             bookingDetail.setAd(bookingDTO.getAd());
-            bookingDetail.setAdvertiser(bookingDTO.getAdvertiser());
+            bookingDetail.setAdvertiser(bookingDTO.getLoaner());
             bookingDetail.setId(bookingDTO.getId());
             bookingDetail.setPlace(bookingDTO.getPlace());
-            bookingDetail.setCreated(DatatypeFactory.newInstance().newXMLGregorianCalendar(bookingDTO.getCreated().toString()));
-            bookingDetail.setStartDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(bookingDTO.getStartDate().toString()));
-            bookingDetail.setEndDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(bookingDTO.getEndDate().toString()));
+
+            bookingDetail.setCreated(DatatypeFactory.newInstance().newXMLGregorianCalendar(bookingDTO.getCreated().toLocalDate().toString()));
+            bookingDetail.setStartDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(bookingDTO.getStartDate().toLocalDate().toString()));
+            bookingDetail.setEndDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(bookingDTO.getEndDate().toLocalDate().toString()));
 
             if (bookingDTO.getState().equals(RequestState.PENDING))
                 bookingDetail.setState(0);
@@ -507,14 +520,6 @@ public class BookingService {
         }
 
         return bookingDetails;
-    }
-
-    public BookingDetails mappingBookingDTO(BookingDTO booking) {
-
-        BookingDetails bookingDetails = new BookingDetails();
-
-        return bookingDetails;
-
     }
 
 

@@ -16,7 +16,7 @@ public class Bundle {
     @Column
     private Long loaner;
 
-    @OneToMany()
+    @OneToMany(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
     private List<Booking> bookings;
 
     public Bundle() {

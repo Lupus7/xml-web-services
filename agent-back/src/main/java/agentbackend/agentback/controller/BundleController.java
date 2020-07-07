@@ -1,16 +1,15 @@
 package agentbackend.agentback.controller;
 
+import agentbackend.agentback.controller.dto.GetBundleDTO;
 import agentbackend.agentback.service.BundleService;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Set;
 
 @RestController
 public class BundleController {
@@ -37,6 +36,12 @@ public class BundleController {
             return ResponseEntity.ok("Bundle request canceled!");
         else
             return ResponseEntity.status(400).body("Could not accept");
+    }
+
+    //Get all bundle request client received
+    @GetMapping(value = "/api/bundle", produces = "application/json")
+    public ResponseEntity<Set<GetBundleDTO>> getAllReceivedBundleRequests(Principal user){
+        return ResponseEntity.ok(bundleService.getAllReceivedBundleRequests(user.getName()));
     }
 
 }
