@@ -39,11 +39,11 @@ func (ch *CarHandler) FindAll(c echo.Context) error {
 		}
 		images, err := ch.CarService.FindImagesByCarId(car.Id)
 
-		url := fmt.Sprintf("http://%s:8080/community/rate/%v",api,car.Id)
+		url := fmt.Sprintf("http://%s:8080/community/rate/%v", api, car.Id)
 		fmt.Println(url)
 
 		resp, err := client.Get(url)
-		if err != nil{
+		if err != nil {
 			fmt.Errorf(err.Error())
 			return err
 		}
@@ -58,7 +58,6 @@ func (ch *CarHandler) FindAll(c echo.Context) error {
 		if err != nil {
 			return err
 		}
-
 
 		carsDto = append(carsDto, toResponse(ad, car, images, float32(rateFloat)))
 	}
@@ -87,11 +86,11 @@ func (ch *CarHandler) SearchAds(c echo.Context) error {
 		}
 		images, err := ch.CarService.FindImagesByCarId(car.Id)
 
-		url := fmt.Sprintf("http://%s:8080/community/rate/%v",api,car.Id)
+		url := fmt.Sprintf("http://%s:8080/community/rate/%v", api, car.Id)
 		fmt.Println(url)
 
 		resp, err := client.Get(url)
-		if err != nil{
+		if err != nil {
 			fmt.Errorf(err.Error())
 			return err
 		}
@@ -238,7 +237,7 @@ func toResponse(ad *model.Ad, car *model.Car, images []*model.Image, rating floa
 		collisionDamage = "allowed"
 	}
 	allowedMileage := "UNLIMITED"
-	if car.AllowedMileage == 0 {
+	if car.AllowedMileage != 0 {
 		allowedMileage = fmt.Sprintf("%f", car.AllowedMileage)
 	}
 	carImages := []string{}
