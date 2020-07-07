@@ -1,5 +1,7 @@
 package carRent.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -33,7 +35,7 @@ public class Booking {
     @Column(name = "loaner", nullable = false)
     private Long loaner;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
     @JoinColumn(name = "bundle_id", referencedColumnName = "id")
     private Bundle bundle;
 

@@ -1,7 +1,8 @@
 package carRent.controller.soap;
 
 import carRent.model.Booking;
-import carRent.model.dto.BookingDTO;
+import carRent.model.dto.GetBundleDTO;
+import carRent.model.dto.SoapBookingDTO;
 import carRent.service.BookingService;
 import carRent.service.BundleService;
 import carRent.soap.SoapProperties;
@@ -88,9 +89,11 @@ public class SoapBookingController {
     @ResponsePayload
     public GetBookingsResponse getBookings(@RequestPayload GetBookingsRequest request) throws DatatypeConfigurationException {
         GetBookingsResponse response = new GetBookingsResponse();
-        Set<BookingDTO> bookings = bookingService.getAllReceivedBookingRequests(request.getEmail());
+        Set<SoapBookingDTO> bookings = bookingService.getAllReceivedBookingRequestsSoap(request.getEmail());
         Set<BookingDetails> bookingDetails = bookingService.mappingDtoArray(bookings);
-        response.getResponse().addAll(bookingDetails);
+        for(BookingDetails b: bookingDetails)
+            response.getResponse().add(b);
+
         return response;
     }
 
@@ -111,6 +114,17 @@ public class SoapBookingController {
         RejectBundleResponse response = new RejectBundleResponse();
         bundleService.rejectBundleRequest(request.getId(), request.getEmail());
         response.setResponse("Bundle request rejected!");
+        return response;
+    }
+    //svi bundle zahtevi
+    @PayloadRoot(namespace = SoapProperties.NAMESPACE_URI, localPart = "getBundlesRequest")
+    @ResponsePayload
+    public GetBundlesResponse getBundles(@RequestPayload GetBundlesRequest request) throws DatatypeConfigurationException {
+        GetBundlesResponse response = new GetBundlesResponse();
+        Set<GetBundleDTO> bundlesDto = bundleService.getAllReceivedBundleRequests(request.getEmail());
+        Set<BundleDetail> details = bundleService.mapBundleToDetail(bundlesDto);
+        for(BundleDetail bd: details)
+            response.getResponse().add(bd);
         return response;
     }
 

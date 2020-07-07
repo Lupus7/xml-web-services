@@ -138,4 +138,10 @@ public class BookingController {
         else
             return ResponseEntity.status(400).body("Could not accept");
     }
+
+    @GetMapping(value = "/api/booking/state/{id}", produces = "application/json")
+    @PreAuthorize("hasAuthority('MASTER')")
+    public ResponseEntity<Boolean> checkStates(@PathVariable("id") Long id, Principal user) {
+        return ResponseEntity.ok(bookingService.checkStates(id, user.getName()));
+    }
 }

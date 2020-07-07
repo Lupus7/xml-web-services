@@ -5,10 +5,12 @@ import CarsAdsApp.model.Car;
 import CarsAdsApp.model.Image;
 import CarsAdsApp.model.dto.AdClientDTO;
 import CarsAdsApp.model.dto.AdDTO;
+import CarsAdsApp.proxy.RentProxy;
 import CarsAdsApp.proxy.UserProxy;
 import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.CarRepository;
 import CarsAdsApp.repository.ImageRepository;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,6 +42,9 @@ public class AdService {
 
     @Autowired
     UserProxy userProxy;
+
+    @Autowired
+    RentProxy rentProxy;
 
     public int createAd(AdDTO adDTO, String email) {
 
@@ -103,13 +108,16 @@ public class AdService {
         Long userId = userIdResponse.getBody();
 
         Optional<Ad> ad = adRepo.findById(id);
-        if (!ad.isPresent() || ad.get().getOwnerId() != userId || ad.get().isActive())
+        if (!ad.isPresent() || ad.get().getOwnerId() != userId)
             return 400;
 
         ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
         if (ads.size() == 3)
             return 402;
 
+        ResponseEntity<Boolean> check = rentProxy.checkState(id,email+";MASTER");
+        if(check == null || !check.getBody())
+            return 405;
 
         ad.get().setActive(true);
         adRepo.save(ad.get());
@@ -126,7 +134,7 @@ public class AdService {
         Long userId = userIdResponse.getBody();
 
         Optional<Ad> ad = adRepo.findById(id);
-        if (!ad.isPresent() || ad.get().getOwnerId() != userId || !ad.get().isActive())
+        if (!ad.isPresent() || ad.get().getOwnerId() != userId)
             return false;
 
         ad.get().setActive(false);
@@ -179,6 +187,7 @@ public class AdService {
         List<AdClientDTO> adClientDTOS = new ArrayList<>();
 
         List<Ad> ads = adRepo.findAllByOwnerId(userId);
+
         for (Ad ad : ads) {
             Optional<Car> car = carRepo.findById(ad.getCarId());
             if (car.isPresent()) {
@@ -189,6 +198,7 @@ public class AdService {
                 adClientDTOS.add(adClientDTO);
             }
         }
+
 
         return adClientDTOS;
     }

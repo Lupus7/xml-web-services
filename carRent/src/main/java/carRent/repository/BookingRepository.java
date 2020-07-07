@@ -22,4 +22,6 @@ public interface BookingRepository extends JpaRepository<Booking,Long> {
     List<Booking> findAllByAdAndBundleId(Long ad, Long bundle_id);
 
     ArrayList<Booking> findAllByLoanerAndBundleId(Long userId, Long bundle_id);
+
+    List<Booking> findAllByAdAndBundleIdNotNull(Long adId);
 }

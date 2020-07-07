@@ -52,6 +52,8 @@ public class AdController {
             return ResponseEntity.ok("Ad successfully deactivated!");
         else if (response == 402)
             return ResponseEntity.status(402).body("You have already 3 ads!");
+        else if (response == 405)
+            return ResponseEntity.status(405).body("Ad aldready rented!");
         else
             return ResponseEntity.status(400).body("Could not accept");
 

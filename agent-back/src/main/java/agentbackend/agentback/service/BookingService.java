@@ -10,6 +10,8 @@ import agentbackend.agentback.repository.BookingRepository;
 import agentbackend.agentback.repository.BundleRepository;
 import agentbackend.agentback.repository.UserRepository;
 import agentbackend.agentback.soapClient.BookingSoapClient;
+import com.car_rent.agent_api.wsdl.BookingDetails;
+import com.car_rent.agent_api.wsdl.GetBookingsResponse;
 import com.car_rent.agent_api.wsdl.ReserveBookingResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -126,76 +128,89 @@ public class BookingService {
         return reservedBookings;
     }
 
-    public boolean acceptBookingRequest(Long id, Principal user) throws JSONException {
-        User userr = userRepository.findByEmail(user.getName());
-        if (userr == null)
+    public boolean acceptBookingRequest(Long id, String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null)
             return false;
 
         Optional<Booking> booking = bookingRepo.findById(id);
         if (!booking.isPresent())
             return false;
 
+        if(booking.get().getAd() == null || !booking.get().getAd().getOwner().equals(user.getEmail()))
+            return false;
+
         booking.get().setState(RequestState.PAID);
         bookingRepo.save(booking.get());
 
-        //Deactivate AD
-        Optional<Ad> ad = adRepository.findById(booking.get().getAd().getId());
-        ad.get().setActive(false);
-        adRepository.save(ad.get());
+        booking.get().getAd().setActive(false);
+        adRepository.save(booking.get().getAd());
+
+        List<Booking> bookings = bookingRepo.findAllByAd(booking.get().getAd());
+        for (Booking b : bookings) {
+            if (b.getState().equals(RequestState.PENDING) && b.getId() != id) {
+                b.setState(RequestState.CANCELED);
+                bookingRepo.save(b);
+            }
+
+        }
 
         if (booking.get().getServiceId() != null)
-            bookingSoapClient.acceptBooking(booking.get().getServiceId(), user.getName());
+            bookingSoapClient.acceptBooking(booking.get().getServiceId(), user.getEmail());
 
         return true;
     }
 
-    public boolean rejectBookingRequest(Long id, Principal user) throws JSONException {
+    public boolean rejectBookingRequest(Long id, String email) {
 
-        User userr = userRepository.findByEmail(user.getName());
-        if (userr == null)
+        User user = userRepository.findByEmail(email);
+        if (user == null)
             return false;
 
         Optional<Booking> booking = bookingRepo.findById(id);
         if (!booking.isPresent() || booking.get().getState() != RequestState.PENDING)
             return false;
 
-        Ad ad = adRepository.getOne(booking.get().getAd().getId());
-        if (ad == null) {
+        if(booking.get().getAd() == null || !booking.get().getAd().getOwner().equals(user.getEmail()))
             return false;
-        }
-
-        User owner = userRepository.findByEmail(ad.getOwner());
-        if (owner.getId() == userr.getId()) {
-            return false;
-        }
 
         booking.get().setState(RequestState.CANCELED);
         bookingRepo.save(booking.get());
 
-
         if (booking.get().getServiceId() != null)
-            bookingSoapClient.rejectBooking(booking.get().getServiceId(), user.getName());
+            bookingSoapClient.rejectBooking(booking.get().getServiceId(), user.getEmail());
 
 
         return true;
     }
 
     public Set<BookingDTO> getAllReceivedBookingRequests(String email) {
+
         Set<BookingDTO> bookingDTOS = new HashSet<>();
-
         User user = userRepository.findByEmail(email);
-
-        if(user == null)
+        if (user == null)
             return bookingDTOS;
+
+        GetBookingsResponse serviceBookings = bookingSoapClient.getBookings(email);
+        for (BookingDetails bookDetail : serviceBookings.getResponse()) {
+            Booking b = bookingRepo.findByServiceIdAndBundleId(bookDetail.getId(), null);
+            if (b == null) {
+                Ad ad = adRepository.findByServiceId(bookDetail.getAd());
+                Booking booking = new Booking(bookDetail, ad);
+                bookingRepo.save(booking);
+            }
+        }
+
 
         List<Ad> ads = adRepository.findAllByOwner(user.getEmail());
         if (ads == null)
             return bookingDTOS;
 
-        for(Ad ad:ads){
-            List<Booking> bookings = bookingRepo.findAllByAd(ad);
-            for(Booking b:bookings)
+        for (Ad ad : ads) {
+            List<Booking> bookings = bookingRepo.findAllByAdAndBundleId(ad, null);
+            for (Booking b : bookings)
                 bookingDTOS.add(new BookingDTO(b));
+
         }
 
         return bookingDTOS;

@@ -3,14 +3,8 @@ package agentbackend.agentback.service;
 
 import agentbackend.agentback.controller.dto.AdClientDTO;
 import agentbackend.agentback.controller.dto.AdDTO;
-import agentbackend.agentback.model.Ad;
-import agentbackend.agentback.model.Car;
-import agentbackend.agentback.model.Image;
-import agentbackend.agentback.model.User;
-import agentbackend.agentback.repository.AdRepository;
-import agentbackend.agentback.repository.CarRepository;
-import agentbackend.agentback.repository.ImageRepository;
-import agentbackend.agentback.repository.UserRepository;
+import agentbackend.agentback.model.*;
+import agentbackend.agentback.repository.*;
 import agentbackend.agentback.soapClient.AdSoapClient;
 import com.car_rent.agent_api.wsdl.ActivateAdResponse;
 import com.car_rent.agent_api.wsdl.CreateAdResponse;
@@ -47,10 +41,13 @@ public class AdService {
     @Autowired
     private AdSoapClient adSoapClient;
 
+    @Autowired
+    BookingRepository bookingRepository;
+
     public int createAd(AdDTO adDTO, String email) {
         User user = userRepository.findByEmail(email);
         if (user == null)
-           return 400;
+            return 400;
 
 
         if (adDTO == null)
@@ -103,7 +100,7 @@ public class AdService {
 
         User user = userRepository.findByEmail(email);
         if (user == null)
-           return false;
+            return false;
 
         Optional<Ad> ad = adRepo.findById(id);
         User owner = userRepository.findByEmail(ad.get().getOwner());
@@ -111,12 +108,19 @@ public class AdService {
         if (!ad.isPresent() || !owner.getEmail().equals(user.getEmail()) || ad.get().isActive())
             return false;
 
+        List<Booking> bookings = bookingRepository.findAllByAd(ad.get());
+        for (Booking b : bookings) {
+            if (b.getState().equals(RequestState.PAID) || b.getState().equals(RequestState.ENDED))
+                return false;
+        }
+
+
         ad.get().setActive(true);
         adRepo.save(ad.get());
 
         if (ad.get().getServiceId() != null) {
             ActivateAdResponse response = adSoapClient.activateAd(ad.get().getServiceId(), email);
-            if(!response.isResponse())
+            if (!response.isResponse())
                 return false;
         }
 
@@ -139,7 +143,7 @@ public class AdService {
 
         if (ad.get().getServiceId() != null) {
             DeactivateAdResponse response = adSoapClient.deactivateAd(ad.get().getServiceId(), email);
-            if(!response.isResponse())
+            if (!response.isResponse())
                 return false;
         }
 

@@ -1,15 +1,19 @@
 package agentbackend.agentback.model;
 
+import com.car_rent.agent_api.wsdl.BookingDetails;
+
 import javax.persistence.*;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "booking")
 public class Booking {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "booking_id_seq_gen")
-    @SequenceGenerator(name="booking_id_seq_gen", sequenceName = "booking_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "booking_id_seq_gen", sequenceName = "booking_id_seq", allocationSize = 1)
     Long id;
 
     @Column(unique = false, nullable = false)
@@ -53,6 +57,55 @@ public class Booking {
         this.created = created;
         this.ad = ad;
         this.loaner = user;
+    }
+
+    public Booking(BookingDetails bookDetail, Ad ad) {
+        this.serviceId = bookDetail.getId();
+        this.bundle = null;
+        this.ad = ad;
+        this.place = bookDetail.getPlace();
+        if (bookDetail.getState() == 0)
+            this.state = RequestState.PENDING;
+        else if (bookDetail.getState() == 1)
+            this.state = RequestState.PAID;
+        else if (bookDetail.getState() == 2)
+            this.state = RequestState.CANCELED;
+        else if (bookDetail.getState() == 3)
+            this.state = RequestState.ENDED;
+        this.created = convert(bookDetail.getCreated());
+        this.startDate = convert(bookDetail.getStartDate());
+        this.endDate = convert(bookDetail.getEndDate());
+        this.loaner = bookDetail.getAdvertiser();
+
+    }
+
+    public Booking(BookingDetails bookDetail, Ad ad, Bundle bundle) {
+        this.serviceId = bookDetail.getId();
+        this.bundle = bundle;
+        this.ad = ad;
+        this.place = bookDetail.getPlace();
+        if (bookDetail.getState() == 0)
+            this.state = RequestState.PENDING;
+        else if (bookDetail.getState() == 1)
+            this.state = RequestState.PAID;
+        else if (bookDetail.getState() == 2)
+            this.state = RequestState.CANCELED;
+        else if (bookDetail.getState() == 3)
+            this.state = RequestState.ENDED;
+        this.created = convert(bookDetail.getCreated());
+        this.startDate = convert(bookDetail.getStartDate());
+        this.endDate = convert(bookDetail.getEndDate());
+        this.loaner = bundle.getLoaner();
+
+    }
+
+    public LocalDateTime convert(XMLGregorianCalendar date) {
+
+        return LocalDateTime.of(
+                date.getYear(),
+                date.getMonth(),
+                date.getDay(), 0, 0, 0);
+
     }
 
 

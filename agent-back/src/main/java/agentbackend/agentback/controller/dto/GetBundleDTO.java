@@ -1,7 +1,7 @@
-package carRent.model.dto;
+package agentbackend.agentback.controller.dto;
 
-import carRent.model.Booking;
-import carRent.model.Bundle;
+import agentbackend.agentback.model.Booking;
+import agentbackend.agentback.model.Bundle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +16,9 @@ public class GetBundleDTO {
     public GetBundleDTO() {
     }
 
-    public GetBundleDTO(Bundle bundle, String loanerEmail) {
+    public GetBundleDTO(Bundle bundle) {
         this.id = bundle.getId();
-        this.loaner = bundle.getLoaner();
-        this.loanerEmail = loanerEmail;
+        this.loanerEmail = bundle.getLoaner();
         for (Booking b : bundle.getBookings())
             this.bookings.add(new BookingDTO(b));
     }
