@@ -65,6 +65,9 @@ public class Message {
     @Column(unique = false, nullable = false)
     protected String receiver;
 
+    @Column(unique = true, nullable = true)
+    protected Long serviceId;
+
     public Message() {
     }
 
@@ -160,5 +163,13 @@ public class Message {
 
     public void setReceiver(String receiver) {
         this.receiver = receiver;
+    }
+
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
     }
 }

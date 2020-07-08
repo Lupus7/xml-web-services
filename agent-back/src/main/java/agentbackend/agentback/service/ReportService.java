@@ -5,6 +5,10 @@ import agentbackend.agentback.controller.dto.ReportDto;
 import agentbackend.agentback.controller.dto.StatisticsDTO;
 import agentbackend.agentback.model.*;
 import agentbackend.agentback.repository.*;
+import agentbackend.agentback.soapClient.CommunitySoapClient;
+import com.car_rent.agent_api.wsdl.CreateReportResponse;
+import com.car_rent.agent_api.wsdl.GetReportsResponse;
+import com.car_rent.agent_api.wsdl.ReportDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +28,9 @@ public class ReportService {
     private CarRepository carRepository;
     @Autowired
     private RateRepository rateRepository;
+
+    @Autowired
+    private CommunitySoapClient communitySoapClient;
 
     public Boolean createReport(ReportDto reportDto){
         Report report = new Report();
@@ -50,11 +57,44 @@ public class ReportService {
         booking.setState(RequestState.ENDED);
         bookingRepository.save(booking);
         carRepository.save(car);
+
+        CreateReportResponse response = communitySoapClient.createReport(reportDto, car.getOwner());
+
+        if (response != null && response.getId() != -1)
+            report.setServiceId(response.getId());
+
         reportRepository.save(report);
+
         return  true;
     }
 
-    public ArrayList<Report> getAllReports(){ return (ArrayList<Report>) reportRepository.findAll(); }
+    public List<Report> getAllReports(){
+        List<Report> reports = reportRepository.findAll();
+
+        GetReportsResponse response = communitySoapClient.getReports("TEMP");
+        if (response != null && response.getReports() != null) {
+            for (ReportDetails rd : response.getReports()) {
+                boolean found = false;
+                for (Report r : reports) {
+                    if (r.getServiceId() == rd.getId()) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    Report report = new Report();
+                    report.setServiceId(rd.getId());
+                    report.setAllowedMileage(rd.getMileage());
+                    report.setBooking(rd.getBooking());
+                    report.setExtraInfo(rd.getExtraInfo());
+
+                    reportRepository.save(report);
+                }
+            }
+        }
+
+        return reportRepository.findAll(); // ponovo da doda koji su mogli da se sauvaju itd
+    }
 
     public ArrayList<ReportDto>getAllReportsForSpecificCar(Long id){
         ArrayList<Report> reports = (ArrayList<Report>) reportRepository.findAll();
@@ -152,6 +192,7 @@ public class ReportService {
     }
 
     public List<StatisticsDTO> getStatistics(String name) {
+        getAllReports(); // update all
         List<StatisticsDTO> statistics = new ArrayList<>();
 
         List<Car> cars = carRepository.findAllByOwner(name);
