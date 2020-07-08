@@ -5,16 +5,20 @@ import agentbackend.agentback.controller.dto.ConversationDTO;
 import agentbackend.agentback.controller.dto.MessageDto;
 import agentbackend.agentback.controller.dto.MessageDto2;
 import agentbackend.agentback.model.*;
+import agentbackend.agentback.model.ObjectFactory;
 import agentbackend.agentback.repository.AdRepository;
 import agentbackend.agentback.repository.BookingRepository;
 import agentbackend.agentback.repository.MessageRepository;
 import agentbackend.agentback.repository.UserRepository;
+import agentbackend.agentback.soapClient.CommunitySoapClient;
+import com.car_rent.agent_api.wsdl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -28,6 +32,9 @@ public class MessageService {
     private BookingRepository bookingRepository;
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CommunitySoapClient communitySoapClient;
 
     public Boolean createNew(MessageDto msg, Principal user){
         Message message = new Message();
@@ -162,6 +169,11 @@ public class MessageService {
                 people.put(mess.getSender(), mess.getSender());
         }
 
+        GetPeopleResponse response = communitySoapClient.getPeople(user.getName());
+        if (response != null && response.getPeople() != null) {
+            response.getPeople().forEach(p -> people.put(p, p));
+        }
+
         for (Map.Entry<String, String> entry : people.entrySet()) {
             peopleList.add(entry.getKey());
         }
@@ -174,6 +186,9 @@ public class MessageService {
         ArrayList<MessageDto2> messageDtos = new ArrayList<>();
         List<Message> messageList1 = messageRepository.findAllBySenderAndReceiverOrderByDateDesc(user.getName(), receiver);
         List<Message> messageList2 = messageRepository.findAllByReceiverAndSenderOrderByDateDesc(user.getName(), receiver);
+
+
+        GetConversationResponse response = communitySoapClient.getConversation(user.getName(), receiver);
 
         for (Message m : messageList1) {
             MessageDto2 dto = new MessageDto2();
@@ -196,6 +211,49 @@ public class MessageService {
             dto.setId(m.getId());
             messageDtos.add(dto);
         }
+
+        ///// update
+        if (response != null && response.getMessages() != null) {
+            for (MessageDetails md : response.getMessages()) {
+                boolean found = false;
+                for (Message m : messageList1) {
+                    if (m.getServiceId() == md.getId()) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    for (Message m : messageList2) {
+                        if (m.getServiceId() == md.getId()) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found)
+                        continue;
+
+                    Message m = new Message();
+                    m.setServiceId(md.getId());
+                    m.setBooking(md.getBooking());
+                    m.setSender(md.getSender());
+                    m.setReceiver(md.getReceiver());
+                    m.setDate(md.getDate().toGregorianCalendar().toZonedDateTime().withZoneSameLocal(ZoneId.systemDefault()).toLocalDateTime());
+                    m.setBody(md.getBody());
+                    messageRepository.save(m);
+
+                    MessageDto2 dto = new MessageDto2();
+                    dto.setBody(md.getBody());
+                    dto.setBooking(md.getBooking());
+                    dto.setDate(md.getDate().toGregorianCalendar().toZonedDateTime().withZoneSameLocal(ZoneId.systemDefault()).toLocalDateTime());
+                    dto.setReceiver(md.getReceiver());
+                    dto.setSender(md.getSender());
+                    dto.setId(md.getId());
+                    messageDtos.add(dto);
+                }
+            }
+        }
+        /////
+
         MessageDto2 temp;
         for (int i = 0; i < messageDtos.size(); i++) {
             for (int j = 0; j < messageDtos.size(); j++) {
@@ -220,6 +278,11 @@ public class MessageService {
         message.setReceiver(msg.getReceiver());
         message.setSender(user.getName());
 
+        CreateMessageResponse response = communitySoapClient.createMessage(message, user.getName());
+
+        if (response != null && response.getMessageDetails() != null && response.getMessageDetails().getId() != -1L)
+            message.setServiceId(response.getMessageDetails().getId());
+
         messageRepository.save(message);
 
         MessageDto2 dto = new MessageDto2();
@@ -239,6 +302,11 @@ public class MessageService {
         message.setDate(LocalDateTime.now());
         message.setSender(user.getName());
         message.setReceiver(conversationDTO.getReceiver());
+
+        StartConversationResponse response = communitySoapClient.startConversation(conversationDTO.getBookingId(), conversationDTO.getReceiver(), user.getName());
+
+        if (response != null && response.getId() != -1L)
+            message.setServiceId(response.getId());
 
         messageRepository.save(message);
         return true;

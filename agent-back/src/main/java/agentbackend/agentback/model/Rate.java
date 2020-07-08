@@ -63,6 +63,9 @@ public class Rate {
     @Column(nullable = false)
     protected String rater;
 
+    @Column(unique = true, nullable = true)
+    protected Long serviceId;
+
     public Rate() {
     }
 
@@ -176,5 +179,13 @@ public class Rate {
 
     public void setRater(String rater) {
         this.rater = rater;
+    }
+
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
     }
 }

@@ -60,15 +60,6 @@ const router = new Router({
             beforeEnter: authetication
 
         },
-
-        {
-            path: "/leaverate",
-            name: "LeaveRate",
-            props: true,
-            component: () => import("./components/LeaveRate"),
-            beforeEnter: authetication
-
-        },
     ],
 });
 

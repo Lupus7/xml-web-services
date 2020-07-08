@@ -12,6 +12,9 @@ import agentbackend.agentback.repository.BookingRepository;
 import agentbackend.agentback.repository.CarRepository;
 import agentbackend.agentback.repository.ImageRepository;
 import agentbackend.agentback.repository.RateRepository;
+import agentbackend.agentback.soapClient.CommunitySoapClient;
+import com.car_rent.agent_api.wsdl.GetRatesResponse;
+import com.car_rent.agent_api.wsdl.RateDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,15 +33,18 @@ public class RateService {
     @Autowired
     private ImageRepository imageRepository;
 
-    public Boolean createRate(RateDto ratedto, Principal user){
+    @Autowired
+    private CommunitySoapClient communitySoapClient;
+
+    public Boolean createRate(RateDto ratedto, Principal user) {
         //Ako ne postoji auto sa zadatim Id-jem, izadji
         Optional<Car> car = carRepository.findById(ratedto.getCarId());
-        if(!car.isPresent()){
+        if (!car.isPresent()) {
             return false;
         }
         //TODO: Ako je vec jdnom ostavljen komentar za odredjeni booking, blokiraj spamovanje
         Optional<Booking> rateByBooking = bookingRepository.findById(ratedto.getBooking());
-        if(rateByBooking.isPresent()){
+        if (rateByBooking.isPresent()) {
             return false;
         }
 
@@ -50,133 +56,131 @@ public class RateService {
         rate.setCarId(ratedto.getCarId());
         rate.setRater(user.getName());
         rateRepository.save(rate);
-        return  true;
+        return true;
     }
 
-    public ArrayList<Rate> getAllRates(){
+    public ArrayList<Rate> getAllRates() {
         return (ArrayList<Rate>) rateRepository.findAll();
     }
 
-    public ArrayList<Rate> getApprovedRates(){
+    public ArrayList<Rate> getApprovedRates() {
         ArrayList rates = getAllRates();
         Iterator itr = rates.iterator();
-        while(itr.hasNext()){
+        while (itr.hasNext()) {
             Rate rate = (Rate) itr.next();
 
-            if(!rate.isApproved()){
+            if (!rate.isApproved()) {
                 itr.remove();
             }
         }
         return rates;
     }
 
-    public Boolean approveRate(Long id){
+    public Boolean approveRate(Long id) {
         Rate rate = rateRepository.getOne(id);
-        if(rate==null)
+        if (rate == null)
             return false;
         rate.setApproved(true);
         rateRepository.save(rate);
         return true;
     }
 
-    public ArrayList<Rate>getAllRatesForSpecificAd(Long adId){
+    public ArrayList<Rate> getAllRatesForSpecificAd(Long adId) {
         ArrayList<Rate> rates = getAllRates();
         Iterator itr = rates.iterator();
-        while(itr.hasNext()){
+        while (itr.hasNext()) {
             Rate rate = (Rate) itr.next();
             Booking booking = bookingRepository.getOne(rate.getBooking());
-            if(booking.getAd().getId() != adId){
+            if (booking.getAd().getId() != adId) {
                 itr.remove();
             }
         }
         return rates;
     }
 
-    public ArrayList<Rate>getAllRatesforSpecificCar(Long carId){
+    public ArrayList<Rate> getAllRatesforSpecificCar(Long carId) {
         ArrayList<Rate> rates = getAllRates();
         Iterator it = rates.iterator();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             Rate rate = (Rate) it.next();
-            if(rate.getCarId() != carId){
+            if (rate.getCarId() != carId) {
                 it.remove();
             }
         }
         return rates;
     }
 
-    public HashMap<String,Integer> getCarsWithMostComment(){
-        HashMap<Car,Integer> mostCommented = new HashMap<>();
+    public HashMap<String, Integer> getCarsWithMostComment() {
+        HashMap<Car, Integer> mostCommented = new HashMap<>();
         ArrayList<Rate> rates = (ArrayList<Rate>) rateRepository.findAll();
-        for(Rate rate: rates){
+        for (Rate rate : rates) {
             Car car = carRepository.getOne(rate.getCarId());
-            if(car == null)
+            if (car == null)
                 return null;
-            if(mostCommented.containsKey(car)){
+            if (mostCommented.containsKey(car)) {
                 //Ako je auto vec u mapi, povecaj broj komentara za 1
                 mostCommented.put(car, mostCommented.get(car) + 1);
-            }else{
+            } else {
                 //Ako smo prvi put naisli na ovaj auto, njegov broj komentara postavi na 1
-                mostCommented.put(car,1);
+                mostCommented.put(car, 1);
             }
         }
 
         //Sortiranje mape
-        HashMap<Car,Integer> sorted = sortByValue(mostCommented);
-        HashMap<String,Integer> sortedDtos = new HashMap<>();
+        HashMap<Car, Integer> sorted = sortByValue(mostCommented);
+        HashMap<String, Integer> sortedDtos = new HashMap<>();
         Iterator it = sorted.entrySet().iterator();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            Car car = (Car)pair.getKey();
+            Car car = (Car) pair.getKey();
             CarDTO carDto = new CarDTO();
             carDto.setBrand(car.getBrand());
             carDto.setModel(car.getModel());
             carDto.setFuel(car.getFuel());
-            sortedDtos.put(carDto.getBrand() +" " +carDto.getModel() +" " + carDto.getFuel() + " " +carDto.getImages(), (Integer) pair.getValue());
+            sortedDtos.put(carDto.getBrand() + " " + carDto.getModel() + " " + carDto.getFuel() + " " + carDto.getImages(), (Integer) pair.getValue());
         }
         return sortedDtos;
     }
 
-    public HashMap<String,Double> getCarsWithBestAverageRate(){
-        HashMap<Car,Double> bestrated = new HashMap<>();
+    public HashMap<String, Double> getCarsWithBestAverageRate() {
+        HashMap<Car, Double> bestrated = new HashMap<>();
         ArrayList<Rate> rates = (ArrayList<Rate>) rateRepository.findAll();
-        for(Rate rate: rates){
+        for (Rate rate : rates) {
             Car car = carRepository.getOne(rate.getCarId());
-            if(car == null)
+            if (car == null)
                 return null;
             Double carRate = calculateRatingForCar(car.getId());
-            if(!bestrated.containsKey(car)){
+            if (!bestrated.containsKey(car)) {
                 //Ako ako nije vec dodat u mapu, izracunaj njegov rating i dodaj ga.
                 bestrated.put(car, carRate);
             }
         }
 
         //Sortiranje mape
-        HashMap<Car,Double> sorted = sortByValueDouble(bestrated);
-        HashMap<String,Double> sortedDtos = new HashMap<>();
+        HashMap<Car, Double> sorted = sortByValueDouble(bestrated);
+        HashMap<String, Double> sortedDtos = new HashMap<>();
         Iterator it = sorted.entrySet().iterator();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            Car car = (Car)pair.getKey();
+            Car car = (Car) pair.getKey();
             CarDTO carDto = new CarDTO();
             carDto.setBrand(car.getBrand());
             carDto.setModel(car.getModel());
             carDto.setFuel(car.getFuel());
-            sortedDtos.put(carDto.getBrand() +" " +carDto.getModel() +" " + carDto.getFuel() + " " +carDto.getImages(), (Double) pair.getValue());
+            sortedDtos.put(carDto.getBrand() + " " + carDto.getModel() + " " + carDto.getFuel() + " " + carDto.getImages(), (Double) pair.getValue());
         }
         return sortedDtos;
     }
 
-    public static HashMap<Car, Integer> sortByValue(HashMap<Car, Integer> hm)
-    {
+    public static HashMap<Car, Integer> sortByValue(HashMap<Car, Integer> hm) {
         // Create a list from elements of HashMap
-        List<Map.Entry<Car, Integer> > list =
-                new LinkedList<Map.Entry<Car, Integer> >(hm.entrySet());
+        List<Map.Entry<Car, Integer>> list =
+                new LinkedList<Map.Entry<Car, Integer>>(hm.entrySet());
 
         // Sort the list
         Collections.sort(list, new Comparator<Map.Entry<Car, Integer>>() {
             public int compare(Map.Entry<Car, Integer> o1,
-                               Map.Entry<Car, Integer> o2)
-            {
+                               Map.Entry<Car, Integer> o2) {
                 return (o1.getValue()).compareTo(o2.getValue());
             }
         });
@@ -189,17 +193,15 @@ public class RateService {
         return temp;
     }
 
-    public static HashMap<Car, Double> sortByValueDouble(HashMap<Car, Double> hm)
-    {
+    public static HashMap<Car, Double> sortByValueDouble(HashMap<Car, Double> hm) {
         // Create a list from elements of HashMap
-        List<Map.Entry<Car, Double> > list =
-                new LinkedList<Map.Entry<Car, Double> >(hm.entrySet());
+        List<Map.Entry<Car, Double>> list =
+                new LinkedList<Map.Entry<Car, Double>>(hm.entrySet());
 
         // Sort the list
         Collections.sort(list, new Comparator<Map.Entry<Car, Double>>() {
             public int compare(Map.Entry<Car, Double> o1,
-                               Map.Entry<Car, Double> o2)
-            {
+                               Map.Entry<Car, Double> o2) {
                 return (o1.getValue()).compareTo(o2.getValue());
             }
         });
@@ -212,18 +214,18 @@ public class RateService {
         return temp;
     }
 
-    public Double calculateRatingForCar(long carId){
+    public Double calculateRatingForCar(long carId) {
         Integer sum = 0;
-        Integer count=0;
+        Integer count = 0;
         ArrayList<Rate> rates = (ArrayList<Rate>) rateRepository.findAll();
-        for(Rate rate:rates){
-            if(rate.getCarId() == carId){
+        for (Rate rate : rates) {
+            if (rate.getCarId() == carId) {
                 sum += rate.getRate();
-                count +=1;
+                count += 1;
             }
         }
 
-        return (double)sum/count;
+        return (double) sum / count;
     }
 
 
@@ -236,11 +238,40 @@ public class RateService {
         if (cars == null)
             return carRates;
 
+        GetRatesResponse response = communitySoapClient.getRates(user.getName());
+
         for (Car car : cars) {
             List<Rate> rates = rateRepository.findAllByCarId(car.getId());
             List<Image> images = imageRepository.findAllByCarId(car.getId());
-            for (Rate rate : rates)
+            for (Rate rate : rates) {
                 carRates.add(new CarRateDTO(rate, new CarDTO(car, images), user.getName()));
+            }
+
+            if (response != null && response.getRates() != null) {
+                for (RateDetails rd : response.getRates()) {
+                    if (rd.getCarId() != car.getId())
+                        continue;
+                    boolean found = false;
+                    for (Rate rate : rates) {
+                        if (rate.getServiceId() == rd.getId()) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        Rate r = new Rate();
+                        r.setApproved(rd.isApproved());
+                        r.setBooking(rd.getBooking());
+                        r.setCarId(rd.getCarId());
+                        r.setComment(rd.getComment());
+                        r.setRate(rd.getRate());
+                        r.setRater(rd.getRater());
+                        r.setServiceId(rd.getId());
+                        rateRepository.save(r);
+                        carRates.add(new CarRateDTO(r, new CarDTO(car, images), user.getName()));
+                    }
+                }
+            }
         }
 
         return carRates;
