@@ -7,6 +7,7 @@ import CarsAdsApp.model.Car;
 import CarsAdsApp.model.Image;
 import CarsAdsApp.model.ObjectFactory;
 import CarsAdsApp.model.dto.CarDTO;
+import CarsAdsApp.model.dto.CarDTOSoap;
 import CarsAdsApp.proxy.RentProxy;
 import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.CarRepository;
@@ -150,7 +151,7 @@ public class CarService {
         }
 
         List<Image> images = imageRepository.findAllByCarId(id);
-        for(Image i:images)
+        for (Image i : images)
             imageRepository.delete(i);
 
         carRepository.deleteById(id);
@@ -170,6 +171,19 @@ public class CarService {
             carDTOS.add(carDTO);
         }
 
+
+        return carDTOS;
+    }
+
+    public List<CarDTOSoap> getClientCarsSoap(String email) {
+        List<CarDTOSoap> carDTOS = new ArrayList<>();
+        List<Car> cars = carRepository.findAllByOwner(email);
+
+        for (Car car : cars) {
+            List<Image> images = imageRepository.findAllByCarId(car.getId());
+            CarDTOSoap carDTO = new CarDTOSoap(car, images);
+            carDTOS.add(carDTO);
+        }
 
         return carDTOS;
     }

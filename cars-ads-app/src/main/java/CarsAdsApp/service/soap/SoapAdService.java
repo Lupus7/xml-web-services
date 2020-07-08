@@ -158,9 +158,10 @@ public class SoapAdService {
                 adClientDTO.setDescription(car.get().getDescription());
                 adClientDTO.setColDamProtection(car.get().isColDamProtection());
                 adClientDTO.setPlace(ad.getPlace());
-                adClientDTO.setStartDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(ad.getStartDate().toString()));
-                adClientDTO.setEndDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(ad.getEndDate().toString()));
-
+                System.out.println("UDJE");
+                adClientDTO.setStartDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(ad.getStartDate().toLocalDate().toString()));
+                adClientDTO.setEndDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(ad.getEndDate().toLocalDate().toString()));
+                System.out.println("IZAJDE");
 
                 adClientDTOS.add(adClientDTO);
             }

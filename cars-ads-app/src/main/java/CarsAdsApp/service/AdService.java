@@ -16,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -53,11 +54,18 @@ public class AdService {
             return 400;
         Long userId = userIdResponse.getBody();
 
+        ResponseEntity<String> userRoleResponse = userProxy.getUserRole(email);
+        if (userRoleResponse == null || userRoleResponse.getStatusCode() != HttpStatus.OK)
+            return 400;
+
         // provera za 3 ad-a
         boolean active = true;
-        ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
-        if (ads.size() == 3)
-            active = false;
+
+        if (userRoleResponse.getBody().equals("ROLE_CLIENT")) {
+            ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
+            if (ads.size() == 3)
+                active = false;
+        }
 
         if (adDTO == null)
             return 400;
@@ -105,18 +113,25 @@ public class AdService {
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return 400;
 
+        ResponseEntity<String> userRoleResponse = userProxy.getUserRole(email);
+        if (userRoleResponse == null || userRoleResponse.getStatusCode() != HttpStatus.OK)
+            return 400;
+
         Long userId = userIdResponse.getBody();
 
         Optional<Ad> ad = adRepo.findById(id);
         if (!ad.isPresent() || ad.get().getOwnerId() != userId)
             return 400;
 
-        ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
-        if (ads.size() == 3)
-            return 402;
+        if (userRoleResponse.getBody().equals("ROLE_CLIENT")) {
 
-        ResponseEntity<Boolean> check = rentProxy.checkState(id,email+";MASTER");
-        if(check == null || !check.getBody())
+            ArrayList<Ad> ads = adRepo.findAllByOwnerIdAndActive(userId, true);
+            if (ads.size() == 3)
+                return 402;
+        }
+
+        ResponseEntity<Boolean> check = rentProxy.checkState(id, email + ";MASTER");
+        if (check == null || !check.getBody())
             return 405;
 
         ad.get().setActive(true);

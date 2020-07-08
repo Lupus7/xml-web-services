@@ -124,7 +124,6 @@ public class CarService {
         }
 
 
-
         List<Ad> ads = adRepository.findAllByCar(car.get());
         String adsIds = "";
         if (ads.size() > 0)
@@ -136,8 +135,8 @@ public class CarService {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("ads", adsIds);
 
-        CheckingBookingResponse check = bookingSoapClient.checkingBooking(jsonObject.toString(),email);
-        if(!check.isResponse())
+        CheckingBookingResponse check = bookingSoapClient.checkingBooking(jsonObject.toString(), email);
+        if (!check.isResponse())
             return false;
 
         for (Ad ad : ads) {
@@ -146,11 +145,11 @@ public class CarService {
         }
 
         DeleteCarResponse response = carSoapClient.deleteCar(car.get().getServiceId(), email);
-        if(!response.isResponse())
+        if (!response.isResponse())
             return false;
 
         List<Image> images = imageRepository.findAllByCar(car.get());
-        for(Image i:images)
+        for (Image i : images)
             imageRepository.delete(i);
 
         carRepository.delete(car.get());
@@ -158,6 +157,76 @@ public class CarService {
     }
 
     public List<CarDTO> getClientCars(String email) {
+
+
+        GetCarsResponse response = carSoapClient.getCars(email);
+        if (response != null) {
+            for (CarDetailsSoap carDetail : response.getCarDetails()) {
+                Car carCheck = carRepository.findByServiceId(carDetail.getId());
+                if (carCheck == null) {
+                    Car car = new Car();
+                    car.setServiceId(carDetail.getId());
+                    car.setAllowedMileage(carDetail.getAllowedMileage());
+                    car.setTotalMileage(carDetail.getTotalMileage());
+                    car.setColDamProtection(carDetail.isColDamProtection());
+                    car.setChildrenSeats(carDetail.getChildrenSeats());
+                    car.setBrand(carDetail.getBrand());
+                    car.setModel(carDetail.getModel());
+                    car.setCarClass(carDetail.getCarClass());
+                    car.setFuel(carDetail.getFuel());
+                    car.setTransmission(carDetail.getTransmission());
+                    car.setDescription(carDetail.getDescription());
+                    car.setOwner(carDetail.getOwner());
+                    carRepository.save(car);
+                    for (ImageDetails img : carDetail.getImages()) {
+                        Image image = new Image();
+                        image.setServiceId(img.getId());
+                        image.setEncoded64Image(img.getSrc());
+                        image.setCar(car);
+                        imageRepository.save(image);
+                    }
+                } else {
+                    if (carCheck.getAllowedMileage() != carDetail.getAllowedMileage())
+                        carCheck.setAllowedMileage(carDetail.getAllowedMileage());
+                    if (carCheck.getTotalMileage() != carDetail.getTotalMileage())
+                        carCheck.setTotalMileage(carDetail.getTotalMileage());
+                    if (carCheck.getChildrenSeats() != carDetail.getChildrenSeats())
+                        carCheck.setChildrenSeats(carDetail.getChildrenSeats());
+                    if (carCheck.isColDamProtection() != carDetail.isColDamProtection())
+                        carCheck.setColDamProtection(carDetail.isColDamProtection());
+                    if (!carCheck.getDescription().equals(carDetail.getDescription()))
+                        carCheck.setDescription(carDetail.getDescription());
+                    if (!carCheck.getBrand().equals(carDetail.getBrand()))
+                        carCheck.setBrand(carDetail.getBrand());
+                    if (!carCheck.getModel().equals(carDetail.getModel()))
+                        carCheck.setModel(carDetail.getModel());
+                    if (!carCheck.getCarClass().equals(carDetail.getCarClass()))
+                        carCheck.setCarClass(carDetail.getCarClass());
+                    if (!carCheck.getFuel().equals(carDetail.getFuel()))
+                        carCheck.setFuel(carDetail.getFuel());
+                    if (!carCheck.getTransmission().equals(carDetail.getTransmission()))
+                        carCheck.setTransmission(carDetail.getTransmission());
+
+                    carRepository.save(carCheck);
+
+                    List<Image> images = imageRepository.findAllByCar(carCheck);
+                    for (ImageDetails imgDetail : carDetail.getImages()) {
+                        for (Image img : images) {
+                            if (imgDetail.getId() == img.getServiceId()) {
+                                if (!imgDetail.getSrc().equals(img.getEncoded64Image())) {
+                                    img.setEncoded64Image(imgDetail.getSrc());
+                                    imageRepository.save(img);
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+            }
+        }
+
+
         List<CarDTO> carDTOS = new ArrayList<>();
         List<Car> cars = carRepository.findAllByOwner(email);
 

@@ -1,6 +1,7 @@
 package team10.user.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import team10.user.models.User;
 import team10.user.models.dto.UserAuthInfo;
@@ -33,5 +34,16 @@ public class UserUtilityService {
         if (user.isPresent())
             return user.get().getEmail();
         return null;
+    }
+
+    public ResponseEntity<String> getUserRole(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null)
+            return ResponseEntity.badRequest().body("User doesnt exist!");
+        if (user.getAuthorities() == null || user.getAuthorities().equals(""))
+            return ResponseEntity.badRequest().body("User doesnt have authorities!");
+        String[] privileges = user.getAuthorities().split(";");
+        return ResponseEntity.ok(privileges[0]);
+
     }
 }
