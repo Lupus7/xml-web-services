@@ -84,5 +84,13 @@ public class CarSoapClient extends WebServiceGatewaySupport {
     }
 
 
-    // TODO get Cars Soap
+    public GetCarsResponse getCars(String email) {
+        GetCarsRequest request = new GetCarsRequest();
+
+        request.setEmail(email);
+
+        return (GetCarsResponse) getWebServiceTemplate()
+                .marshalSendAndReceive(SoapProperties.CARS_WSDL, request,
+                        new SoapActionCallback(SoapProperties.NAMESPACE_URI + "/getCarsRequest"));
+    }
 }

@@ -23,4 +23,6 @@ public interface BookingRepository extends JpaRepository<Booking,Long> {
     Booking findByServiceIdAndBundleId(long id, Object o);
 
     List<Booking> findAllByAdAndBundleIdNotNull(Ad ad);
+
+    Booking findByServiceId(long id);
 }

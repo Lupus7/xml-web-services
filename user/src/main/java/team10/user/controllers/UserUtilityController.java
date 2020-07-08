@@ -35,4 +35,9 @@ public class UserUtilityController {
             return ResponseEntity.ok(email);
         return ResponseEntity.badRequest().body(null);
     }
+
+    @GetMapping(value = "/role/{email}")
+    public ResponseEntity<String> getUserRole(@PathVariable("email") String email) {
+        return userUtilityService.getUserRole(email);
+    }
 }

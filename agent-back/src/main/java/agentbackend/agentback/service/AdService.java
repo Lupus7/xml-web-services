@@ -6,9 +6,7 @@ import agentbackend.agentback.controller.dto.AdDTO;
 import agentbackend.agentback.model.*;
 import agentbackend.agentback.repository.*;
 import agentbackend.agentback.soapClient.AdSoapClient;
-import com.car_rent.agent_api.wsdl.ActivateAdResponse;
-import com.car_rent.agent_api.wsdl.CreateAdResponse;
-import com.car_rent.agent_api.wsdl.DeactivateAdResponse;
+import com.car_rent.agent_api.wsdl.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -191,6 +190,29 @@ public class AdService {
         if (user == null)
             return new ArrayList<>();
 
+        GetAdsResponse response = adSoapClient.getAds(email);
+        if (response != null) {
+            for (AdDetails adDetail : response.getAdDetails()) {
+                Ad adCheck = adRepo.findByServiceId(adDetail.getAdId());
+                if (adCheck == null) {
+                    Car car = carRepo.findByServiceId(adDetail.getCarId());
+                    if (car != null) {
+                        Ad ad = new Ad(adDetail, car);
+                        adRepo.save(ad);
+                    }
+                } else {
+                    if (!adCheck.getPlace().equals(adDetail.getPlace()))
+                        adCheck.setPlace(adDetail.getPlace());
+                    if (!adCheck.getStartDate().equals(convert(adDetail.getStartDate())))
+                        adCheck.setStartDate(convert(adDetail.getStartDate()));
+                    if (!adCheck.getEndDate().equals(convert(adDetail.getEndDate())))
+                        adCheck.setEndDate(convert(adDetail.getEndDate()));
+                    adRepo.save(adCheck);
+                }
+
+            }
+        }
+
         List<AdClientDTO> adClientDTOS = new ArrayList<>();
 
         List<Ad> ads = adRepo.findAllByOwner(user.getEmail());
@@ -239,5 +261,14 @@ public class AdService {
             return owner.getId();
         }
         return null;
+    }
+
+    public LocalDateTime convert(XMLGregorianCalendar date) {
+
+        return LocalDateTime.of(
+                date.getYear(),
+                date.getMonth(),
+                date.getDay(), 0, 0, 0);
+
     }
 }

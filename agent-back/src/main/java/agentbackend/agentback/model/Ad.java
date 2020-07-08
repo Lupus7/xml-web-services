@@ -1,6 +1,9 @@
 package agentbackend.agentback.model;
 
+import com.car_rent.agent_api.wsdl.AdDetails;
+
 import javax.persistence.*;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.LocalDateTime;
 
 
@@ -47,6 +50,27 @@ public class Ad {
         this.owner = owner;
         this.active = true;
     }
+
+    public Ad(AdDetails adDetail, Car car) {
+        this.serviceId = adDetail.getAdId();
+        this.active = adDetail.isActive();
+        this.startDate = convert(adDetail.getStartDate());
+        this.endDate = convert(adDetail.getEndDate());
+        this.owner = adDetail.getAdvertiser();
+        this.place = adDetail.getPlace();
+        this.car = car;
+
+    }
+
+    public LocalDateTime convert(XMLGregorianCalendar date) {
+
+        return LocalDateTime.of(
+                date.getYear(),
+                date.getMonth(),
+                date.getDay(), 0, 0, 0);
+
+    }
+
 
     public Long getId() {
         return id;

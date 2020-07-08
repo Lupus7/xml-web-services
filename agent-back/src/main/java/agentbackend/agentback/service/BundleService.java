@@ -109,8 +109,8 @@ public class BundleService {
 
         GetBundlesResponse serviceBundles = bookingSoapClient.getBundles(user.getEmail());
         for (BundleDetail bundleDetail : serviceBundles.getResponse()) {
-            Optional<Bundle> bundle = bundleRepository.findById(bundleDetail.getId());
-            if (!bundle.isPresent()) {
+            Bundle bundle = bundleRepository.findByServiceId(bundleDetail.getId());
+            if (bundle == null) {
                 Bundle newBundle = new Bundle();
                 newBundle.setServiceId(bundleDetail.getId());
                 newBundle.setLoaner(bundleDetail.getLoaner());
@@ -121,6 +121,16 @@ public class BundleService {
                     bookingRepo.save(newBooking);
                     newBundle.getBookings().add(newBooking);
                     bundleRepository.save(newBundle);
+                }
+            } else {
+                for (BookingDetails booking : bundleDetail.getBooksDetails()) {
+                    Booking b = bookingRepo.findByServiceId(booking.getId());
+                    if (b != null) {
+                        if (returnInt(b.getState()) != booking.getState()) {
+                            b.setState(returnState(booking.getState()));
+                            bookingRepo.save(b);
+                        }
+                    }
                 }
             }
         }
@@ -145,5 +155,27 @@ public class BundleService {
         }
 
         return bundles;
+    }
+
+    public int returnInt(RequestState state) {
+        if (state.equals(RequestState.PENDING))
+            return 0;
+        else if (state.equals(RequestState.PAID))
+            return 1;
+        else if (state.equals(RequestState.CANCELED))
+            return 2;
+        else
+            return 3;
+    }
+
+    public RequestState returnState(int number) {
+        if (number == 0)
+            return RequestState.PENDING;
+        else if (number == 1)
+            return RequestState.PAID;
+        else if (number == 2)
+            return RequestState.CANCELED;
+        else
+            return RequestState.ENDED;
     }
 }

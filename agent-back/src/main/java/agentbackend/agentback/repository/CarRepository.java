@@ -15,4 +15,6 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     List<Car> findAllByFuel(String fuel);
     List<Car> findAllByTransmission(String transmission);
     List<Car> findTopByOrderByIdDesc();
+
+    Car findByServiceId(long carId);
 }

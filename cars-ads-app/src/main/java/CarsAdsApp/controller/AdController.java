@@ -86,7 +86,7 @@ public class AdController {
 
     // Svi adovi clienta
     @GetMapping(value = "/api/ad/client")
-    @PreAuthorize("hasAuthority('READ_CLIENT_ADS') or hasAuthority('MASTER')")
+    @PreAuthorize("hasAuthority('READ_ADS') or hasAuthority('MASTER')")
     public ResponseEntity<List<AdClientDTO>> getClientAds(Principal user){
         List<AdClientDTO> ads = adService.getClientAds(user.getName());
         return ResponseEntity.ok(ads);

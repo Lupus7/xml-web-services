@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface BundleRepository extends JpaRepository<Bundle, Long> {
     Optional<Bundle> findById(Long id);
+
+    Bundle findByServiceId(long id);
 }
