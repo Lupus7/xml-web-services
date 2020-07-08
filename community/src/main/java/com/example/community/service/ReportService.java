@@ -19,7 +19,7 @@ public class ReportService {
     @Autowired
     private CarRentProxy carRentProxy;
 
-    public Boolean createReport(ReportDto reportDto, String user) {
+    public Long createReport(ReportDto reportDto, String user) {
         Report report = new Report();
         report.setAllowedMileage(reportDto.getAllowedMileage());
         report.setBooking(reportDto.getBooking());
@@ -27,11 +27,11 @@ public class ReportService {
 
         ResponseEntity<String> response = carRentProxy.endBookingRequest(reportDto.getBooking(), user + ";MASTER");
         if (response.getStatusCode().isError())
-            return false;
+            return null;
 
         reportRepository.save(report);
 
-        return true;
+        return report.getId();
     }
 
     public ArrayList<Report> getAllReports() {

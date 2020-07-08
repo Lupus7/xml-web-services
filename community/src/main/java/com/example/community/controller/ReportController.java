@@ -21,7 +21,7 @@ public class ReportController {
 
     @PostMapping("/reports")
     public ResponseEntity<String> createReport(@RequestBody ReportDto reportDto, Principal user){
-        if(reportService.createReport(reportDto, user.getName())){
+        if(reportService.createReport(reportDto, user.getName()) != null){
             return ResponseEntity.ok("Successfully created...");
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

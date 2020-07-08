@@ -20,6 +20,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtAuthorizationFilter(authenticationManager()))
                 .authorizeRequests()
                 .antMatchers("/health").permitAll()
+                .antMatchers("/ws/**").permitAll()
                 //.anyRequest().hasAuthority("MASTER")// health available to all
                 .anyRequest().authenticated(); // everything else available only to authenticated users
     }

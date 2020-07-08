@@ -33,7 +33,7 @@ public class ReportController {
     @GetMapping("/reports")
     public ResponseEntity<ArrayList<ReportDto>> findAll(){
         ArrayList<ReportDto> reportsDto = new ArrayList<>();
-        ArrayList<Report> reports = reportService.getAllReports();
+        List<Report> reports = reportService.getAllReports();
         for(Report r: reports){
             ReportDto dto = new ReportDto(r.getExtraInfo(),r.getAllowedMileage(),r.getBooking());
             reportsDto.add(dto);

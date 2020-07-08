@@ -251,9 +251,6 @@ export default {
             );
 
         },
-        leaveRate(info){
-            this.$router.push({name:"LeaveRate", params:{booking:info}})
-        },
         fill() {
             if (this.mode == "personal") this.getBookings();
             else this.getBookings2();

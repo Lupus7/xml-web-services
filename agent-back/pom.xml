@@ -144,6 +144,9 @@
 						<schema>
 							<url>http://localhost:8080/rent/ws/booking.wsdl</url>
 						</schema>
+						<schema>
+							<url>http://localhost:8080/community/ws/community.wsdl</url>
+						</schema>
 					</schemas>
 				</configuration>
 			</plugin>

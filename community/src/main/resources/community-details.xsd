@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cr="http://car-rent.com/agent-api"
+    targetNamespace="http://car-rent.com/agent-api" elementFormDefault="qualified">
+    <xs:element name="createMessageRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="messageDetails" type="cr:MessageDetails"/>
+                <xs:element name="user" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="createMessageResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="messageDetails" type="cr:MessageDetails"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="startConversationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="bookingId" type="xs:long"/>
+                <xs:element name="receiver" type="xs:string"/>
+                <xs:element name="user" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="startConversationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getPeopleRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="user" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getPeopleResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" name="people" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getConversationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="receiver" type="xs:string"/>
+                <xs:element name="user" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getConversationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" name="messages" type="cr:MessageDetails"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getRatesRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="user" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getRatesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="rates" type="cr:RateDetails" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="createReportRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="report" type="cr:ReportDetails"/>
+                <xs:element name="user" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="createReportResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getReportsRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="user" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getReportsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" name="reports" type="cr:ReportDetails"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="MessageDetails">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="booking" type="xs:long"/>
+            <xs:element name="body" type="xs:string"/>
+            <xs:element name="sender" type="xs:string"/>
+            <xs:element name="receiver" type="xs:string"/>
+            <xs:element name="date" type="xs:dateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RateDetails">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="rate" type="xs:int"/>
+            <xs:element name="comment" type="xs:string"/>
+            <xs:element name="approved" type="xs:boolean"/>
+            <xs:element name="booking" type="xs:long"/>
+            <xs:element name="carId" type="xs:long"/>
+            <xs:element name="rater" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ReportDetails">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="booking" type="xs:long"/>
+            <xs:element name="extraInfo" type="xs:string"/>
+            <xs:element name="mileage" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
