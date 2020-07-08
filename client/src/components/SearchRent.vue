@@ -165,6 +165,7 @@
 
 <script>
 import axios from 'axios'
+import jwt_decode from 'jwt-decode'
 
 export default {
   name: 'SearchRent',
@@ -192,7 +193,8 @@ export default {
         collision_damageF:false,
         seats_numberF:0,
         searchName: "Advanced Search",
-        brands:[], carClasses:[],transmissions:[],fuels:[],models:[],modelBool:true,brandsResponse:[]
+        brands:[], carClasses:[],transmissions:[],fuels:[],models:[],modelBool:true,brandsResponse:[],
+        email: "",
     }
   },
   methods:{
@@ -255,32 +257,39 @@ export default {
                        //preuzmes rezultate u listu xD
                        this.adds = []
                        for(let res of response.data){
-                         let card = {
-                            Place : res.Place,         
-                            StartDate : res.StartDate,       
-                            EndDate : res.EndDate,
-                            Brand : res.Brand,
-                            Model : res.Model,
-                            Fuel : res.Fuel,
-                            Transmission : res.Transmission,
-                            Class : res.Class,
-                            Advertiser: res.Advertiser,
-                            Description: res.Description,
-                            SeatsNumber : res.SeatsNumber,
+                         if(res.Advertiser !== this.email){
+                          let card = {
+                              Place : res.Place,         
+                              StartDate : res.StartDate,       
+                              EndDate : res.EndDate,
+                              Brand : res.Brand,
+                              Model : res.Model,
+                              Fuel : res.Fuel,
+                              Transmission : res.Transmission,
+                              Class : res.Class,
+                              Advertiser: res.Advertiser,
+                              Description: res.Description,
+                              SeatsNumber : res.SeatsNumber,
 
-                         }
-                          let add = {
-                            Id: res.Id,
-                            Images: res.Images,
-                            Card: card,
-                            TotalMileage : res.TotalMileage,
-                            AllowedMileage : res.AllowedMileage,
-                            Price : res.Price,
-                            Rating : res.Rating,
-                         };
-                         
+                          }
+                            let add = {
+                              Id: res.Id,
+                              Images: res.Images,
+                              Card: card,
+                              TotalMileage : parseFloat(res.TotalMileage).toFixed(2),
+                              AllowedMileage : res.AllowedMileage,
+                              Price : res.Price,
+                              Rating : parseFloat(res.Rating).toFixed(2),
+                          };
+
+                          if(res.AllowedMileage !== "UNLIMITED"){
+                            add.AllowedMileage =  parseFloat(res.AllowedMileage).toFixed(2);
+                          }
+
+                          
                           this.adds.push(add);
 
+                        }
                        }
                      
                    
@@ -350,9 +359,16 @@ export default {
             params: { id: id },
         });
     },
+
+    getEmail(){
+        const token = localStorage.getItem("accessToken");
+        this.email = jwt_decode(token).sub;
+
+    }
   },
   created(){
     this.getCarSpec();
+    this.getEmail();
   }
   
 }

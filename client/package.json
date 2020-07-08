@@ -12,6 +12,7 @@
     "bootstrap": "^4.4.1",
     "bootstrap-vue": "^2.15.0",
     "core-js": "^3.6.4",
+    "jwt-decode": "^2.2.0",
     "vue": "^2.6.11",
     "vue-jquery": "^1.0.6",
     "vue-resource": "^1.5.1",
