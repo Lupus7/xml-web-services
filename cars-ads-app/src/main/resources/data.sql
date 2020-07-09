@@ -34,11 +34,33 @@ alter sequence car_id_seq RESTART with 9;
 
 
 -- ads
-insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (1, 1, '2020-05-19T00:00:00', '2020-05-30T00:00:00', 'Novi Sad', 1, true);
-insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (2, 1, '2020-07-19T00:00:00', '2020-07-30T00:00:00', 'Beograd', 1, false);
-insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (3, 2, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 1, false);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active, pricelist) values (1, 1, '2020-05-19T00:00:00', '2020-05-30T00:00:00', 'Novi Sad', 1, true,1);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active, pricelist) values (2, 1, '2020-07-19T00:00:00', '2020-07-30T00:00:00', 'Beograd', 1, false,1);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active, pricelist) values (3, 2, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 1, false,1);
 insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (4, 3, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Nis', 1, true);
 insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (5, 4, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 4, true);
 
 alter sequence ad_id_seq RESTART with 6;
 
+
+--prices
+insert into price(id, price, price_km, price_cdw, car_id) values(1,100,4,10,1);
+insert into price(id, price, price_km, price_cdw, car_id) values(2,80,2,12,2);
+alter sequence price_id_seq RESTART with 3;
+
+--discounts
+insert into discount(id, percentage,min_days) values(1,20,4);
+insert into discount(id, percentage,min_days) values(2,30,6);
+alter sequence discount_id_seq RESTART with 3;
+
+--pricelist
+insert into pricelist(id, name) values(1,'pricelist1');
+insert into pricelist(id, name) values(2,'pricelist2');
+alter sequence pricelist_id_seq RESTART with 3;
+
+--price_discount
+insert into price_discount values(1,1);
+
+--pricelist_price
+insert into pricelist_price values(1,1);
+insert into pricelist_price values(1,2);

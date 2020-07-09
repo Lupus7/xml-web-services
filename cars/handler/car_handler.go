@@ -59,7 +59,14 @@ func (ch *CarHandler) FindAll(c echo.Context) error {
 			return err
 		}
 
-		carsDto = append(carsDto, toResponse(ad, car, images, float32(rateFloat)))
+		//Get price
+		price, err := getCarsPrice(client,api,ad.PriceListId, ad.CarId)
+		if err != nil {
+			return err
+		}
+
+
+		carsDto = append(carsDto, toResponse(ad, car, images, float32(rateFloat), price))
 	}
 
 	return c.JSON(http.StatusOK, carsDto)
@@ -89,25 +96,32 @@ func (ch *CarHandler) SearchAds(c echo.Context) error {
 		url := fmt.Sprintf("http://%s:8080/community/rate/%v", api, car.Id)
 		fmt.Println(url)
 
-		resp, err := client.Get(url)
-		if err != nil {
-			fmt.Errorf(err.Error())
-			return err
-		}
+		resp, _ := client.Get(url)
+		//if err != nil {
+		//	fmt.Errorf(err.Error())
+		//	return err
+		//}
 
 		fmt.Println("RESPONSE CODE: ", resp.StatusCode)
-		respString, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Println(err.Error())
-			return err
-		}
+		respString, _ := ioutil.ReadAll(resp.Body)
+		//if err != nil {
+		//	fmt.Println(err.Error())
+		//	return err
+		//}
 		fmt.Println("ODGOVOR: ", string(respString))
+	 	rateFloat := 0.0
+		rateFloat, _ = strconv.ParseFloat(string(respString), 32)
+		//if err != nil {
+		//	return err
+		//}
 
-		rateFloat, err := strconv.ParseFloat(string(respString), 32)
+		//Get price
+		price, err := getCarsPrice(client,api,ad.PriceListId, ad.CarId)
 		if err != nil {
 			return err
 		}
-		carsResponse = append(carsResponse, toResponse(ad, car, images, float32(rateFloat)))
+
+		carsResponse = append(carsResponse, toResponse(ad, car, images, float32(rateFloat), price))
 
 	}
 	return c.JSON(http.StatusOK, carsResponse)
@@ -128,7 +142,8 @@ func (ch *CarHandler) GetAdById(c echo.Context) error {
 		return err
 	}
 	images, err := ch.CarService.FindImagesByCarId(car.Id)
-	adResponse := toResponse(ad, car, images, 0)
+
+	adResponse := toResponse(ad, car, images, 0, 0)
 	return c.JSON(http.StatusOK, adResponse)
 }
 
@@ -231,7 +246,7 @@ func (ch *CarHandler) FindAllCars(c echo.Context) error {
 //	return fmt.Sprintf("http://%s:%v", address, port), nil
 //}
 
-func toResponse(ad *model.Ad, car *model.Car, images []*model.Image, rating float32) *dto.SearchResponse {
+func toResponse(ad *model.Ad, car *model.Car, images []*model.Image, rating, price float32) *dto.SearchResponse {
 	collisionDamage := "not allowed"
 	if car.ColDamProtection {
 		collisionDamage = "allowed"
@@ -261,7 +276,7 @@ func toResponse(ad *model.Ad, car *model.Car, images []*model.Image, rating floa
 		Fuel:         car.Fuel,
 		Transmission: car.Transmission,
 		Class:        car.CarClass,
-		//Price:           ad.Car.Price,
+		Price:           price,
 		AllowedMileage:  allowedMileage,
 		TotalMileage:    float32(car.TotalMileage),
 		SeatsNumber:     car.ChildrenSeats,
@@ -273,4 +288,28 @@ func toResponse(ad *model.Ad, car *model.Car, images []*model.Image, rating floa
 		StartDate:       strings.Split(ad.StartDate.String(), " ")[0],
 		EndDate:         strings.Split(ad.EndDate.String(), " ")[0],
 	}
+}
+
+func getCarsPrice(client *http.Client, api string, priceListId, carId int64)(float32,error){
+	url := fmt.Sprintf("http://%s:8080/cars-ads/test/pricelist/%v/car/%v", api, priceListId, carId)
+	fmt.Println(url)
+
+	resp, err := client.Get(url)
+	if err != nil {
+		fmt.Errorf(err.Error())
+		return 0.0, err
+	}
+
+	respString, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println(err.Error())
+		return 0.0, err
+	}
+
+	priceFloat, err := strconv.ParseFloat(string(respString), 32)
+	if err != nil {
+		return 0.0 ,err
+	}
+
+	return float32(priceFloat), nil
 }

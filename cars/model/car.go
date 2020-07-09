@@ -19,10 +19,6 @@ type Car struct {
 	CarClass         string  `xml:"xml-web-services-cars carClass"`
 	Fuel             string  `xml:"xml-web-services-cars fuel"`
 	Transmission     string  `xml:"xml-web-services-cars transmission"`
-	//Uuid  	         string  `xml:"xml-web-services-cars uuid"`
-	//Bookings         []int64  `xml:"xml-web-services-cars bookings,omitempty" gorm:"-"`
-	//Images           []string `xml:"xml-web-services-cars images,omitempty" gorm:"-"`
-	//Ads              []Ad     `xml:"xml-web-services-cars ads,omitempty" gorm:"-"`
 }
 
 type xsdDate time.Time

@@ -31,6 +31,9 @@ public class Ad {
     @Column(name = "active", unique = false, nullable = false)
     private boolean active;
 
+    @Column(name = "pricelist")
+    private Long priceListId;
+
     public Ad() {
 
     }
@@ -44,13 +47,14 @@ public class Ad {
         this.active = true;
     }
 
-    public Ad(LocalDateTime startDate, LocalDateTime endDate, String place, Long car, Long owner, boolean active) {
+    public Ad(LocalDateTime startDate, LocalDateTime endDate, String place, Long car, Long owner, boolean active, Long priceListId) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.place = place;
         this.carId = car;
         this.ownerId = owner;
         this.active = active;
+        this.priceListId = priceListId;
     }
 
     public Long getId() {
@@ -107,6 +111,14 @@ public class Ad {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Long getPriceListId() {
+        return priceListId;
+    }
+
+    public void setPriceListId(Long priceListId) {
+        this.priceListId = priceListId;
     }
 }
 

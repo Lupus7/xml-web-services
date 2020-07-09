@@ -13,6 +13,7 @@ type Ad struct {
 	CarId     int64     `xml:"xml-web-services-cars carId" gorm:"not null"`
 	OwnerId   int64     `xml:"xml-web-services-cars ownerId"`
 	Active    bool      `xml:"xml-web-services-cars active"`
+	PriceListId int64   `xml:"xml-web-services-cars pricelist" gorm:"column:pricelist"`
 }
 
 func (t *Ad) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
