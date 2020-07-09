@@ -24,14 +24,14 @@ public class MessageService {
     @Autowired
     CarRentProxy carRentProxy;
 
-    public MessageDto createNew(MessageDto msg, Principal user) {
+    public MessageDto createNew(MessageDto msg, String user) {
 
         ObjectFactory objectFactory = new ObjectFactory();
         Message message = objectFactory.createMessage();
         message.setBody(msg.getBody());
         message.setDate(LocalDateTime.now());
         message.setReceiver(msg.getReceiver());
-        message.setSender(user.getName());
+        message.setSender(user);
 
         messageRepository.save(message);
 
@@ -58,7 +58,7 @@ public class MessageService {
         return msgs;
     }
 
-    public boolean startConversation(ConversationDTO conversationDTO, Principal user) {
+    public Long startConversation(ConversationDTO conversationDTO, String user) {
 
         /*Boolean check = carRentProxy.checkingBookingRequests(conversationDTO.getBookingId().toString(), user.getName() + ";MASTER").getBody();
         if (!check)
@@ -69,20 +69,20 @@ public class MessageService {
         message.setBody("BEGIN");
         message.setBooking(conversationDTO.getBookingId());
         message.setDate(LocalDateTime.now());
-        message.setSender(user.getName());
+        message.setSender(user);
         message.setReceiver(conversationDTO.getReceiver());
 
         messageRepository.save(message);
-        return true;
+        return message.getId();
     }
 
-    public ArrayList<String> getPeople(Principal user) {
+    public ArrayList<String> getPeople(String user) {
 
         HashMap<String, String> people = new HashMap<>();
         ArrayList<String> peopleList = new ArrayList<>();
 
-        List<Message> messageListSenders = messageRepository.findAllBySender(user.getName());
-        List<Message> messageListReceivers = messageRepository.findAllByReceiver(user.getName());
+        List<Message> messageListSenders = messageRepository.findAllBySender(user);
+        List<Message> messageListReceivers = messageRepository.findAllByReceiver(user);
         for (Message mess : messageListSenders) {
             if (people.containsKey(mess.getReceiver()))
                 continue;
@@ -105,10 +105,10 @@ public class MessageService {
 
     }
 
-    public ArrayList<MessageDto> getConversation(String receiver, Principal user) {
+    public ArrayList<MessageDto> getConversation(String receiver, String user) {
         ArrayList<MessageDto> messageDtos = new ArrayList<>();
-        List<Message> messageList1 = messageRepository.findAllBySenderAndReceiverOrderByDateDesc(user.getName(), receiver);
-        List<Message> messageList2 = messageRepository.findAllByReceiverAndSenderOrderByDateDesc(user.getName(), receiver);
+        List<Message> messageList1 = messageRepository.findAllBySenderAndReceiverOrderByDateDesc(user, receiver);
+        List<Message> messageList2 = messageRepository.findAllByReceiverAndSenderOrderByDateDesc(user, receiver);
 
         for (Message m : messageList1) {
             MessageDto dto = new MessageDto();

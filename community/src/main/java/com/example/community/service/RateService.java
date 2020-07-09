@@ -76,6 +76,25 @@ public class RateService {
         return carRates;
     }
 
+    public List<RateDto> getRatesOnly(String user) {
+
+        List<RateDto> carRates = new ArrayList<>();
+
+        ResponseEntity<List<CarDTO>> cars = carsAdsProxy.getClientCars(user + ";MASTER");
+
+        if (cars == null || cars.getBody() == null)
+            return carRates;
+
+        for (CarDTO carDTO : cars.getBody()) {
+            List<Rate> rates = rateRepository.findAllByCarId(carDTO.getCarId());
+            for (Rate rate : rates)
+                carRates.add(new RateDto(rate));
+
+        }
+
+        return carRates;
+    }
+
     public Double getCarRate(Long carId) {
 
         List<Rate> rates = rateRepository.findAllByCarId(carId);

@@ -137,7 +137,7 @@ public class BookingService {
         if (!booking.isPresent())
             return false;
 
-        if(booking.get().getAd() == null || !booking.get().getAd().getOwner().equals(user.getEmail()))
+        if (booking.get().getAd() == null || !booking.get().getAd().getOwner().equals(user.getEmail()))
             return false;
 
         booking.get().setState(RequestState.PAID);
@@ -171,7 +171,7 @@ public class BookingService {
         if (!booking.isPresent() || booking.get().getState() != RequestState.PENDING)
             return false;
 
-        if(booking.get().getAd() == null || !booking.get().getAd().getOwner().equals(user.getEmail()))
+        if (booking.get().getAd() == null || !booking.get().getAd().getOwner().equals(user.getEmail()))
             return false;
 
         booking.get().setState(RequestState.CANCELED);
@@ -198,6 +198,11 @@ public class BookingService {
                 Ad ad = adRepository.findByServiceId(bookDetail.getAd());
                 Booking booking = new Booking(bookDetail, ad);
                 bookingRepo.save(booking);
+            } else {
+                if (returnInt(b.getState()) != bookDetail.getState()) {
+                    b.setState(returnState(bookDetail.getState()));
+                    bookingRepo.save(b);
+                }
             }
         }
 
@@ -287,5 +292,27 @@ public class BookingService {
 
         }
 
+    }
+
+    public int returnInt(RequestState state) {
+        if (state.equals(RequestState.PENDING))
+            return 0;
+        else if (state.equals(RequestState.PAID))
+            return 1;
+        else if (state.equals(RequestState.CANCELED))
+            return 2;
+        else
+            return 3;
+    }
+
+    public RequestState returnState(int number) {
+        if (number == 0)
+            return RequestState.PENDING;
+        else if (number == 1)
+            return RequestState.PAID;
+        else if (number == 2)
+            return RequestState.CANCELED;
+        else
+            return RequestState.ENDED;
     }
 }

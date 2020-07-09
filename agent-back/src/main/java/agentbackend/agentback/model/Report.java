@@ -53,6 +53,9 @@ public class Report {
     @XmlElement(namespace = "xml-web-services-community")
     protected long booking;
 
+    @Column(unique = true, nullable = true)
+    protected Long serviceId;
+
     public Report() {
     }
 
@@ -135,4 +138,12 @@ public class Report {
         this.booking = value;
     }
 
+
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
+    }
 }

@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="carDetails" type="{http://car-rent.com/agent-api}CarDetails" maxOccurs="unbounded"/>
+ *         &lt;element name="carDetails" type="{http://car-rent.com/agent-api}CarDetailsSoap" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
 public class GetCarsResponse {
 
     @XmlElement(required = true)
-    protected List<CarDetails> carDetails;
+    protected List<CarDetailsSoap> carDetails;
 
     /**
      * Gets the value of the carDetails property.
@@ -64,13 +64,13 @@ public class GetCarsResponse {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link CarDetails }
+     * {@link CarDetailsSoap }
      * 
      * 
      */
-    public List<CarDetails> getCarDetails() {
+    public List<CarDetailsSoap> getCarDetails() {
         if (carDetails == null) {
-            carDetails = new ArrayList<CarDetails>();
+            carDetails = new ArrayList<CarDetailsSoap>();
         }
         return this.carDetails;
     }

@@ -28,7 +28,7 @@
     <xs:element name="getCarsResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="carDetails" type="cr:CarDetails" maxOccurs="unbounded"/>
+                <xs:element name="carDetails" type="cr:CarDetailsSoap" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -83,6 +83,30 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:complexType name="ImageDetails">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="src" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CarDetailsSoap">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="brand" type="xs:string"/>
+            <xs:element name="model" type="xs:string"/>
+            <xs:element name="carClass" type="xs:string"/>
+            <xs:element name="totalMileage" type="xs:double"/>
+            <xs:element name="allowedMileage" type="xs:double"/>
+            <xs:element name="childrenSeats" type="xs:int"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="colDamProtection" type="xs:boolean"/>
+            <xs:element name="fuel" type="xs:string"/>
+            <xs:element name="transmission" type="xs:string"/>
+            <xs:element name="owner" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" name="images" type="cr:ImageDetails"/>
+        </xs:sequence>
+    </xs:complexType>
 
     <xs:complexType name="CarDetails">
         <xs:sequence>

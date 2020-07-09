@@ -3,6 +3,7 @@ package CarsAdsApp.controller.soap;
 import CarsAdsApp.controller.dto.ImageDTO;
 import CarsAdsApp.controller.dto.UpdateCarDTO;
 import CarsAdsApp.model.dto.CarDTO;
+import CarsAdsApp.model.dto.CarDTOSoap;
 import CarsAdsApp.service.CarService;
 import CarsAdsApp.soap.SoapProperties;
 import com.car_rent.agent_api.*;
@@ -34,10 +35,10 @@ public class SoapCarController {
     @ResponsePayload
     public GetCarsResponse getCars(@RequestPayload GetCarsRequest request) {
         GetCarsResponse response = new ObjectFactory().createGetCarsResponse();
-        List<CarDetails> carDetailsList = new ArrayList<>();
-        List<CarDTO> cars = carService.getClientCars(request.getEmail());
-        for (CarDTO carDTO : cars) {
-            CarDetails carDetails = new CarDetails();
+        List<CarDetailsSoap> carDetailsList = new ArrayList<>();
+        List<CarDTOSoap> cars = carService.getClientCarsSoap(request.getEmail());
+        for (CarDTOSoap carDTO : cars) {
+            CarDetailsSoap carDetails = new CarDetailsSoap();
             carDetails.setId(carDTO.getCarId());
             carDetails.setAllowedMileage(carDTO.getAllowedMileage());
             carDetails.setTotalMileage(carDTO.getTotalMileage());
@@ -50,6 +51,12 @@ public class SoapCarController {
             carDetails.setFuel(carDTO.getFuel());
             carDetails.setTransmission(carDTO.getTransmission());
             carDetails.setOwner(carDTO.getAdvertiser());
+            for (CarsAdsApp.model.dto.ImageDTO img : carDTO.getImages()) {
+                ImageDetails imageDetail = new ImageDetails();
+                imageDetail.setId(img.getId());
+                imageDetail.setSrc(img.getSrc());
+                carDetails.getImages().add(imageDetail);
+            }
 
             carDetailsList.add(carDetails);
         }
@@ -93,7 +100,7 @@ public class SoapCarController {
         UpdateCarImagesResponse response = new UpdateCarImagesResponse();
         ImageDTO imageDTO = new ImageDTO();
         imageDTO.getImages().addAll(request.getImages());
-        List<Long> images = carService.updateImages(imageDTO,request.getId());
+        List<Long> images = carService.updateImages(imageDTO, request.getId());
         response.setId(request.getId());
         response.getImages().addAll(images);
         return response;

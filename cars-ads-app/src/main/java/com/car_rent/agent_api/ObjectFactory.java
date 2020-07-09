@@ -125,6 +125,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link CarDetailsSoap }
+     * 
+     */
+    public CarDetailsSoap createCarDetailsSoap() {
+        return new CarDetailsSoap();
+    }
+
+    /**
      * Create an instance of {@link DeactivateAdRequest }
      * 
      */
@@ -226,6 +234,14 @@ public class ObjectFactory {
      */
     public DeleteCarRequest createDeleteCarRequest() {
         return new DeleteCarRequest();
+    }
+
+    /**
+     * Create an instance of {@link ImageDetails }
+     * 
+     */
+    public ImageDetails createImageDetails() {
+        return new ImageDetails();
     }
 
 }
