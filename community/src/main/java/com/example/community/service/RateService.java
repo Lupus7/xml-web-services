@@ -3,6 +3,7 @@ package com.example.community.service;
 import com.example.community.controller.dto.CarDTO;
 import com.example.community.controller.dto.CarRateDTO;
 import com.example.community.controller.dto.RateDto;
+import com.example.community.controller.dto.ReCommentDTO;
 import com.example.community.model.ObjectFactory;
 import com.example.community.model.Rate;
 import com.example.community.proxy.CarsAdsProxy;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RateService {
@@ -118,6 +120,16 @@ public class RateService {
         rate.setApproved(false);
         rate.setComment("REJECTED!");
         rateRepository.save(rate);
+        return true;
+    }
+
+    public Boolean recomment(Long rateId, ReCommentDTO reCommentDTO) {
+        Optional<Rate> rate = rateRepository.findById(rateId);
+        if(!rate.isPresent()){
+            return false;
+        }
+        rate.get().setRecomment(reCommentDTO.getRecomment());
+        rateRepository.save(rate.get());
         return true;
     }
 }

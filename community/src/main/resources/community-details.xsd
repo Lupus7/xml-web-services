@@ -123,6 +123,7 @@
             <xs:element name="booking" type="xs:long"/>
             <xs:element name="carId" type="xs:long"/>
             <xs:element name="rater" type="xs:string"/>
+            <xs:element name="recomment" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="ReportDetails">

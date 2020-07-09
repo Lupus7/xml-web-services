@@ -2,9 +2,11 @@ package com.example.community.controller;
 
 import com.example.community.controller.dto.CarRateDTO;
 import com.example.community.controller.dto.RateDto;
+import com.example.community.controller.dto.ReCommentDTO;
 import com.example.community.model.Rate;
 import com.example.community.service.RateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,6 +58,16 @@ public class RateController {
     @GetMapping("/rate/{carId}")
     public ResponseEntity<Double> getCarRate(@PathVariable("carId") Long carId){
         return ResponseEntity.ok(rateService.getCarRate(carId));
+    }
+
+    //Send rate Id for update
+    @PutMapping("/rate/{id}/recomment")
+    public ResponseEntity<String>recomment(@PathVariable("id")Long rateId, @RequestBody ReCommentDTO reCommentDTO){
+        Boolean succ = rateService.recomment(rateId,reCommentDTO);
+        if(!succ){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please try again..");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Successfully left owner comment");
     }
 
 }

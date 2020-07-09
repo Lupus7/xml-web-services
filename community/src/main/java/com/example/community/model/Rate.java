@@ -71,6 +71,16 @@ public class Rate {
     @XmlElement(namespace = "xml-web-services-community")
     @Column(nullable = false)
     protected String rater;
+    @XmlElement(namespace = "xml-web-services-community")
+    protected String recomment;
+
+    public String getRecomment() {
+        return recomment;
+    }
+
+    public void setRecomment(String recomment) {
+        this.recomment = recomment;
+    }
 
     /**
      * Gets the value of the id property.
