@@ -200,6 +200,13 @@ export default {
             });
         },
         bookCar() {
+
+            if(!this.chosenStart.includes('T'))
+                this.chosenStart += "T00:00:00";
+            
+            if(!this.chosenEnd.includes('T'))
+                this.chosenEnd += "T00:00:00";
+
             axios.post("/rent/api/booking", {
                 // TODO: add date selector for start and end date
                 loaner: this.info.loaner,
@@ -218,6 +225,13 @@ export default {
                         variant: "success",
                         solid: true
                     });
+                let url = "/cars-ads/api/ad/" + this.id;
+
+                axios.get(url).then((response) => {
+                    this.info = response.data;
+                    this.chosenStart = this.info.startDate;
+                    this.chosenEnd = this.info.endDate;
+                });
             });
             this.$refs["my-modal"].hide();
           
