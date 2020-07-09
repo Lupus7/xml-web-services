@@ -2,6 +2,11 @@ package service
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"strconv"
+
 	//"github.com/hashicorp/consul/api"
 	//"github.com/hashicorp/consul/connect"
 	"strings"
@@ -39,6 +44,8 @@ func(cs *CarService)FindImagesByCarId(carId int64)([]*model.Image,error){
 
 func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	fmt.Printf("%v", *request)
+	api := os.Getenv("API_GATEWAY")
+	client := &http.Client{}
 	var ads []*model.Ad
 	ads, _ = cs.Store.FindAllActiveAds()
 
@@ -135,23 +142,37 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	}
 
 	//TODO: wait to implement price service first
-	//if request.PriceMin != 0 {
-	//	//search by minimum price
-	//	for i := len(ads) - 1; i >= 0; i-- {
-	//		if request.PriceMin > ads[i].Car.Price {
-	//			ads = append(ads[:i], ads[i+1:]...)
-	//		}
-	//	}
-	//}
+	if request.PriceMin != 0 {
+		//search by minimum price
+		for i := len(ads) - 1; i >= 0; i-- {
+			price, err := getCarsPrice(client,api,ads[i].PriceListId, ads[i].CarId)
+			if err != nil {
+				return nil, err
+			}
+			if price != 0.0 {
+				if request.PriceMin > price {
+					ads = append(ads[:i], ads[i+1:]...)
+				}
+			}
 
-	//if request.PriceMax != 0 {
-	//	//search by maximum price
-	//	for i := len(ads) - 1; i >= 0; i-- {
-	//		if request.PriceMax < ads[i].Car.Price {
-	//			ads = append(ads[:i], ads[i+1:]...)
-	//		}
-	//	}
-	//}
+		}
+	}
+
+	if request.PriceMax != 0 {
+		//search by maximum price
+		for i := len(ads) - 1; i >= 0; i-- {
+			price, err := getCarsPrice(client,api,ads[i].PriceListId, ads[i].CarId)
+			if err != nil {
+				return nil, err
+			}
+			if price != 0.0{
+				if request.PriceMax < price {
+					ads = append(ads[:i], ads[i+1:]...)
+				}
+			}
+
+		}
+	}
 
 	if request.TotalMileAge != 0 {
 		//search by total mileage
@@ -208,6 +229,30 @@ func (cs *CarService) Search(request *dto.SearchDTO) ([]*model.Ad, error) {
 	}
 
 	return ads, nil
+}
+
+func getCarsPrice(client *http.Client, api string, priceListId, carId int64)(float32,error){
+	url := fmt.Sprintf("http://%s:8080/cars-ads/test/pricelist/%v/car/%v", api, priceListId, carId)
+	fmt.Println(url)
+
+	resp, err := client.Get(url)
+	if err != nil {
+		fmt.Errorf(err.Error())
+		return 0.0, err
+	}
+
+	respString, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println(err.Error())
+		return 0.0, err
+	}
+
+	priceFloat, err := strconv.ParseFloat(string(respString), 32)
+	if err != nil {
+		return 0.0 ,err
+	}
+
+	return float32(priceFloat), nil
 }
 
 func (cs *CarService) FindAllBrands() ([]*model.Brand, error) {

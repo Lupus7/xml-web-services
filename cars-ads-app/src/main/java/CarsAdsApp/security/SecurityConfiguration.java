@@ -22,6 +22,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/health").permitAll()
                 //.anyRequest().hasAuthority("MASTER")// health available to all
                 .antMatchers("/ws/**").permitAll()
+                .antMatchers("/test/**").permitAll()
                 .anyRequest().authenticated(); // everything else available only to authenticated users
     }
 }

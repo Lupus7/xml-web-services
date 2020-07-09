@@ -16,14 +16,17 @@ public class AdDTO {
 
     private Long carId;
 
+    private Long priceListId;
+
     public AdDTO() {
     }
 
-    public AdDTO(String startDate, String endDate, String place, Long car) {
+    public AdDTO(String startDate, String endDate, String place, Long car, Long priceListId) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.place = place;
         this.carId = car;
+        this.priceListId = priceListId;
     }
 
     public String getStartDate() {
@@ -56,5 +59,13 @@ public class AdDTO {
 
     public void setCarId(Long car) {
         this.carId = car;
+    }
+
+    public Long getPriceListId() {
+        return priceListId;
+    }
+
+    public void setPriceListId(Long priceListId) {
+        this.priceListId = priceListId;
     }
 }
