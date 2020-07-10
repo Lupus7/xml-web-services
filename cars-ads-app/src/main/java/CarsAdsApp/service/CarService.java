@@ -252,4 +252,14 @@ public class CarService {
         }
         return imgIds;
     }
+
+    public Boolean updateCarKm(Long carId, Double km) {
+        Optional<Car> car = carRepository.findById(carId);
+        if(!car.isPresent())
+            return false;
+        Double totalKm = car.get().getTotalMileage() + km;
+        car.get().setTotalMileage(totalKm);
+        carRepository.save(car.get());
+        return true;
+    }
 }

@@ -131,5 +131,13 @@ public class CarController {
         return ResponseEntity.badRequest().build();
     }
 
+    @PutMapping("/cars/{id}/update/{km}")
+    public ResponseEntity<String> updateCarKm(@PathVariable("id") Long carId, @PathVariable("km") Double km){
+        Boolean success = carService.updateCarKm(carId, km);
+        if(success)
+            return ResponseEntity.ok("Successfully updated");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Something bad happened..");
+    }
+
 
 }

@@ -5,14 +5,24 @@ public class ReportDto {
     private String extraInfo;
     private double allowedMileage;
     private long booking;
+    private double travelledKm;
 
     public ReportDto() {
     }
 
-    public ReportDto(String extraInfo, double allowedMileage, long booking) {
+    public ReportDto(String extraInfo, double allowedMileage, long booking, double travelledKm) {
         this.extraInfo = extraInfo;
         this.allowedMileage = allowedMileage;
         this.booking = booking;
+        this.travelledKm = travelledKm;
+    }
+
+    public double getTravelledKm() {
+        return travelledKm;
+    }
+
+    public void setTravelledKm(double travelledKm) {
+        this.travelledKm = travelledKm;
     }
 
     public String getExtraInfo() {
