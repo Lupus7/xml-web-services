@@ -48,7 +48,7 @@ public class AdService {
 
     public int createAd(AdDTO adDTO, String email) {
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return 400;
         Long userId = userIdResponse.getBody();
@@ -88,7 +88,7 @@ public class AdService {
     public boolean checkAds(String obj, String email) throws JSONException {
         System.out.println(obj);
         JSONObject object = new JSONObject(obj);
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
@@ -112,7 +112,7 @@ public class AdService {
 
     public int activateAd(Long id, String email) {
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return 400;
 
@@ -145,7 +145,7 @@ public class AdService {
 
     public boolean deactivateAd(Long id, String email) {
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
@@ -163,7 +163,7 @@ public class AdService {
 
     public boolean editAd(Long id, AdDTO adDTO, String email) {
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
@@ -197,7 +197,7 @@ public class AdService {
 
     public List<AdClientDTO> getClientAds(String email) {
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return new ArrayList<>();
 

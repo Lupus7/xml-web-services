@@ -41,7 +41,7 @@ public class SoapAdService {
 
     public Long createAdSoap(AdDTO adDTO, String email) {
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return (long) -1;
         Long userId = userIdResponse.getBody();
@@ -65,7 +65,7 @@ public class SoapAdService {
         Optional<Ad> ad = adRepo.findById(id);
         if (!ad.isPresent() || ad.get().isActive())
             return false;
-        ResponseEntity<String> userEmail = userProxy.getUserEmail(ad.get().getOwnerId());
+        ResponseEntity<String> userEmail = userProxy.getUserEmail(ad.get().getOwnerId(), "NONE;MASTER");
         if (userEmail == null || !email.equals(userEmail.getBody()))
             return false;
 
@@ -79,7 +79,7 @@ public class SoapAdService {
         Optional<Ad> ad = adRepo.findById(id);
         if (!ad.isPresent() || !ad.get().isActive())
             return false;
-        ResponseEntity<String> userEmail = userProxy.getUserEmail(ad.get().getOwnerId());
+        ResponseEntity<String> userEmail = userProxy.getUserEmail(ad.get().getOwnerId(), "NONE;MASTER");
         if (userEmail == null || !email.equals(userEmail.getBody()))
             return false;
 
@@ -91,7 +91,7 @@ public class SoapAdService {
 
     public Long editAd(long id, AdFormDetails adDTO, String email) {
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return (long) -1;
 
@@ -121,7 +121,7 @@ public class SoapAdService {
 
     public List<AdDetails> getAds(String email) throws DatatypeConfigurationException {
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return new ArrayList<>();
 

@@ -1,4 +1,4 @@
-package team10.codebook.collections.soap;
+package team10.codebook.controllers.soap;
 
 import com.car_rent.agent_api.BrandDetails;
 import com.car_rent.agent_api.GetAllSpecsRequest;

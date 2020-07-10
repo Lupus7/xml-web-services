@@ -28,7 +28,7 @@ public class CartService {
     public boolean addAdToCart(Long id, String email) throws JSONException {
         // provera da li user sa name postoji
 
-        ResponseEntity<Long> userIdRes = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdRes = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdRes == null || userIdRes.getBody() == null)
             return false;
 
@@ -57,7 +57,7 @@ public class CartService {
     public boolean deleteAdToCart(Long id, String email) throws JSONException {
         // provera da li user sa name postoji
 
-        ResponseEntity<Long> userIdRes = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdRes = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdRes == null || userIdRes.getBody() == null)
             return false;
 
@@ -82,7 +82,7 @@ public class CartService {
         // provera da li user sa name postoji
         ArrayList<AdClientDTO> list = new ArrayList<>();
 
-        ResponseEntity<Long> userIdRes = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdRes = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdRes == null || userIdRes.getBody() == null)
             return list;
 
@@ -104,7 +104,7 @@ public class CartService {
 
     public AdClientDTO getAdFromCart(Long id, String email) {
 
-        ResponseEntity<Long> userIdRes = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdRes = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdRes == null || userIdRes.getBody() == null)
             return new AdClientDTO();
 
@@ -124,7 +124,7 @@ public class CartService {
 
     public boolean createCart(String email) {
 
-        ResponseEntity<Long> userIdRes = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdRes = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdRes == null || userIdRes.getBody() == null)
             return false;
 

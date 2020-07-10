@@ -1,4 +1,4 @@
-package team10.apigateway.model.dto;
+package team10.apigateway.dto;
 
 public class UserAuthInfo {
     private String username;

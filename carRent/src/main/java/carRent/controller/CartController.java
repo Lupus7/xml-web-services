@@ -1,6 +1,7 @@
 package carRent.controller;
 
 import carRent.model.dto.AdClientDTO;
+import carRent.model.dto.Placeholder;
 import carRent.service.CartService;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +22,7 @@ public class CartController {
     // Pravljenje carta
     @PostMapping("/api/cart")
     @PreAuthorize("hasAuthority('MASTER')")
-    public ResponseEntity<String> createCart(Principal user) throws JSONException {
+    public ResponseEntity<String> createCart(Principal user, Placeholder placeholder) {
         if (cartService.createCart(user.getName()))
             return ResponseEntity.ok("Cart created!");
         else
