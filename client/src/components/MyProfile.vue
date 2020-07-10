@@ -51,6 +51,15 @@
                         Messages
                     </b-nav-item>
 
+                    <b-nav-item @click="showReports()" right>
+                        <b-icon
+                            icon="clipboard-data"
+                            aria-hidden="true"
+                            variant="dark"
+                        ></b-icon>
+                        Statistics
+                    </b-nav-item>
+
                     <b-nav-item @click="showClientCart()" right>
                         <b-icon
                             icon="cart"
@@ -68,6 +77,7 @@
         <ClientCars v-if="this.boolcars" />
         <ClientAds v-if="this.boolads" />
         <Cart v-if="this.boolcart" />
+        <Reports v-if="this.boolrep" />
     </div>
 </template>
 
@@ -77,6 +87,7 @@ import ClientAds from "./ClientAds";
 import BookingSubmitForm from "./BookingSubmitForm";
 import Cart from "./Cart";
 import AllBookings from "./AllBookings";
+import Reports from "./Reports";
 
 export default {
     data() {
@@ -85,6 +96,7 @@ export default {
             boolads: false,
             boolbook: false,
             boolcart: false,
+            boolrep: false,
         };
     },
     components: {
@@ -93,6 +105,7 @@ export default {
         BookingSubmitForm,
         Cart,
         AllBookings,
+        Reports,
     },
     methods: {
         showClientCars() {
@@ -100,24 +113,35 @@ export default {
             this.boolads = false;
             this.boolbook = false;
             this.boolcart = false;
+            this.boolrep = false;
         },
         showClientAds() {
             this.boolads = true;
             this.boolcars = false;
             this.boolbook = false;
             this.boolcart = false;
+            this.boolrep = false;
         },
         showClientBookings() {
             this.boolads = false;
             this.boolcars = false;
             this.boolbook = true;
             this.boolcart = false;
+            this.boolrep = false;
         },
         showClientCart() {
             this.boolads = false;
             this.boolcars = false;
             this.boolbook = false;
             this.boolcart = true;
+            this.boolrep = false;
+        },
+        showReports() {
+            this.boolads = false;
+            this.boolcars = false;
+            this.boolbook = false;
+            this.boolcart = false;
+            this.boolrep = true;
         },
         showMessages(){
             this.$router.push("/messages");

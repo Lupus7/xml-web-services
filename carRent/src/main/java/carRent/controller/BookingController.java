@@ -115,7 +115,7 @@ public class BookingController {
     }
 
     @GetMapping(value = "/api/booking/{id}", produces = "application/json")
-    @PreAuthorize("hasAuthority('READ_BOOKINGS')")
+    @PreAuthorize("hasAuthority('READ_BOOKINGS') or hasAuthority('MASTER')")
     public ResponseEntity<BookingDTO> getBooking(@PathVariable("id") Long id, Principal user) {
 
         return ResponseEntity.ok((BookingDTO) bookingService.getBooking(id, user.getName()));

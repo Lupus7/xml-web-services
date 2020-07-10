@@ -18,8 +18,9 @@
             @row-clicked="fillReports"
         ></b-table>
 
-        <b-modal ref="my-modal" hide-footer title="Reports:" v-if="reports != null && reports.length > 0" scrollable>
+        <b-modal ref="my-modal" hide-footer title="Reports:" scrollable>
             <b-table
+                v-if="reports != null && reports.length > 0"
                 bordered
                 :items="reports"
                 :fields="fields_modal"
@@ -27,6 +28,7 @@
                 ref="table_reports"
                 style="background:white"
             ></b-table>
+            <span v-else> No reports for this car! </span>
         </b-modal>
     </div>
 </template>
@@ -53,12 +55,12 @@ export default {
     },
     methods: {
         getAll() {
-            axios.get("/reports/statistics").then(response => {
+            axios.get("/community/reports/statistics").then(response => {
                 this.stats = response.data;
             });
         },
         fillReports(row) {
-            axios.get("/reports/cars/" + row.carId).then(response => {
+            axios.get("/community/reports/cars/" + row.carId).then(response => {
                 this.reports = response.data;
                 this.$refs["my-modal"].show();
             });
