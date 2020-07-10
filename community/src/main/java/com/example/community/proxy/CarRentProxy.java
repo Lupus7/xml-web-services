@@ -20,4 +20,7 @@ public interface CarRentProxy {
     @GetMapping(value = "/api/booking/{id}", produces = "application/json")
     ResponseEntity<BookingDTO> getBooking(@PathVariable("id") Long id, @RequestHeader("Authorization") String auth);
 
+    @GetMapping(value = "/api/booking/{id}/ad", produces = "application/json")
+    ResponseEntity<Long> getBookingsAd(@PathVariable("id") Long id, @RequestHeader("Authorization") String auth);
+
 }
