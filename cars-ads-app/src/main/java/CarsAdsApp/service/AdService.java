@@ -256,6 +256,13 @@ public class AdService {
         return null;
     }
 
+    public Long getCarId(Long adId) {
+        Optional<Ad> ad = adRepo.findById(adId);
+        if(!ad.isPresent())
+            return -1L;
+        return ad.get().getCarId();
+    }
+
 
     ///// SOAP
 

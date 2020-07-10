@@ -7,6 +7,7 @@ import CarsAdsApp.service.AdService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -126,5 +127,11 @@ public class AdController {
     @PreAuthorize("hasAuthority('MASTER')")
     public ResponseEntity<Long> getOwnerById(@PathVariable("id") Long id){
         return ResponseEntity.ok(adService.getOwnerId(id));
+    }
+
+    @GetMapping("/ad/{id}/car")
+    public ResponseEntity<Long> getCarIdFromAd(@PathVariable("id") Long adId){
+        Long carId = adService.getCarId(adId);
+        return ResponseEntity.status(HttpStatus.OK).body(carId);
     }
 }
