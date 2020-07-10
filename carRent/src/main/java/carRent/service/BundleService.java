@@ -37,7 +37,7 @@ public class BundleService {
 
     public boolean acceptBundleRequest(Long id, String name) {
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(name);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(name, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
@@ -73,7 +73,7 @@ public class BundleService {
 
     public boolean rejectBundleRequest(Long id, String user) {
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(user);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(user, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
@@ -93,7 +93,7 @@ public class BundleService {
 
     public boolean cancelBundleRequest(Long id, String name) {
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(name);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(name, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
@@ -116,7 +116,7 @@ public class BundleService {
 
     public List<GetBundleDTO> getAllSentBundleRequests(String email) {
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return new ArrayList<>();
 
@@ -142,7 +142,7 @@ public class BundleService {
         Set<GetBundleDTO> bundleDTOS = new HashSet<>();
         HashMap<Long, Bundle> bundles = new HashMap<>();
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(name);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(name, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return bundleDTOS;
 
@@ -161,7 +161,7 @@ public class BundleService {
         }
 
         for (Bundle b : bundles.values()) {
-            ResponseEntity<String> loaner = userProxy.getUserEmail(b.getLoaner());
+            ResponseEntity<String> loaner = userProxy.getUserEmail(b.getLoaner(), "NONE;MASTER");
             if (loaner != null && loaner.getBody() != null && !loaner.getBody().equals("")) {
                 GetBundleDTO getBundleDTO = new GetBundleDTO(b, loaner.getBody());
                 bundleDTOS.add(getBundleDTO);

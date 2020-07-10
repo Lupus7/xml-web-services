@@ -44,7 +44,7 @@ public class BookingService {
     public boolean createBookingRequest(BundleDTO bundleDTO, String email) {
 
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
@@ -161,7 +161,7 @@ public class BookingService {
 
         HashMap<Long, Booking> reservedBookings = new HashMap<>();
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return new HashMap<>();
 
@@ -239,7 +239,7 @@ public class BookingService {
     }
 
     public boolean acceptBookingRequest(Long id, String user) {
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(user);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(user, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
@@ -266,7 +266,7 @@ public class BookingService {
 
     public boolean cancelBookingRequest(Long id, String email) {
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
@@ -285,7 +285,7 @@ public class BookingService {
 
     public boolean rejectBookingRequest(Long id, String user) throws JSONException {
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(user);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(user, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
@@ -315,7 +315,7 @@ public class BookingService {
 
     public ArrayList<BookingDTO> getAllSentBookingRequests(String email) {
         ArrayList<BookingDTO> bookingDTOS = new ArrayList<>();
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return bookingDTOS;
 
@@ -338,7 +338,7 @@ public class BookingService {
 
     public Set<BookingDTO> getAllReceivedBookingRequests(String email) {
         Set<BookingDTO> bookingDTOS = new HashSet<>();
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null) // provera da li postoji
             return bookingDTOS;
 
@@ -362,7 +362,7 @@ public class BookingService {
 
         JSONObject object = new JSONObject(jsonObject);
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
@@ -387,7 +387,7 @@ public class BookingService {
         if (id.equals(""))
             return true;
 
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
@@ -409,7 +409,7 @@ public class BookingService {
     }
 
     public BookingDTO getBooking(Long id, String email) {
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return new BookingDTO();
 
@@ -448,7 +448,7 @@ public class BookingService {
     }
 
     public boolean endBookingRequest(Long id, String user) {
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(user);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(user, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null)
             return false;
 
@@ -465,7 +465,7 @@ public class BookingService {
     // soap bookings
     public Set<SoapBookingDTO> getAllReceivedBookingRequestsSoap(String email) {
         Set<SoapBookingDTO> bookingDTOS = new HashSet<>();
-        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email);
+        ResponseEntity<Long> userIdResponse = userProxy.getUserId(email, "NONE;MASTER");
         if (userIdResponse == null || userIdResponse.getBody() == null) // provera da li postoji
             return bookingDTOS;
 
@@ -477,7 +477,7 @@ public class BookingService {
             System.out.println("Ad id: " + ad.getAdId());
             List<Booking> bookings = bookingRepo.findAllByAdAndBundleId(ad.getAdId(), null);
             for (Booking book : bookings) {
-                ResponseEntity<String> loaner = userProxy.getUserEmail(book.getLoaner());
+                ResponseEntity<String> loaner = userProxy.getUserEmail(book.getLoaner(), "NONE;MASTER");
                 if (loaner != null && loaner.getBody() != null && !loaner.getBody().equals(""))
                     bookingDTOS.add(new SoapBookingDTO(book, loaner.getBody()));
             }

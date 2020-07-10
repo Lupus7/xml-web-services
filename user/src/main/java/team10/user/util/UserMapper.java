@@ -3,6 +3,7 @@ package team10.user.util;
 import team10.user.models.User;
 import team10.user.models.dto.NewAgentDTO;
 import team10.user.models.dto.NewCompanyDTO;
+import team10.user.models.dto.RegistrationRequest;
 
 import java.util.ArrayList;
 
@@ -22,6 +23,23 @@ public class UserMapper {
         retVal.setFirstName(newAgentDTO.getFirstName());
         retVal.setLastName(newAgentDTO.getLastName());
         retVal.setPassword(newAgentDTO.getPassword());
+        return retVal;
+    }
+
+    public static User toEntity(RegistrationRequest registrationRequest) {
+        User retVal = new User();
+        retVal.setAddress(registrationRequest.getAddress());
+        retVal.setApproved(true);
+        retVal.setAuthorities("ROLE_CLIENT;DEFAULT");
+        retVal.setBlocked(false);
+        retVal.setBookings(new ArrayList<>());
+        retVal.setCars(new ArrayList<>());
+        //retVal.setCart(new Cart());
+        retVal.setCompanyName("");
+        retVal.setEmail(registrationRequest.getEmail());
+        retVal.setFirstName(registrationRequest.getFirstName());
+        retVal.setLastName(registrationRequest.getLastName());
+        retVal.setPassword(registrationRequest.getPassword());
         return retVal;
     }
 

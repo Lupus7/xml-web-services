@@ -1,9 +1,8 @@
 package team10.user.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import team10.user.models.dto.ClientDTO;
 import team10.user.models.dto.NewAgentDTO;
@@ -19,7 +18,7 @@ public class ClientController {
     private ClientService clientService;
 
     @GetMapping("")
-    //@PreAuthorize("hasAuthority('READ_CLIENTS')")
+    @PreAuthorize("hasAuthority('READ_CLIENTS')")
     public ResponseEntity<List<ClientDTO>> getAllClients() {
         List<ClientDTO> retVal = clientService.getAll();
         if (retVal != null)
@@ -28,7 +27,7 @@ public class ClientController {
     }
 
     @PutMapping("/block/{email}")
-    //@PreAuthorize("hasAuthority('UPDATE_CLIENT_BLOCK')")
+    @PreAuthorize("hasAuthority('UPDATE_CLIENT_BLOCK')")
     public ResponseEntity<String> blockClient(@PathVariable("email") String email) {
         if (clientService.block(email))
             return ResponseEntity.ok("Operation successful!");
@@ -36,7 +35,7 @@ public class ClientController {
     }
 
     @PutMapping("/activate/{email}")
-    //@PreAuthorize("hasAuthority('UPDATE_CLIENT_BLOCK')")
+    @PreAuthorize("hasAuthority('UPDATE_CLIENT_BLOCK')")
     public ResponseEntity<String> activateClient(@PathVariable("email") String email) {
         if (clientService.activate(email))
             return ResponseEntity.ok("Operation successful!");
@@ -44,7 +43,7 @@ public class ClientController {
     }
 
     @DeleteMapping("/{email}")
-    //@PreAuthorize("hasAuthority('DELETE_CLIENT')")
+    @PreAuthorize("hasAuthority('DELETE_CLIENT')")
     public ResponseEntity<String> deleteClient(@PathVariable("email") String email) {
         if (clientService.delete(email))
             return ResponseEntity.ok("Operation successful!");
@@ -52,7 +51,7 @@ public class ClientController {
     }
 
     @PostMapping("/company")
-    //@PreAuthorize("hasAuthority('ADD_COMPANY')")
+    @PreAuthorize("hasAuthority('ADD_COMPANY')")
     public ResponseEntity<String> registerCompany(@RequestBody NewCompanyDTO newCompanyDTO) {
         if (clientService.registerCompany(newCompanyDTO))
             return ResponseEntity.ok("Operation successful!");
@@ -60,7 +59,7 @@ public class ClientController {
     }
 
     @PostMapping("/agent")
-    //@PreAuthorize("hasAuthority('ADD_AGENT')")
+    @PreAuthorize("hasAuthority('ADD_AGENT')")
     public ResponseEntity<String> registerAgent(@RequestBody NewAgentDTO newAgentDTO) {
         if (clientService.registerAgent(newAgentDTO))
             return ResponseEntity.ok("Operation successful!");
@@ -68,6 +67,7 @@ public class ClientController {
     }
 
     @GetMapping(value = "/user/{email}")
+    @PreAuthorize("hasAuthority('MASTER')")
     public ResponseEntity<Long> getUserId(@PathVariable("email") String email) {
         Long id  = clientService.getUserId(email);
         if (id != null)

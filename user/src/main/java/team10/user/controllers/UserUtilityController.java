@@ -2,6 +2,7 @@ package team10.user.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,11 +17,13 @@ public class UserUtilityController {
     private UserUtilityService userUtilityService;
 
     @GetMapping("exists/{email}")
+    @PreAuthorize("hasAuthority('MASTER')")
     public ResponseEntity<Boolean> userExists(@PathVariable("email") String email) {
         return ResponseEntity.ok(userUtilityService.userExists(email));
     }
 
     @GetMapping("auth/{email}")
+    @PreAuthorize("hasAuthority('MASTER')")
     public ResponseEntity<UserAuthInfo> getAuthInfo(@PathVariable("email") String email) {
         UserAuthInfo userAuthInfo = userUtilityService.getAuthInfo(email);
         if (userAuthInfo == null)
@@ -29,6 +32,7 @@ public class UserUtilityController {
     }
 
     @GetMapping(value = "/user/{id}")
+    @PreAuthorize("hasAuthority('MASTER')")
     public ResponseEntity<String> getUserEmail(@PathVariable("id") Long id) {
         String email = userUtilityService.getUserEmail(id);
         if (email != null)

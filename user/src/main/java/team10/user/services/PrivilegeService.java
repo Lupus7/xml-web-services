@@ -28,6 +28,16 @@ public class PrivilegeService {
     @Autowired
     private RoleRepository roleRepository;
 
+    public void addDefaultPrivileges(User user) {
+        if (user.getAuthorities() != null && user.getAuthorities().contains(";DEFAULT")) {
+            Role role = roleRepository.findByName(user.getRoles().get(0));
+            if (role != null) {
+                user.setAuthorities(role.getName() + ";" + role.getPrivileges().stream().map(Privilege::getName).collect(Collectors.joining(";")));
+                userRepository.save(user);
+            }
+        }
+    }
+
     public boolean updatePrivilege(String email, PrivilegeDTO privilegeDTO) {
         User user = userRepository.findByEmail(email);
         if (user == null) return false;
@@ -50,12 +60,16 @@ public class PrivilegeService {
         List<User> users = userRepository.findAll();
         if (users == null) return null;
 
+        users.stream().forEach(this::addDefaultPrivileges);
+
         return users.stream().map(UserPrivilegeMapper::toDTO).collect(Collectors.toList());
     }
 
     public List<PrivilegeDTO> getByUser(String email) {
         User user = userRepository.findByEmail(email);
         if (user == null) return null;
+
+        addDefaultPrivileges(user);
 
         return extractPrivileges(user);
     }

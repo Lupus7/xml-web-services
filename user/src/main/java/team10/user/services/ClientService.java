@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service;
 import team10.user.models.Privilege;
 import team10.user.models.Role;
 import team10.user.models.User;
-import team10.user.models.dto.CarDTO;
-import team10.user.models.dto.ClientDTO;
-import team10.user.models.dto.NewAgentDTO;
-import team10.user.models.dto.NewCompanyDTO;
+import team10.user.models.dto.*;
 import team10.user.proxy.CarsAdsProxy;
 import team10.user.proxy.RentProxy;
 import team10.user.repositories.RoleRepository;
@@ -131,11 +128,12 @@ public class ClientService {
             user.setAuthorities(user.getAuthorities() + ";" + p.getName());
         }
 
-        // TODO: 400 no body error
-//        ResponseEntity<String> responseEntity = rentProxy.createCart(user.getEmail() + ";MASTER", "0");
-//
-//        if (responseEntity.getStatusCode().isError())
-//            return false;
+        userRepository.save(user);
+
+        ResponseEntity<String> responseEntity = rentProxy.createCart(user.getEmail() + ";MASTER", new Placeholder());
+
+        if (responseEntity.getStatusCode().isError())
+            return false;
 
         userRepository.save(user);
         return true;
