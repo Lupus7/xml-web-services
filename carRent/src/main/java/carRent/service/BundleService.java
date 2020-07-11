@@ -49,10 +49,11 @@ public class BundleService {
 
         for (Booking b : bundle.get().getBookings()) {
             b.setState(RequestState.PAID);
-            bookingRepo.save(b);
+            //bookingRepo.save(b);
             carsAdsProxy.deactivateAd(b.getAd(), name + ";MASTER");
             ads.add(b.getAd());
         }
+        bundleRepository.save(bundle.get());
 
 
         for (Long adId : ads) {
@@ -62,9 +63,7 @@ public class BundleService {
                     b.setState(RequestState.CANCELED);
                     bookingRepo.save(b);
                 }
-
             }
-
         }
 
         return true;
@@ -82,11 +81,13 @@ public class BundleService {
             return false;
 
         for (Booking b : bundle.get().getBookings()) {
+            System.out.println("B: " + b);
             if (b.getState().equals(RequestState.PENDING)) {
                 b.setState(RequestState.CANCELED);
-                bookingRepo.save(b);
+                //bookingRepo.save(b);
             }
         }
+        bundleRepository.save(bundle.get());
 
         return true;
     }
@@ -108,8 +109,9 @@ public class BundleService {
                 return false;
 
             booking.setState(RequestState.CANCELED);
-            bookingRepo.save(booking);
+            //bookingRepo.save(booking);
         }
+        bundleRepository.save(bundle.get());
 
         return true;
     }

@@ -3,14 +3,13 @@
         <span class="row">
             <div class="col-6">
                 <b-carousel
-                    v-model="slide"
                     :interval="0"
                     controls
                     indicators
                     background="#ababab"
                     style="text-shadow: 1px 1px 2px #333;"
                 >
-                    <span v-if="info.images.length > 0">
+                    <span v-if="info.images && info.images.length > 0">
                         <b-carousel-slide
                             v-for="(item, index) in info.images"
                             :key="index"
@@ -19,85 +18,57 @@
                         />
                     </span>
 
-                    <b-carousel-slide
-                        v-else
-                        caption="No images"
-                        img-blank
-                        img-alt="No images"
-                    >
-                        <p>
-                            Contact car owner or admin for more info.
-                        </p>
+                    <b-carousel-slide v-else caption="No images" img-blank img-alt="No images">
+                        <p>Contact car owner or admin for more info.</p>
                     </b-carousel-slide>
                 </b-carousel>
             </div>
             <div class="col-6">
                 <div class="ad-title">
-                    <h3 class="car-price float-left">
-                        {{ info.brand }} {{ info.model }}
-                    </h3>
+                    <h3 class="car-price float-left">{{ info.brand }} {{ info.model }}</h3>
                     <h3 class="car-price float-right">
-                        <!-- {{ info.price }}  -->0 €
+                        <!-- {{ info.price }}  -->
+                        0 €
                     </h3>
                 </div>
                 <h4 class="ad-info">
-                    <b-icon
-                        icon="building"
-                        aria-hidden="true"
-                        variant="light"
-                    ></b-icon>
+                    <b-icon icon="building" aria-hidden="true" variant="light"></b-icon>
                     Advertiser: {{ info.advertiser }}
                 </h4>
                 <h4 class="ad-info">
-                    <b-icon
-                        icon="geo-alt"
-                        aria-hidden="true"
-                        variant="light"
-                    ></b-icon>
+                    <b-icon icon="geo-alt" aria-hidden="true" variant="light"></b-icon>
                     Place: {{ info.place }}
                 </h4>
                 <hr />
                 <h4 class="ad-info">Class: {{ info.carClass }}</h4>
                 <h4 class="ad-info">Fuel: {{ info.fuel }}</h4>
                 <h4 class="ad-info">Transmission: {{ info.transmission }}</h4>
-                <h4 class="ad-info">
-                    Children seats: {{ info.childrenSeats }}
-                </h4>
+                <h4 class="ad-info">Children seats: {{ info.childrenSeats }}</h4>
                 <hr />
-                <h4>
-                    <b-icon
-                        icon="calendar"
-                        aria-hidden="true"
-                        variant="light"
-                    />
+                <h4 v-if="info && info.startDate">
+                    <b-icon icon="calendar" aria-hidden="true" variant="light" />
                     Start Date: {{ info.startDate.split("T")[0] }}
                 </h4>
-                <h4>
-                    <b-icon
-                        icon="calendar-fill"
-                        aria-hidden="true"
-                        variant="light"
-                    />
+                <h4 v-if="info && info.endDate">
+                    <b-icon icon="calendar-fill" aria-hidden="true" variant="light" />
                     End Date: {{ info.endDate.split("T")[0] }}
                 </h4>
                 <hr />
                 <h6 v-if="show">Log in to rent this car...</h6>
+                <h6 v-else-if="!active">This ad is not active...</h6>
                 <span v-else>
                     <b-button
                         class="float-left"
                         style="background:#b20000; width:150px"
                         @click="openDiag()"
-                    >
-                        Book Car
-                    </b-button>
+                    >Book Car</b-button>
                     <b-button
                         v-if="!inCart"
                         class="float-right"
                         style="background:white; width:150px; color: black"
                         @click="addToCart()"
                     >
-                        <b-icon icon="plus" aria-hidden="true" variant="dark" />
-                        Add to cart
+                        <b-icon icon="plus" aria-hidden="true" variant="dark" />Add to cart
                     </b-button>
                     <b-button
                         v-else
@@ -105,12 +76,7 @@
                         style="background:white; width:150px; color: black"
                         disabled
                     >
-                        <b-icon
-                            icon="check"
-                            aria-hidden="true"
-                            variant="dark"
-                        />
-                        In cart
+                        <b-icon icon="check" aria-hidden="true" variant="dark" />In cart
                     </b-button>
                 </span>
             </div>
@@ -152,11 +118,7 @@
                 </div>
             </div>
             <span>
-                <button
-                    type="button"
-                    class="btn btn-danger float-right"
-                    data-dismiss="modal"
-                >
+                <button type="button" class="btn btn-danger float-right" data-dismiss="modal">
                     <b-icon icon="x-circle"></b-icon>Close
                 </button>
                 <button
@@ -166,8 +128,7 @@
                     style="margin-right: 5px"
                     @click="bookCar()"
                 >
-                    <b-icon icon="check-circle" aria-hidden="true"></b-icon
-                    >Create Booking
+                    <b-icon icon="check-circle" aria-hidden="true"></b-icon>Create Booking
                 </button>
             </span>
         </b-modal>
@@ -186,6 +147,7 @@ export default {
             inCart: false,
             chosenStart: {},
             chosenEnd: {},
+            active: true
         };
     },
     props: ["id"],
@@ -193,68 +155,71 @@ export default {
         fill() {
             let url = "/cars-ads/api/ad/" + this.id;
 
-            axios.get(url).then((response) => {
+            axios.get(url).then(response => {
                 this.info = response.data;
                 this.chosenStart = this.info.startDate;
                 this.chosenEnd = this.info.endDate;
             });
+
+            axios.get("/cars-ads/api/ad/active/" + this.id).then(response => {
+                this.active = response.data;
+            });
         },
         bookCar() {
-
-            if(!this.chosenStart.includes('T'))
+            if (!this.chosenStart.includes("T"))
                 this.chosenStart += "T00:00:00";
-            
-            if(!this.chosenEnd.includes('T'))
-                this.chosenEnd += "T00:00:00";
 
-            axios.post("/rent/api/booking", {
-                // TODO: add date selector for start and end date
-                loaner: this.info.loaner,
-                books: [
-                    {
-                        adId: this.info.adId,
-                        startDate: this.chosenStart,
-                        endDate: this.chosenEnd,
-                        place: this.info.place,
-                    },
-                ],
-            }).then(response => {
-                if(response.status === 200)
-                    this.$bvToast.toast(response.data, {
-                        title: "Creating Booking",
-                        variant: "success",
-                        solid: true
+            if (!this.chosenEnd.includes("T")) this.chosenEnd += "T00:00:00";
+
+            axios
+                .post("/rent/api/booking", {
+                    // TODO: add date selector for start and end date
+                    loaner: this.info.loaner,
+                    books: [
+                        {
+                            adId: this.info.adId,
+                            startDate: this.chosenStart,
+                            endDate: this.chosenEnd,
+                            place: this.info.place
+                        }
+                    ]
+                })
+                .then(response => {
+                    if (response.status === 200)
+                        this.$bvToast.toast(response.data, {
+                            title: "Creating Booking",
+                            variant: "success",
+                            solid: true
+                        });
+                    let url = "/cars-ads/api/ad/" + this.id;
+
+                    axios.get(url).then(response => {
+                        this.info = response.data;
+                        this.chosenStart = this.info.startDate;
+                        this.chosenEnd = this.info.endDate;
                     });
-                let url = "/cars-ads/api/ad/" + this.id;
-
-                axios.get(url).then((response) => {
-                    this.info = response.data;
-                    this.chosenStart = this.info.startDate;
-                    this.chosenEnd = this.info.endDate;
                 });
-            });
             this.$refs["my-modal"].hide();
-          
         },
         openDiag() {
             this.$refs["my-modal"].show();
         },
         addToCart() {
-            axios.put("/rent/api/cart/" + this.info.adId).then((response) => {
+            axios.put("/rent/api/cart/" + this.info.adId).then(response => {
                 if (response.status < 300) this.inCart = true;
             });
         },
         getCartItems() {
-            axios.get("/rent/api/cart").then((response) => {
+            axios.get("/rent/api/cart").then(response => {
                 this.cart = response.data;
                 this.isInCart();
             });
         },
         isInCart() {
-            this.cart.forEach((c) => {
+            this.cart.forEach(c => {
                 if (c.carId == this.info.carId) this.inCart = true;
             });
-        },
+        }
     },
     created() {
         this.getCartItems();
@@ -262,7 +227,7 @@ export default {
         const token = localStorage.getItem("accessToken");
         if (token === null || token === "") this.show = true;
         else this.show = false;
-    },
+    }
 };
 </script>
 
