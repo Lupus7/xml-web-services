@@ -38,7 +38,7 @@ public class ReportService {
         if(booking == null)
             return false;
         //Ako nije zavrsen request, ne moze da podnese report
-        if(booking.getState() != RequestState.PAID)
+        if(booking.getState() != RequestState.PAID && booking.getState() != RequestState.ENDED)
             return false;
         report.setAllowedMileage(reportDto.getAllowedMileage());
         report.setBooking(reportDto.getBooking());

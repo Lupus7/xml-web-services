@@ -453,7 +453,8 @@ public class BookingService {
             return false;
 
         Optional<Booking> booking = bookingRepo.findByIdAndBundleId(id, null);
-        if (!booking.isPresent())
+        // dodao sam da prolazi i kad je vec ended jer se ovo poziva i kad se pravi report pa da ne pravi greske (kad je vec ended, ovo nista ne menja, ne smeta)
+        if (!booking.isPresent() || booking.get().getState() != RequestState.PAID || booking.get().getState() != RequestState.ENDED)
             return false;
 
         booking.get().setState(RequestState.ENDED);
