@@ -24,8 +24,6 @@ public class ReportService {
 
     @Autowired
     private CarRentProxy carRentProxy;
-    @Autowired
-    private CarsAdsProxy carsAdsProxy;
 
     @Autowired
     private CarsAdsProxy carsAdsProxy;

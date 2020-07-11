@@ -8,3 +8,10 @@ cars/seed2
 cars/model/tests.go
 cars/setup.sql
 .vs
+carRent/src/main/java/com/car_rent/agent_api/
+
+cars-ads-app/src/main/java/com/car_rent/agent_api/
+
+codebook/src/main/java/com/car_rent/agent_api/
+
+community/src/main/java/com/car_rent/agent_api/

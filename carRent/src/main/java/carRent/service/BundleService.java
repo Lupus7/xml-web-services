@@ -129,8 +129,17 @@ public class BundleService {
             bundleDTO.setId(bundle.getId());
             bundleDTO.setLoaner(userIdResponse.getBody());
             bundleDTO.setLoanerEmail(email);
-            for (Booking booking : bundle.getBookings())
-                bundleDTO.getBookings().add(new BookingDTO(booking));
+            for (Booking booking : bundle.getBookings()) {
+                ResponseEntity<Long> userId = carsAdsProxy.getOwnerById(booking.getAd(), "NONE;MASTER");
+                if (userId == null || userId.getStatusCode().isError())
+                    continue;
+
+                ResponseEntity<String> username = userProxy.getUserEmail(userId.getBody(), "NONE;MASTER");
+                if (username == null || username.getStatusCode().isError())
+                    continue;
+
+                bundleDTO.getBookings().add(new BookingDTO(booking, username.getBody()));
+            }
 
             bundleDTOS.add(bundleDTO);
         }
