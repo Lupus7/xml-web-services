@@ -50,10 +50,11 @@ public class BundleService {
 
         for (Booking b : bundle.get().getBookings()) {
             b.setState(RequestState.PAID);
-            bookingRepo.save(b);
+//            bookingRepo.save(b);
             adService.deactivateAd(b.getAd().getId(), name);
             ads.add(b.getAd());
         }
+        bundleRepository.save(bundle.get());
 
 
         for (Ad ad : ads) {
@@ -89,9 +90,11 @@ public class BundleService {
         for (Booking b : bundle.get().getBookings()) {
             if (b.getState().equals(RequestState.PENDING)) {
                 b.setState(RequestState.CANCELED);
-                bookingRepo.save(b);
+//                bookingRepo.save(b);
             }
         }
+
+        bundleRepository.save(bundle.get());
 
         RejectBundleResponse response = bookingSoapClient.rejectBundle(bundle.get().getServiceId(), name);
         if (response == null)
