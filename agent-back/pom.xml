@@ -147,6 +147,9 @@
 						<schema>
 							<url>http://localhost:8080/community/ws/community.wsdl</url>
 						</schema>
+						<schema>
+							<url>http://localhost:8080/user/ws/user.wsdl</url>
+						</schema>
 					</schemas>
 				</configuration>
 			</plugin>

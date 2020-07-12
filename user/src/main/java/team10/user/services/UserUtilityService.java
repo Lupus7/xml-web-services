@@ -1,5 +1,9 @@
 package team10.user.services;
 
+import com.car_rent.agent_api.GetAllUsersRequest;
+import com.car_rent.agent_api.GetAllUsersResponse;
+import com.car_rent.agent_api.ObjectFactory;
+import com.car_rent.agent_api.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -10,8 +14,11 @@ import team10.user.models.dto.UserAuthInfo;
 import team10.user.repositories.RoleRepository;
 import team10.user.repositories.UserRepository;
 import team10.user.util.UserAuthInfoMapper;
+import team10.user.util.UserMapper;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,5 +61,12 @@ public class UserUtilityService {
         String[] privileges = user.getAuthorities().split(";");
         return ResponseEntity.ok(privileges[0]);
 
+    }
+
+    public GetAllUsersResponse getAllSoapUserDetails() {
+        GetAllUsersResponse response = new ObjectFactory().createGetAllUsersResponse();
+        List<UserDetails> users = userRepository.findAll().stream().map(UserMapper::toDetails).collect(Collectors.toList());
+        response.getUserDetails().addAll(users.stream().filter(user -> user.getRole().equals("ROLE_AGENT") || user.getRole().equals("ROLE_COMPANY")).collect(Collectors.toList()));
+        return response;
     }
 }

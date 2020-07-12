@@ -48,7 +48,7 @@ public class ReportService {
         Long carId = response3.getBody();
         System.out.println("CAR: " + carId);
         //now update mileage
-        ResponseEntity<String> response4 = carsAdsProxy.updateCarKm(carId, reportDto.getTravelledKm());
+        ResponseEntity<String> response4 = carsAdsProxy.updateCarKm(carId, reportDto.getAllowedMileage());
         if(response4.getStatusCode().isError())
             return null;
 

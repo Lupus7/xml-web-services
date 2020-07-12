@@ -1,5 +1,8 @@
 package agentbackend.agentback.model;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +18,9 @@ public class User {
 
     @Column(name = "email", unique = true, nullable = false)
     private String email;
+
+    @Column(name = "service_id", unique = true, nullable = true)
+    private Long serviceId;
 
     @Column(name = "first_name", unique = false, nullable = false)
     private String firstName;
@@ -44,11 +50,13 @@ public class User {
 //    private String authorities;
 
     @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
     @CollectionTable(name = "user_bookings", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "booking_id")
     private List<Long> bookings;
 
     @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
     @CollectionTable(name = "user_cars", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "car_id")
     private List<Long> cars;
@@ -152,7 +160,15 @@ public class User {
         this.cars = cars;
     }
 
-//    public String getAuthorities() {
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    //    public String getAuthorities() {
 //        return authorities;
 //    }
 //

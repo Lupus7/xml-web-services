@@ -83,7 +83,7 @@
                                 <b-input
                                     placeholder="Enter Password"
                                     v-model="password"
-                                    type="text"
+                                    type="password"
                                     class="form-control"
                                 />
                             </div>
@@ -187,7 +187,7 @@
                                 <b-input
                                     placeholder="Enter Password"
                                     v-model="password"
-                                    type="text"
+                                    type="password"
                                     class="form-control"
                                 />
                             </div>
