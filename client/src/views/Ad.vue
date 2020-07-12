@@ -27,8 +27,9 @@
                 <div class="ad-title">
                     <h3 class="car-price float-left">{{ info.brand }} {{ info.model }}</h3>
                     <h3 class="car-price float-right">
-                        <!-- {{ info.price }}  -->
-                        0 €
+                        <span v-if="info.price == 0"> ARANGED PRICE </span>
+                        <span v-else> Price: {{ info.price }} </span> 
+                        
                     </h3>
                 </div>
                 <h4 class="ad-info">
@@ -159,6 +160,10 @@ export default {
                 this.info = response.data;
                 this.chosenStart = this.info.startDate;
                 this.chosenEnd = this.info.endDate;
+                let x = this.info
+                axios.get("/cars-ads/test/pricelist/" + this.info.pricelist + "/car/" + this.info.carId).then(response => {
+                    x.price = response.data
+                });
             });
 
             axios.get("/cars-ads/api/ad/active/" + this.id).then(response => {

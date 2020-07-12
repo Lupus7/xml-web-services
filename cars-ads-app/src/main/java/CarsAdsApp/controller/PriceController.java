@@ -1,11 +1,12 @@
 package CarsAdsApp.controller;
 
+import CarsAdsApp.model.Discount;
 import CarsAdsApp.model.Price;
 import CarsAdsApp.model.PriceList;
-import CarsAdsApp.model.dto.AdDTO;
-import CarsAdsApp.model.dto.PriceDTO;
-import CarsAdsApp.model.dto.PriceListDTO;
+import CarsAdsApp.model.dto.*;
+import CarsAdsApp.service.DiscountService;
 import CarsAdsApp.service.PriceService;
+import CarsAdsApp.service.PricelistService;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,35 +16,112 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class PriceController {
 
     @Autowired
     private PriceService priceService;
+    @Autowired
+    private PricelistService pricelistService;
+    @Autowired
+    private DiscountService discountService;
 
-    @GetMapping(value = "/test/price")
-    public ResponseEntity<ArrayList<Price>> getAllPrices(){
-        ArrayList<Price> prices = priceService.getAllPrices();
-        return ResponseEntity.status(HttpStatus.OK).body(prices);
+    //PRICELIST
+
+    // Kreiranje pricelista
+    @PostMapping(value = "/pricelist")
+    public ResponseEntity<PricelistDTO> createPricelist(@RequestBody PricelistDTO pricelist, Principal user) {
+        return pricelistService.createPricelist(pricelist,user.getName());
     }
 
-    @GetMapping(value = "/test/pricelist")
-    public ResponseEntity<ArrayList<PriceList>> getAllPriceLists(){
-        ArrayList<PriceList> priceLists = priceService.getPriceLists();
+    // Brisanje pricelista
+    @DeleteMapping(value = "/pricelist/{id}")
+    public ResponseEntity<String> deletePricelist(@PathVariable("id") Long id, Principal user) {
+        return pricelistService.deletePricelist(id, user.getName());
+    }
+
+    @GetMapping(value = "/pricelist")
+    public ResponseEntity<List<PricelistDTO>> getAllPriceLists(Principal user){
+        List<PricelistDTO> priceLists = pricelistService.getPriceLists(user.getName());
         return ResponseEntity.status(HttpStatus.OK).body(priceLists);
     }
 
-    // Kreiranje price
-    @PostMapping(value = "/test/price")
-    public ResponseEntity<String> createAd(@RequestBody PriceDTO priceDTO) throws JSONException {
-        boolean response = priceService.createPrice(priceDTO);
+    @GetMapping(value = "/pricelist/{id}")
+    public ResponseEntity<PricelistDTO> getAllPriceList(@PathVariable("id") Long id, Principal user){
+        PricelistDTO priceLists = pricelistService.getPriceList(id, user.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(priceLists);
+    }
+
+    // PRICE
+
+    // Kreiranje pricea
+    @PostMapping(value = "/price")
+    public ResponseEntity<String> createPrice(@RequestBody PriceDTO priceDTO, Principal user) {
+        boolean response = priceService.createPrice(priceDTO, user.getName());
         if (response)
             return ResponseEntity.ok("Price successfully created!");
         else
             return ResponseEntity.status(400).body("Could not accept");
 
     }
+
+    // Editovanje pricea
+    @PutMapping(value = "/price/{id}")
+    public ResponseEntity<String> editPrice(@PathVariable("id") Long id, @RequestBody PriceDTO priceDTO, Principal user) {
+        boolean response = priceService.editPrice(id,priceDTO,user.getName());
+        if (response)
+            return ResponseEntity.ok("Price successfully updated!");
+        else
+            return ResponseEntity.status(400).body("Could not accept");
+
+    }
+
+    // Brisanje pricea
+    @DeleteMapping(value = "/price/{id}/{pricelistId}")
+    public ResponseEntity<String> deletePrice(@PathVariable("id") Long id, @PathVariable("pricelistId") Long pricelistId, Principal user){
+        boolean response = priceService.deletePrice(id,pricelistId,user.getName());
+        if (response)
+            return ResponseEntity.ok("Price successfully deleted!");
+        else
+            return ResponseEntity.status(400).body("Could not accept");
+
+    }
+
+    @GetMapping(value = "/price/{id}")
+    public ResponseEntity<Price2DTO> getPrice(@PathVariable("id") Long id, Principal user){
+        Price2DTO price = priceService.getPrice(id, user.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(price);
+    }
+
+    // DISCOUNT
+
+    // Kreiranje discounta
+    @PostMapping(value = "/discount")
+    public ResponseEntity<String> createDiscount(@RequestBody DiscountDTO discountDTO, Principal user) {
+        boolean response = discountService.createDiscount(discountDTO, user.getName());
+        if (response)
+            return ResponseEntity.ok("Disocunt successfully created!");
+        else
+            return ResponseEntity.status(400).body("Could not accept");
+
+    }
+
+
+    // Brisanje discounta
+    @DeleteMapping(value = "/discount/{id}/{priceId}")
+    public ResponseEntity<String> deleteDiscount(@PathVariable("id") Long id, @PathVariable("priceId") Long priceId, Principal user){
+        boolean response = discountService.deleteDiscount(id, priceId, user.getName());
+        if (response)
+            return ResponseEntity.ok("Discount successfully deleted!");
+        else
+            return ResponseEntity.status(400).body("Could not accept");
+
+    }
+
+
+    // GETTERS
 
     @GetMapping(value ="/test/{id}")
     public ResponseEntity<Double> getPriceByCarId(@PathVariable("id") Long carId){
@@ -65,6 +143,19 @@ public class PriceController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
+
+    @GetMapping(value = "/test/price")
+    public ResponseEntity<ArrayList<Price>> getAllPrices(){
+        ArrayList<Price> prices = priceService.getAllPrices();
+        return ResponseEntity.status(HttpStatus.OK).body(prices);
+    }
+
+    @GetMapping(value = "/test/pricelist")
+    public ResponseEntity<ArrayList<PriceList>> getAllPriceLists(){
+        ArrayList<PriceList> priceLists = priceService.getPriceLists();
+        return ResponseEntity.status(HttpStatus.OK).body(priceLists);
+    }
+
 
     //Ovo koristim u pretrazi
     @GetMapping(value = "/test/pricelist/{ID}/car/{id}")

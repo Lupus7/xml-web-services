@@ -12,9 +12,13 @@ public class Price {
     @SequenceGenerator(name="price_id_seq_gen", sequenceName = "price_id_seq", allocationSize = 1)
     protected long id;
 
+    @Column()
     protected Double price;
+    @Column()
     protected Double priceKm;
+    @Column()
     protected Double priceCdw;
+    @Column()
     protected Long carId;
     @ManyToMany
     @JoinTable(

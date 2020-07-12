@@ -272,22 +272,28 @@ export default {
                               SeatsNumber : res.SeatsNumber,
 
                           }
-                            let add = {
-                              Id: res.Id,
-                              Images: res.Images,
-                              Card: card,
-                              TotalMileage : parseFloat(res.TotalMileage).toFixed(2),
-                              AllowedMileage : res.AllowedMileage,
-                              Price : res.Price,
-                              Rating : parseFloat(res.Rating).toFixed(2),
-                          };
+                          let carId;
+                          axios.get("/cars-ads/ad/" + res.Id + "/car").then(response => {
+                            carId = response.data
+                            if (carId)
+                              axios.get("/cars-ads/test/pricelist/" + 1 + "/car/" + carId).then(response => {
+                                let add = {
+                                    Id: res.Id,
+                                    Images: res.Images,
+                                    Card: card,
+                                    TotalMileage : parseFloat(res.TotalMileage).toFixed(2),
+                                    AllowedMileage : res.AllowedMileage,
+                                    Price : response.data,
+                                    Rating : parseFloat(res.Rating).toFixed(2),
+                                };
 
-                          if(res.AllowedMileage !== "UNLIMITED"){
-                            add.AllowedMileage =  parseFloat(res.AllowedMileage).toFixed(2);
-                          }
-
-                          
-                          this.adds.push(add);
+                                if(res.AllowedMileage !== "UNLIMITED"){
+                                  add.AllowedMileage =  parseFloat(res.AllowedMileage).toFixed(2);
+                                }
+                        
+                                this.adds.push(add);
+                              })
+                          })
 
                         }
                        }

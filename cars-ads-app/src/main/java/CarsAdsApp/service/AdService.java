@@ -184,6 +184,10 @@ public class AdService {
         if (adDTO.getPlace() != null)
             ad.get().setPlace(adDTO.getPlace());
 
+        if(adDTO.getPriceListId() != null){
+            ad.get().setPriceListId(adDTO.getPriceListId());
+        }
+
         adRepo.save(ad.get());
 
         return true;

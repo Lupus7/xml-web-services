@@ -7,6 +7,7 @@ public class PriceDTO {
     protected Long carId;
     protected Double percentage;
     protected Integer minDays;
+    private Long pricelistId;
 
     public PriceDTO(Double price, Double priceKm, Double priceCdw, Long carId, Double percentage, Integer minDays) {
         this.price = price;
@@ -66,5 +67,13 @@ public class PriceDTO {
 
     public void setMinDays(Integer minDays) {
         this.minDays = minDays;
+    }
+
+    public Long getPricelistId() {
+        return pricelistId;
+    }
+
+    public void setPricelistId(Long pricelistId) {
+        this.pricelistId = pricelistId;
     }
 }

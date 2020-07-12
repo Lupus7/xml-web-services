@@ -30,6 +30,7 @@ public class AdClientDTO {
     private List<String> images = new ArrayList<>();
     private boolean active;
     private String advertiser;
+    private Long pricelist;
 
     public AdClientDTO() {
     }
@@ -61,6 +62,7 @@ public class AdClientDTO {
            this.images = car.getImages();
          */
         this.advertiser = car.getOwner();
+        this.pricelist = ad.getPriceListId();
     }
 
     public LocalDateTime getStartDate() {
@@ -206,5 +208,13 @@ public class AdClientDTO {
 
     public void setAdvertiser(String advertiser) {
         this.advertiser = advertiser;
+    }
+
+    public Long getPricelist() {
+        return pricelist;
+    }
+
+    public void setPricelist(Long pricelist) {
+        this.pricelist = pricelist;
     }
 }
