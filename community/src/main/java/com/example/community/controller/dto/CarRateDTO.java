@@ -20,6 +20,7 @@ public class CarRateDTO {
     private String advertiser;
     private int rate;
     private String comment;
+    private String recomment;
     private Long rateId;
     private boolean approved;
     private String user;
@@ -39,6 +40,7 @@ public class CarRateDTO {
         this.advertiser = carDTO.getAdvertiser();
         this.rate = rate.getRate();
         this.comment = rate.getComment();
+        this.recomment = rate.getRecomment();
         this.rateId = rate.getId();
         this.approved = rate.isApproved();
         this.user = rate.getRater();
@@ -182,5 +184,13 @@ public class CarRateDTO {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public String getRecomment() {
+        return recomment;
+    }
+
+    public void setRecomment(String recomment) {
+        this.recomment = recomment;
     }
 }

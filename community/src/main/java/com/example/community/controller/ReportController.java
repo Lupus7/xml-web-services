@@ -31,7 +31,7 @@ public class ReportController {
         ArrayList<ReportDto> reportsDto = new ArrayList<>();
         ArrayList<Report> reports = reportService.getAllReports();
         for(Report r: reports){
-            ReportDto dto = new ReportDto(r.getExtraInfo(),r.getAllowedMileage(),r.getBooking(),0);
+            ReportDto dto = new ReportDto(r.getExtraInfo(),r.getAllowedMileage(),r.getBooking());
             reportsDto.add(dto);
         }
         return  ResponseEntity.ok(reportsDto);

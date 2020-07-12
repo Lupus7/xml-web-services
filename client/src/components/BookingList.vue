@@ -1,6 +1,10 @@
 <template>
     <div>
-        <b-card v-if="this.bookings.length === 0 && this.bundles.length === 0" class="text-center" style="background:#DCDCDC">
+        <b-card
+            v-if="this.bookings.length === 0 && this.bundles.length === 0"
+            class="text-center"
+            style="background:#DCDCDC"
+        >
             <div>
                 <h4 style="color:#696969">You have no bookings!</h4>
             </div>
@@ -18,47 +22,51 @@
                 :items="bookings"
                 :fields="fields"
                 @row-clicked="showOptions"
+                ref="table"
             ></b-table>
         </span>
         <span v-if="this.bundles.length > 0">
             <hr />
             <h4 style="color:#696969;text-align: center;">Bundles:</h4>
             <hr />
-        </span>
-        <span v-for="(bundle, index) in bundles" :key="index">
-            <div style="padding-left: 20px; padding-right:20px">
-                <h5 class="float-left" style="color:#696969;text-align: center;">ID #{{bundle.id}}</h5>
-                <span class="float-right" style="margin-top:-5px; margin-bottom:10px">
-                    <b-button
+            <span v-for="(bundle, index) in bundles" :key="index">
+                <div style="padding-left: 20px; padding-right:20px">
+                    <h5
                         class="float-left"
-                        style="width:160px; color: white"
-                        variant="dark"
-                        @click="startConversation(bundle.bookings[0])"
-                        v-if="mode == 'personal' && bundle.bookings[0].state == 'PAID'"
-                    >Start Conversation</b-button>
+                        style="color:#696969;text-align: center;"
+                    >ID #{{bundle.id}}</h5>
+                    <span class="float-right" style="margin-top:-5px; margin-bottom:10px">
+                        <b-button
+                            class="float-left"
+                            style="width:160px; color: white"
+                            variant="dark"
+                            @click="startConversation(bundle.bookings[0])"
+                            v-if="mode == 'personal' && bundle.bookings[0].state == 'PAID'"
+                        >Start Conversation</b-button>
 
-                    <b-button
-                        class="float-left"
-                        style="background:#b20000; width:150px; color: white"
-                        @click="approveBundle(bundle)"
-                        v-if="mode == 'requests' && bundle.bookings[0].state == 'PENDING'"
-                    >Approve</b-button>
-                    <b-button
-                        class="float-right"
-                        style="background:white; width:150px; color: black"
-                        @click="removeBundle(bundle)"
-                        v-if="bundle.bookings[0].state == 'PENDING'"
-                    >Cancel</b-button>
-                </span>
-            </div>
-            <b-table
-                striped
-                bordered
-                hover
-                :items="bundle.bookings"
-                :fields="fields"
-                @row-clicked="showOptions"
-            ></b-table>
+                        <b-button
+                            class="float-left"
+                            style="background:#b20000; width:150px; color: white"
+                            @click="approveBundle(bundle)"
+                            v-if="mode == 'requests' && bundle.bookings[0].state == 'PENDING'"
+                        >Approve</b-button>
+                        <b-button
+                            class="float-right"
+                            style="background:white; width:150px; color: black"
+                            @click="removeBundle(bundle)"
+                            v-if="bundle.bookings[0].state == 'PENDING'"
+                        >Cancel</b-button>
+                    </span>
+                </div>
+                <b-table
+                    striped
+                    bordered
+                    hover
+                    :items="bundle.bookings"
+                    :fields="fields"
+                    @row-clicked="showOptions"
+                ></b-table>
+            </span>
         </span>
         <b-modal
             ref="my-modal"
@@ -197,30 +205,34 @@ export default {
     methods: {
         getBookings() {
             axios.get("/rent/api/booking").then(response => {
-                this.bookings = response.data;
-                this.bookings.forEach(b => {
+                this.bookings.splice(0, this.bookings.length);
+                response.data.forEach(b => {
                     b.start_date = b.startDate.split("T")[0];
                     b.end_date = b.endDate.split("T")[0];
                     b.Created = b.created.split("T")[0];
                     b.inBundle = false;
+                    this.bookings.push(b);
                 });
+                this.$refs.table.refresh();
             });
         },
         getBookings2() {
             axios.get("/rent/api/booking/request").then(response => {
-                this.bookings = response.data;
-                this.bookings.forEach(b => {
+                this.bookings.splice(0, this.bookings.length);
+                response.data.forEach(b => {
                     b.start_date = b.startDate.split("T")[0];
                     b.end_date = b.endDate.split("T")[0];
                     b.Created = b.created.split("T")[0];
                     b.inBundle = false;
+                    this.bookings.push(b);
                 });
+                this.$refs.table.refresh();
             });
         },
         getBundles() {
             axios.get("/rent/api/bundle").then(response => {
-                this.bundles = response.data;
-                this.bundles.forEach(bun => {
+            this.bundles.splice(0, this.bundles.length);
+                response.data.forEach(bun => {
                     bun.bookings.forEach(b => {
                         b.start_date = b.startDate.split("T")[0];
                         b.end_date = b.endDate.split("T")[0];
@@ -228,12 +240,13 @@ export default {
                         b.inBundle = true;
                     });
                 });
+                this.bundles = response.data;
             });
         },
         getBundles2() {
             axios.get("/rent/api/bundle/request").then(response => {
-                this.bundles = response.data;
-                this.bundles.forEach(bun => {
+            this.bundles.splice(0, this.bundles.length);
+                response.data.forEach(bun => {
                     bun.bookings.forEach(b => {
                         b.start_date = b.startDate.split("T")[0];
                         b.end_date = b.endDate.split("T")[0];
@@ -241,6 +254,7 @@ export default {
                         b.inBundle = true;
                     });
                 });
+                this.bundles = response.data;
             });
         },
         showOptions(row) {
@@ -252,6 +266,7 @@ export default {
                 row.state == "ENDED"
             )
                 this.canCancel = false;
+            else this.canCancel = true;
             let url = "/cars-ads/api/ad/" + row.ad;
 
             axios.get(url).then(response => {
@@ -266,30 +281,33 @@ export default {
             if (this.mode == "personal") {
                 axios
                     .delete("/rent/api/booking/" + this.info.id)
-                    .then(this.$refs["my-modal"].hide());
+                    .then(this.closeModalAndRefresh());
             } else {
                 axios
                     .delete("/rent/api/booking/reject/" + this.info.id)
-                    .then(this.$refs["my-modal"].hide());
+                    .then(this.closeModalAndRefresh());
             }
         },
         removeBundle(bundle) {
             if (this.mode == "personal") {
                 axios
                     .delete("/rent/api/bundle/" + bundle.id)
+                    .then(this.closeModalAndRefresh());
             } else {
                 axios
                     .delete("/rent/api/bundle/reject/" + bundle.id)
+                    .then(this.closeModalAndRefresh());
             }
         },
         approve() {
             axios
                 .put("/rent/api/booking/" + this.info.id)
-                .then(this.$refs["my-modal"].hide());
+                .then(this.closeModalAndRefresh());
         },
         approveBundle(bundle) {
             axios
                 .put("/rent/api/bundle/" + bundle.id)
+                .then(this.closeModalAndRefresh());
         },
         report() {
             axios
@@ -325,16 +343,23 @@ export default {
         },
         leaveRate(info) {
             this.$router.push({ name: "LeaveRate", params: { booking: info } });
+        },
+        closeModalAndRefresh() {
+            this.fill();
+            this.$refs["my-modal"].hide();
+        },
+        fill() {
+            if (this.mode == "personal") {
+                this.getBookings();
+                this.getBundles();
+            } else {
+                this.getBookings2();
+                this.getBundles2();
+            }
         }
     },
     created() {
-        if (this.mode == "personal") {
-            this.getBookings();
-            this.getBundles();
-        } else {
-            this.getBookings2();
-            this.getBundles2();
-        }
+        this.fill();
     }
 };
 </script>

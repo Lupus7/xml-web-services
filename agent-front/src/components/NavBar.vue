@@ -51,19 +51,6 @@
                             ></b-icon>
                             Log in
                         </b-link>
-                        <b-link
-                            v-if="this.show"
-                            class="nav-link active"
-                            type="button"
-                            v-on:click="register()"
-                            href="#"
-                        >
-                            <b-icon
-                                icon="person-plus-fill"
-                                aria-hidden="true"
-                            ></b-icon>
-                            Register
-                        </b-link>
 
                         <b-link
                             v-if="!this.show"
@@ -136,18 +123,6 @@
             <template v-slot:modal-footer>
                 <div class="w-100">
                     <b-button
-                        style="margin-left:2rem;border-radius:20px;;width:150px;height:45px;"
-                        class="float-left"
-                        variant="outline-primary"
-                        @click="register()"
-                    >
-                        <b-icon
-                            icon="person-plus-fill"
-                            aria-hidden="true"
-                        ></b-icon>
-                        Register
-                    </b-button>
-                    <b-button
                         style="margin-right:2rem;border-radius:20px;width:150px;height:45px;"
                         class="float-right"
                         variant="primary"
@@ -194,7 +169,6 @@ export default {
                     });
             }
         },
-        register() {},
         logout() {
             localStorage.setItem("accessToken", "");
             this.checkToken();

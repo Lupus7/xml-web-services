@@ -1,5 +1,7 @@
 package team10.user.util;
 
+import com.car_rent.agent_api.ObjectFactory;
+import com.car_rent.agent_api.UserDetails;
 import team10.user.models.User;
 import team10.user.models.dto.NewAgentDTO;
 import team10.user.models.dto.NewCompanyDTO;
@@ -59,5 +61,33 @@ public class UserMapper {
         retVal.setLastName("");
         retVal.setPassword(newCompanyDTO.getPassword());
         return retVal;
+    }
+
+    public static UserDetails toDetails(User user) {
+        UserDetails userDetails = new ObjectFactory().createUserDetails();
+        userDetails.setId(user.getId());
+        userDetails.setAddress(user.getAddress());
+        userDetails.setApproved(user.getApproved());
+        userDetails.setBlocked(user.getBlocked());
+        userDetails.getBookings().addAll(user.getBookings());
+        if (user.getBusinessNumber() != null)
+            userDetails.setBuisinessNumber(user.getBusinessNumber());
+        else
+            userDetails.setBuisinessNumber("");
+        userDetails.getCars().addAll(user.getCars());
+        if (user.getCart() != null)
+            userDetails.setCart(user.getCart());
+        else
+            userDetails.setCart(-1);
+        userDetails.setCompanyName(user.getCompanyName());
+        userDetails.setEmail(user.getEmail());
+        userDetails.setFirstName(user.getFirstName());
+        userDetails.setLastName(user.getLastName());
+        userDetails.setPassword(user.getPassword());
+        if (user.getRoles().isEmpty())
+            userDetails.setRole("ROLE_AGENT");
+        else
+            userDetails.setRole(user.getRoles().get(0));
+        return userDetails;
     }
 }
