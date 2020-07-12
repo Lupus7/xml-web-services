@@ -171,7 +171,8 @@ export default {
             canCancel: true,
             extraInfo: "",
             mileage: 0,
-            inBundle: false
+            inBundle: false,
+            canReport: false
         };
     },
     methods: {
@@ -188,7 +189,7 @@ export default {
             });
         },
         getBundles() {
-            axios.get("/rent/api/bundle/request").then(response => {
+            axios.get("/api/bundle/request").then(response => {
             this.bundles.splice(0, this.bundles.length);
                 response.data.forEach(bun => {
                     bun.bookings.forEach(b => {
@@ -202,6 +203,7 @@ export default {
             });
         },
         showOptions(row) {
+            this.getReports(row)
             if (
                 row.state == "CANCELED" ||
                 row.state == "PAID" ||
@@ -251,6 +253,7 @@ export default {
         },
         getReports(row) {
             axios.get("/reports").then(response => {
+                console.log(this.info.id + " " + row.state)
                 if (
                     response.data.filter(
                         report => report.booking == this.info.id

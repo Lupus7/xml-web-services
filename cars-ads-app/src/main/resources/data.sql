@@ -6,41 +6,45 @@ alter sequence image_id_seq RESTART with 2;
 
 -- cars
 insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (1, 1000, 2000, 2, 'Car Description', true, 'user', 'Opel', 'Astra', 'Diesel', 'Automatic', 'Compact');
+        values (1, 1000, 2000, 2, 'Car Description', true, 'agent', 'Opel', 'Astra', 'Diesel', 'Automatic', 'Compact');
 
 insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (2, 8000, 2000, 1, 'Car Description', true, 'user', 'Opel', 'Zafira', 'Diesel', 'Manual', 'Caravan');
+        values (2, 8000, 2000, 1, 'Car Description', true, 'agent', 'Opel', 'Zafira', 'Diesel', 'Manual', 'Caravan');
 
 insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (3, 25060, 8000, 0, 'Car Description', true, 'user', 'Opel', 'Vectra', 'Gasoline', 'Automatic', 'Microcar');
+        values (3, 25060, 8000, 0, 'Car Description', true, 'agent', 'Opel', 'Vectra', 'Gasoline', 'Automatic', 'Microcar');
 
 insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (4, 5060, 6000, 2, 'Car Description', true, 'user1', 'Audi', 'Q3', 'Gasoline', 'Automatic', 'Microcar');
+        values (4, 5060, 6000, 2, 'Car Description', true, 'agent1', 'Audi', 'Q3', 'Gasoline', 'Automatic', 'Microcar');
 
 insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (5, 1000, 2000, 2, 'Car Description', true, 'agent', 'Opel', 'Astra', 'Diesel', 'Automatic', 'Compact');
+        values (5, 1000, 2000, 2, 'Car Description', true, 'company', 'Opel', 'Astra', 'Diesel', 'Automatic', 'Compact');
 
 insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (6, 8000, 2000, 1, 'Car Description', true, 'agent', 'Opel', 'Zafira', 'Diesel', 'Manual', 'Caravan');
+        values (6, 8000, 2000, 1, 'Car Description', true, 'company', 'Opel', 'Zafira', 'Diesel', 'Manual', 'Caravan');
 
 insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (7, 25060, 8000, 0, 'Car Description', true, 'agent1', 'Opel', 'Vectra', 'Gasoline', 'Automatic', 'Microcar');
+        values (7, 25060, 8000, 0, 'Car Description', true, 'company', 'Opel', 'Vectra', 'Gasoline', 'Automatic', 'Microcar');
 
 insert into car(id, total_mileage, allowed_mileage, children_seats, description, col_dam_protection, owner, brand, model, fuel, transmission, car_class)
-        values (8, 5060, 6000, 2, 'Car Description', true, 'agent1', 'Audi', 'Q3', 'Gasoline', 'Automatic', 'Microcar');
+        values (8, 5060, 6000, 2, 'Car Description', true, 'company', 'Audi', 'Q3', 'Gasoline', 'Automatic', 'Microcar');
 
 alter sequence car_id_seq RESTART with 9;
 
 
 
 -- ads
-insert into ad(id, car_id, start_date, end_date, place, owner_id, active, pricelist) values (1, 1, '2020-05-19T00:00:00', '2020-05-30T00:00:00', 'Novi Sad', 1, true,1);
-insert into ad(id, car_id, start_date, end_date, place, owner_id, active, pricelist) values (2, 1, '2020-07-19T00:00:00', '2020-07-30T00:00:00', 'Beograd', 1, false,1);
-insert into ad(id, car_id, start_date, end_date, place, owner_id, active, pricelist) values (3, 2, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 1, false,1);
-insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (4, 3, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Nis', 1, true);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active, pricelist) values (1, 1, '2020-05-19T00:00:00', '2020-05-30T00:00:00', 'Novi Sad', 2, true,1);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active, pricelist) values (2, 1, '2020-07-19T00:00:00', '2020-07-30T00:00:00', 'Beograd', 2, false,1);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active, pricelist) values (3, 2, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 2, false,1);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (4, 3, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Nis', 2, true);
 insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (5, 4, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 4, true);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (6, 6, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Novi Sad', 5, false);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (7, 5, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 5, false);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (8, 8, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Beograd', 5, false);
+insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (9, 5, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 5, false);
 
-alter sequence ad_id_seq RESTART with 6;
+alter sequence ad_id_seq RESTART with 10;
 
 
 --prices

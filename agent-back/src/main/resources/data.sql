@@ -28,11 +28,11 @@
 --insert into ad(id, car_id, start_date, end_date, place, owner_id, active) values (5, 4, '2020-09-19T00:00:00', '2020-09-30T00:00:00', 'Sabac', 2, true);
 
 --alter sequence ad_id_seq RESTART with 6;
-
-insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (1, true, false, 'agent', 'Agent', 'Agent', '1', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
-insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (2, true, false, 'agent1', 'Agent', 'Agent1', '12', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
-
-alter sequence user_id_seq RESTART with 3;
+--
+-- insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (1, true, false, 'agent', 'Agent', 'Agent', '1', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
+-- insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, password) values (2, true, false, 'agent1', 'Agent', 'Agent1', '12', '', 'some address', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
+--
+-- alter sequence user_id_seq RESTART with 3;
 
 
 -- BOOKINGS
@@ -52,46 +52,46 @@ alter sequence user_id_seq RESTART with 3;
 
 --alter sequence booking_id_seq RESTART with 5;
 
---Messages
-INSERT INTO public.message(
-	id, body, booking, date, receiver, sender)
-	VALUES (1, 'Bas odlican si', 2, '2020-02-01', 'user', 'user1');
-INSERT INTO public.message(
-	id, body, booking, date, receiver, sender)
-	VALUES (2, 'Bas ti hvala', 2, '2020-02-02', 'user1', 'user');
-
-alter sequence message_id_seq RESTART with 5;
-
-
---Rates
-
-INSERT INTO rate(
-	id, approved, booking, comment, rate,car_id,rater)
-	VALUES (1, true, 1, 'very goood', 8, 1 ,'user');
-INSERT INTO rate(
-	id, approved, booking, comment, rate,car_id,rater)
-	VALUES (2, true, 1, 'naaajs', 9, 1, 'user1');
-INSERT INTO rate(
-	id, approved, booking, comment, rate,car_id,rater)
-	VALUES (3, true, 2, 'bad', 4, 1,'user');
-INSERT INTO rate(
-	id, approved, booking, comment, rate,car_id,rater)
-	VALUES (4, true, 2, ' goood', 7, 2, 'user1');
-
-alter sequence rate_id_seq RESTART with 5;
-
---REPORTS
-INSERT INTO report(
-    id, allowed_mileage, booking, extra_info)
-    VALUES(1,140,1,'DOBAR AUTO NEMA STA');
-INSERT INTO report(
-    id, allowed_mileage, booking, extra_info)
-    VALUES(2,1233,2,'KRSINA');
-INSERT INTO report(
-    id, allowed_mileage, booking, extra_info)
-    VALUES(3,223,3,'IDE TRAZI 4.');
-INSERT INTO report(
-    id, allowed_mileage, booking, extra_info)
-    VALUES(4,442,4,'Report');
-
-alter sequence report_id_seq RESTART with 5;
+-- --Messages
+-- INSERT INTO public.message(
+-- 	id, body, booking, date, receiver, sender)
+-- 	VALUES (1, 'Bas odlican si', 2, '2020-02-01', 'user', 'user1');
+-- INSERT INTO public.message(
+-- 	id, body, booking, date, receiver, sender)
+-- 	VALUES (2, 'Bas ti hvala', 2, '2020-02-02', 'user1', 'user');
+--
+-- alter sequence message_id_seq RESTART with 5;
+--
+--
+-- --Rates
+--
+-- INSERT INTO rate(
+-- 	id, approved, booking, comment, rate,car_id,rater)
+-- 	VALUES (1, true, 1, 'very goood', 8, 1 ,'user');
+-- INSERT INTO rate(
+-- 	id, approved, booking, comment, rate,car_id,rater)
+-- 	VALUES (2, true, 1, 'naaajs', 9, 1, 'user1');
+-- INSERT INTO rate(
+-- 	id, approved, booking, comment, rate,car_id,rater)
+-- 	VALUES (3, true, 2, 'bad', 4, 1,'user');
+-- INSERT INTO rate(
+-- 	id, approved, booking, comment, rate,car_id,rater)
+-- 	VALUES (4, true, 2, ' goood', 7, 2, 'user1');
+--
+-- alter sequence rate_id_seq RESTART with 5;
+--
+-- --REPORTS
+-- INSERT INTO report(
+--     id, allowed_mileage, booking, extra_info)
+--     VALUES(1,140,1,'DOBAR AUTO NEMA STA');
+-- INSERT INTO report(
+--     id, allowed_mileage, booking, extra_info)
+--     VALUES(2,1233,2,'KRSINA');
+-- INSERT INTO report(
+--     id, allowed_mileage, booking, extra_info)
+--     VALUES(3,223,3,'IDE TRAZI 4.');
+-- INSERT INTO report(
+--     id, allowed_mileage, booking, extra_info)
+--     VALUES(4,442,4,'Report');
+--
+-- alter sequence report_id_seq RESTART with 5;
