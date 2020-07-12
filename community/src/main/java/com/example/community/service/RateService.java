@@ -123,13 +123,22 @@ public class RateService {
         return true;
     }
 
-    public Boolean recomment(Long rateId, ReCommentDTO reCommentDTO) {
+    public Boolean recomment(Long rateId, ReCommentDTO reCommentDTO, String user) {
         Optional<Rate> rate = rateRepository.findById(rateId);
         if(!rate.isPresent()){
             return false;
         }
-        rate.get().setRecomment(reCommentDTO.getRecomment());
-        rateRepository.save(rate.get());
-        return true;
+        List<RateDto> rates = getRatesOnly(user);
+        if (rates == null || rates.isEmpty())
+            return false;
+
+        for (RateDto r : rates) {
+            if (r.getId() == rateId) {
+                rate.get().setRecomment(reCommentDTO.getRecomment());
+                rateRepository.save(rate.get());
+                return true;
+            }
+        }
+        return false;
     }
 }
