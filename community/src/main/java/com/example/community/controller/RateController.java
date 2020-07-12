@@ -62,8 +62,8 @@ public class RateController {
 
     //Send rate Id for update
     @PutMapping("/rate/{id}/recomment")
-    public ResponseEntity<String>recomment(@PathVariable("id")Long rateId, @RequestBody ReCommentDTO reCommentDTO){
-        Boolean succ = rateService.recomment(rateId,reCommentDTO);
+    public ResponseEntity<String>recomment(@PathVariable("id")Long rateId, @RequestBody ReCommentDTO reCommentDTO, Principal user){
+        Boolean succ = rateService.recomment(rateId,reCommentDTO,user.getName());
         if(!succ){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please try again..");
         }
