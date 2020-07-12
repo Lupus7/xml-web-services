@@ -62,6 +62,7 @@ public class Rate {
     @XmlElement(namespace = "xml-web-services-community")
     @Column(nullable = false)
     protected String rater;
+    private String recomment;
 
     @Column(unique = true, nullable = true)
     protected Long serviceId;
@@ -187,5 +188,13 @@ public class Rate {
 
     public void setServiceId(Long serviceId) {
         this.serviceId = serviceId;
+    }
+
+    public String getRecomment() {
+        return recomment;
+    }
+
+    public void setRecomment(String recomment) {
+        this.recomment = recomment;
     }
 }

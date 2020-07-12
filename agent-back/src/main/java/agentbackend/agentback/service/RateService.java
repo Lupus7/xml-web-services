@@ -4,6 +4,7 @@ package agentbackend.agentback.service;
 import agentbackend.agentback.controller.dto.CarDTO;
 import agentbackend.agentback.controller.dto.CarRateDTO;
 import agentbackend.agentback.controller.dto.RateDto;
+import agentbackend.agentback.controller.dto.ReCommentDTO;
 import agentbackend.agentback.model.Booking;
 import agentbackend.agentback.model.Car;
 import agentbackend.agentback.model.Image;
@@ -229,51 +230,75 @@ public class RateService {
     }
 
 
-    public List<CarRateDTO> getRates(Principal user) {
+    public List<CarRateDTO> getRates(String user) {
 
         List<CarRateDTO> carRates = new ArrayList<>();
 
-        List<Car> cars = carRepository.findAllByOwner(user.getName());
+        List<Car> cars = carRepository.findAllByOwner(user);
 
         if (cars == null)
             return carRates;
 
-        GetRatesResponse response = communitySoapClient.getRates(user.getName());
+        GetRatesResponse response = communitySoapClient.getRates(user);
 
         for (Car car : cars) {
             List<Rate> rates = rateRepository.findAllByCarId(car.getId());
             List<Image> images = imageRepository.findAllByCarId(car.getId());
             for (Rate rate : rates) {
-                carRates.add(new CarRateDTO(rate, new CarDTO(car, images), user.getName()));
+                carRates.add(new CarRateDTO(rate, new CarDTO(car, images), user));
             }
 
             if (response != null && response.getRates() != null) {
                 for (RateDetails rd : response.getRates()) {
-                    if (rd.getCarId() != car.getId())
+                    if (rd.getCarId() != car.getServiceId())
                         continue;
                     boolean found = false;
                     for (Rate rate : rates) {
                         if (rate.getServiceId() == rd.getId()) {
                             found = true;
+                            rate.setRecomment(rd.getRecomment());
+                            rateRepository.save(rate);
                             break;
                         }
                     }
-                    if (!found) {
+                    Booking book = bookingRepository.findByServiceId(rd.getBooking());
+                    if (!found && book != null && book.getServiceId() != null) {
                         Rate r = new Rate();
                         r.setApproved(rd.isApproved());
-                        r.setBooking(rd.getBooking());
-                        r.setCarId(rd.getCarId());
+                        r.setBooking(book.getServiceId());
+                        r.setCarId(car.getId());
                         r.setComment(rd.getComment());
                         r.setRate(rd.getRate());
                         r.setRater(rd.getRater());
                         r.setServiceId(rd.getId());
+                        r.setRecomment(rd.getRecomment());
                         rateRepository.save(r);
-                        carRates.add(new CarRateDTO(r, new CarDTO(car, images), user.getName()));
+                        carRates.add(new CarRateDTO(r, new CarDTO(car, images), user));
                     }
                 }
             }
         }
 
         return carRates;
+    }
+
+    public Boolean recomment(Long rateId, ReCommentDTO reCommentDTO, String user) {
+        Optional<Rate> rate = rateRepository.findById(rateId);
+        if(!rate.isPresent()){
+            return false;
+        }
+        List<CarRateDTO> rates = getRates(user);
+        if (rates == null || rates.isEmpty())
+            return false;
+
+        for (CarRateDTO r : rates) {
+            if (r.getRateId() == rateId) {
+                rate.get().setRecomment(reCommentDTO.getRecomment());
+                rateRepository.save(rate.get());
+                communitySoapClient.reply(r.getRate(), reCommentDTO.getRecomment(), user);
+                return true;
+            }
+        }
+        return false;
     }
 }

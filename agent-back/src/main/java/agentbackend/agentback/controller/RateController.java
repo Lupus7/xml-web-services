@@ -3,9 +3,11 @@ package agentbackend.agentback.controller;
 
 import agentbackend.agentback.controller.dto.CarRateDTO;
 import agentbackend.agentback.controller.dto.RateDto;
+import agentbackend.agentback.controller.dto.ReCommentDTO;
 import agentbackend.agentback.model.Rate;
 import agentbackend.agentback.service.RateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +25,7 @@ public class RateController {
 
     @GetMapping("/rate")
     public ResponseEntity<List<CarRateDTO>> getRates(Principal user){
-        return ResponseEntity.ok(rateService.getRates(user));
+        return ResponseEntity.ok(rateService.getRates(user.getName()));
     }
 
     @PostMapping("/rates")
@@ -115,4 +117,12 @@ public class RateController {
         return  ResponseEntity.badRequest().build();
     }
 
+    @PutMapping("/rate/{id}/recomment")
+    public ResponseEntity<String>recomment(@PathVariable("id")Long rateId, @RequestBody ReCommentDTO reCommentDTO, Principal user){
+        Boolean succ = rateService.recomment(rateId,reCommentDTO,user.getName());
+        if(!succ){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please try again..");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Successfully left owner comment");
+    }
 }

@@ -104,6 +104,22 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    <xs:element name="replyRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+                <xs:element name="recomment" type="xs:string"/>
+                <xs:element name="user" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="replyResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="text" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
     <xs:complexType name="MessageDetails">
         <xs:sequence>
             <xs:element name="id" type="xs:long"/>

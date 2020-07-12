@@ -4,9 +4,9 @@
 
 insert into users(id, cart, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (1, 1, true, false, 'user', 'Joseph', 'Joestar', '1', '', 'some address', 'ROLE_CLIENT;DEFAULT', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
 insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (2, true, false, 'agent', 'Agent', 'Agent', '2', '', 'some address', 'ROLE_AGENT;DEFAULT', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
-insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (3, true, false, 'admin1', 'Johh', 'Doe', '3', '', 'some address', 'ROLE_ADMIN;DEFAULT', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
-insert into users(id, cart, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (4, 2, true, false, 'user1', 'Johny', 'Joestar', '4', '', 'some address', 'ROLE_CLIENT;DEFAULT', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
-insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (5, true, false, 'company1', '', '', '5', 'some company', 'some address', 'ROLE_COMPANY;DEFAULT', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
+insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (3, true, false, 'admin', 'Johh', 'Doe', '3', '', 'some address', 'ROLE_ADMIN;DEFAULT', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
+insert into users(id, cart, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (4, 2, true, false, 'agent1', 'Johny', 'Joestar', '4', '', 'some address', 'ROLE_CLIENT;DEFAULT', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
+insert into users(id, approved, blocked, email, first_name, last_name, business_number, company_name, address, authorities, password) values (5, true, false, 'company', '', '', '5', 'some company', 'some address', 'ROLE_COMPANY;DEFAULT', '$2a$10$GuztdmZFDUgqX/FvWCMPdu/lUfkHxxs8bkJvw6IxvSJv3T54SU6ea');
 
 alter sequence user_id_seq RESTART with 6;
 
@@ -109,14 +109,14 @@ insert into role_privilege(role_id, privilege_id) values (2, 25);
 insert into role_privilege(role_id, privilege_id) values (2, 26);
 insert into role_privilege(role_id, privilege_id) values (2, 27);
 insert into role_privilege(role_id, privilege_id) values (2, 28);
-insert into role_privilege(role_id, privilege_id) values (1, 29);
+insert into role_privilege(role_id, privilege_id) values (4, 29);
 
 insert into role_privilege(role_id, privilege_id) values (4, 24);
 insert into role_privilege(role_id, privilege_id) values (4, 25);
 insert into role_privilege(role_id, privilege_id) values (4, 26);
 insert into role_privilege(role_id, privilege_id) values (4, 27);
 insert into role_privilege(role_id, privilege_id) values (4, 28);
-insert into role_privilege(role_id, privilege_id) values (1, 29);
+insert into role_privilege(role_id, privilege_id) values (4, 29);
 
 --car
 insert into privilege(id, name) values (30, 'CREATE_CAR');
@@ -152,7 +152,11 @@ alter sequence privilege_id_seq RESTART with 36;
 
 --CLIENT PRIVILEGE DEFAULT
 
-insert into user_cars(user_id, car_id) values (1, 1);
-insert into user_cars(user_id, car_id) values (1, 2);
-insert into user_cars(user_id, car_id) values (1, 3);
+insert into user_cars(user_id, car_id) values (2, 1);
+insert into user_cars(user_id, car_id) values (2, 2);
+insert into user_cars(user_id, car_id) values (2, 3);
 insert into user_cars(user_id, car_id) values (4, 4);
+insert into user_cars(user_id, car_id) values (5, 5);
+insert into user_cars(user_id, car_id) values (5, 6);
+insert into user_cars(user_id, car_id) values (5, 7);
+insert into user_cars(user_id, car_id) values (5, 8);

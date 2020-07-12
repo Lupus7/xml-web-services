@@ -1,10 +1,9 @@
 package com.example.community.controller.soap;
 
-import com.car_rent.agent_api.GetRatesRequest;
-import com.car_rent.agent_api.GetRatesResponse;
-import com.car_rent.agent_api.ObjectFactory;
-import com.car_rent.agent_api.RateDetails;
+import com.car_rent.agent_api.*;
 import com.example.community.controller.dto.RateDto;
+import com.example.community.controller.dto.RateDto2;
+import com.example.community.controller.dto.ReCommentDTO;
 import com.example.community.service.RateService;
 import com.example.community.soap.SoapProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ public class SoapRateController {
     public GetRatesResponse getRates(@RequestPayload GetRatesRequest request) {
         GetRatesResponse response = new ObjectFactory().createGetRatesResponse();
 
-        List<RateDto> rates = rateService.getRatesOnly(request.getUser());
+        List<RateDto2> rates = rateService.getRatesOnly(request.getUser());
 
         response.getRates().addAll(
                 rates
@@ -40,11 +39,27 @@ public class SoapRateController {
                             details.setComment(rate.getComment());
                             details.setRate(rate.getRate());
                             details.setRater(rate.getUser());
+                            details.setRecomment(rate.getRecomment());
                             return details;
                         })
                         .collect(Collectors.toList())
         );
 
         return response;
+    }
+
+    @PayloadRoot(namespace = SoapProperties.NAMESPACE_URI, localPart = "replyRequest")
+    @ResponsePayload
+    public ReplyResponse reply(@RequestPayload ReplyRequest request) {
+        ReplyResponse response = new ObjectFactory().createReplyResponse();
+
+        if (rateService.recomment(request.getId(), new ReCommentDTO(request.getRecomment()), request.getUser())) {
+            response.setText("OK");
+        }
+        else {
+            response.setText("BAD");
+        }
+
+        return  response;
     }
 }

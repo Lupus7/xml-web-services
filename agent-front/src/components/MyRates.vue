@@ -116,6 +116,25 @@
                                     >
                                     </b-form-textarea>
                                 </div>
+                                <span v-if="rate.approved">
+                                <label>Reply:</label>
+                                <div class="form-group">
+                                    <b-form-textarea class="form-control"
+                                        rows="6"
+                                        :disabled="rate.recomment"
+                                        no-resize
+                                        v-model="rate.recommentE"
+                                    > </b-form-textarea>
+                                </div>
+
+                                <b-button
+                                    v-if="!rate.recomment"
+                                    :disabled="rate.recommentE.length == 0"
+                                    class="float-right"
+                                    style="background:#b20000; color: white"
+                                    @click="reply(rate)"
+                                >Reply</b-button>
+                            </span>
                             </b-card-body>
                         </b-card>
                     </td>
@@ -139,10 +158,25 @@ export default {
             if (rate.approved) return rate.comment;
             else return "Comment wasnt approved!";
         },
+        reply(rate) {
+            axios.put("/rate/" + rate.rateId + "/recomment", {
+                recomment: rate.recommentE
+            }).then(response => {
+                if (response.status == 200) {
+                    rate.recomment = rate.recommentE;
+                }
+            })
+        }
     },
     created() {
         axios.get("/rate").then((response) => {
             this.carRates = response.data;
+            this.carRates.forEach(r => {
+                if (r.recomment)
+                    r.recommentE = r.recomment;
+                else
+                    r.recommentE = "";
+            })
         });
     },
 };

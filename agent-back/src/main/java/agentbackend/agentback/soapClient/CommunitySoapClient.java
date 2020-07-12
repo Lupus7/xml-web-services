@@ -31,7 +31,7 @@ public class CommunitySoapClient extends WebServiceGatewaySupport {
             return null;
         }
 
-        details.setId(message.getId());
+        details.setId(0);
         details.setReceiver(message.getReceiver());
         details.setSender(email);
 
@@ -111,5 +111,17 @@ public class CommunitySoapClient extends WebServiceGatewaySupport {
         return (GetReportsResponse) getWebServiceTemplate()
                 .marshalSendAndReceive(SoapProperties.COMM_WSDL, request,
                         new SoapActionCallback(SoapProperties.NAMESPACE_URI + "/getReportsRequest"));
+    }
+
+    public ReplyResponse reply(long id, String recomment, String user) {
+        ReplyRequest request = new ObjectFactory().createReplyRequest();
+
+        request.setId(id);
+        request.setRecomment(recomment);
+        request.setUser(user);
+
+        return (ReplyResponse) getWebServiceTemplate()
+                .marshalSendAndReceive(SoapProperties.COMM_WSDL, request,
+                        new SoapActionCallback(SoapProperties.NAMESPACE_URI + "/replyRequest"));
     }
 }

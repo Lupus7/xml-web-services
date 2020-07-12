@@ -1,9 +1,6 @@
 package com.example.community.service;
 
-import com.example.community.controller.dto.CarDTO;
-import com.example.community.controller.dto.CarRateDTO;
-import com.example.community.controller.dto.RateDto;
-import com.example.community.controller.dto.ReCommentDTO;
+import com.example.community.controller.dto.*;
 import com.example.community.model.ObjectFactory;
 import com.example.community.model.Rate;
 import com.example.community.proxy.CarsAdsProxy;
@@ -78,9 +75,9 @@ public class RateService {
         return carRates;
     }
 
-    public List<RateDto> getRatesOnly(String user) {
+    public List<RateDto2> getRatesOnly(String user) {
 
-        List<RateDto> carRates = new ArrayList<>();
+        List<RateDto2> carRates = new ArrayList<>();
 
         ResponseEntity<List<CarDTO>> cars = carsAdsProxy.getClientCars(user + ";MASTER");
 
@@ -90,7 +87,7 @@ public class RateService {
         for (CarDTO carDTO : cars.getBody()) {
             List<Rate> rates = rateRepository.findAllByCarId(carDTO.getCarId());
             for (Rate rate : rates)
-                carRates.add(new RateDto(rate));
+                carRates.add(new RateDto2(rate));
 
         }
 
@@ -128,11 +125,11 @@ public class RateService {
         if(!rate.isPresent()){
             return false;
         }
-        List<RateDto> rates = getRatesOnly(user);
+        List<RateDto2> rates = getRatesOnly(user);
         if (rates == null || rates.isEmpty())
             return false;
 
-        for (RateDto r : rates) {
+        for (RateDto2 r : rates) {
             if (r.getId() == rateId) {
                 rate.get().setRecomment(reCommentDTO.getRecomment());
                 rateRepository.save(rate.get());

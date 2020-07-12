@@ -104,7 +104,7 @@
 
                                 <b-button
                                     v-if="!rate.recomment"
-                                    :disabled="rate.recommentE == ''"
+                                    :disabled="rate.recommentE.length == 0"
                                     class="float-right"
                                     style="background:#b20000; color: white"
                                     @click="reply(rate)"
