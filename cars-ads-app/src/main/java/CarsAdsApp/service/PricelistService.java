@@ -1,10 +1,12 @@
 package CarsAdsApp.service;
 
+import CarsAdsApp.model.Ad;
 import CarsAdsApp.model.Discount;
 import CarsAdsApp.model.Price;
 import CarsAdsApp.model.PriceList;
 import CarsAdsApp.model.dto.*;
 import CarsAdsApp.proxy.UserProxy;
+import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.DiscountRepository;
 import CarsAdsApp.repository.PriceListRepository;
 import CarsAdsApp.repository.PriceRepository;
@@ -31,6 +33,9 @@ public class PricelistService {
 
     @Autowired
     UserProxy userProxy;
+
+    @Autowired
+    AdRepository adRepository;
 
     public ResponseEntity<PricelistDTO> createPricelist(PricelistDTO dto, String email) {
 
@@ -163,5 +168,17 @@ public class PricelistService {
         }
 
         return pricelistDTO;
+    }
+
+    public Long getPriceListId(Long id, String name) {
+
+        Optional<Ad> ad = adRepository.findById(id);
+        if(!ad.isPresent())
+            return null;
+        if(ad.get().getPriceListId() == null)
+            return (long)-1;
+
+        return ad.get().getPriceListId();
+
     }
 }

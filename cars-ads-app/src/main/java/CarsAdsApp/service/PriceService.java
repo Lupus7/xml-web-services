@@ -1,5 +1,6 @@
 package CarsAdsApp.service;
 
+import CarsAdsApp.model.Ad;
 import CarsAdsApp.model.Discount;
 import CarsAdsApp.model.Price;
 import CarsAdsApp.model.PriceList;
@@ -7,9 +8,11 @@ import CarsAdsApp.model.dto.DiscountDTO;
 import CarsAdsApp.model.dto.Price2DTO;
 import CarsAdsApp.model.dto.PriceDTO;
 import CarsAdsApp.model.dto.PricelistDTO;
+import CarsAdsApp.repository.AdRepository;
 import CarsAdsApp.repository.DiscountRepository;
 import CarsAdsApp.repository.PriceListRepository;
 import CarsAdsApp.repository.PriceRepository;
+import javassist.tools.web.BadHttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,9 @@ public class PriceService {
     private PriceListRepository priceListRepository;
     @Autowired
     private DiscountRepository discountRepository;
+
+    @Autowired
+    private AdRepository adRepository;
 
     public Boolean createPrice(PriceDTO priceDTO, String email) {
 
@@ -74,7 +80,7 @@ public class PriceService {
             return false;
 
         Optional<PriceList> priceList = priceListRepository.findById(dto);
-        if(!priceList.isPresent())
+        if (!priceList.isPresent())
             return false;
 
         Optional<Price> price = priceRepository.findById(id);
@@ -146,7 +152,7 @@ public class PriceService {
         if (!priceOptional.isPresent())
             return new Price2DTO();
 
-        Price price = new Price();
+        Price price = priceOptional.get();
 
         Price2DTO price2DTO = new Price2DTO();
         price2DTO.setCarId(price.getCarId());
@@ -163,5 +169,39 @@ public class PriceService {
         }
 
         return price2DTO;
+    }
+
+    public Price2DTO getPricesDisounts(Long id, String name) {
+
+        Optional<Ad> ad = adRepository.findById(id);
+        if (!ad.isPresent() || ad.get().getPriceListId() == null)
+            return new Price2DTO();
+
+        Optional<PriceList> priceList = priceListRepository.findById(ad.get().getPriceListId());
+        Price price = null;
+        for (Price p : priceList.get().getPrices()) {
+            if (p.getCarId() == ad.get().getCarId()) {
+                price = p;
+                break;
+                
+            }
+        }
+
+        Price2DTO price2DTO = new Price2DTO();
+        price2DTO.setCarId(price.getCarId());
+        price2DTO.setId(price.getId());
+        price2DTO.setPrice(price.getPrice());
+        price2DTO.setPriceCdw(price.getPriceCdw());
+        price2DTO.setPriceKm(price.getPriceKm());
+        for (Discount discount : price.getDiscounts()) {
+            DiscountDTO discountDTO = new DiscountDTO();
+            discountDTO.setId(discount.getId());
+            discountDTO.setMinDays(discount.getMinDays());
+            discountDTO.setPercentage(discount.getPercentage());
+            price2DTO.getDiscounts().add(discountDTO);
+        }
+
+        return price2DTO;
+
     }
 }

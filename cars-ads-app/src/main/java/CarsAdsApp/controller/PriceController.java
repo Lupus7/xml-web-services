@@ -54,6 +54,14 @@ public class PriceController {
         return ResponseEntity.status(HttpStatus.OK).body(priceLists);
     }
 
+    @GetMapping(value = "/pricelist/ad/{id}")
+    public ResponseEntity<Long> getAllPriceListId(@PathVariable("id") Long id, Principal user){
+        Long idd = pricelistService.getPriceListId(id, user.getName());
+        if(idd != null)
+            return ResponseEntity.status(HttpStatus.OK).body(idd);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
+
     // PRICE
 
     // Kreiranje pricea
@@ -92,6 +100,12 @@ public class PriceController {
     @GetMapping(value = "/price/{id}")
     public ResponseEntity<Price2DTO> getPrice(@PathVariable("id") Long id, Principal user){
         Price2DTO price = priceService.getPrice(id, user.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(price);
+    }
+
+    @GetMapping(value = "/discount/{id}")
+    public ResponseEntity<Price2DTO> getPricesDiscounts(@PathVariable("id") Long id, Principal user){
+        Price2DTO price = priceService.getPricesDisounts(id, user.getName());
         return ResponseEntity.status(HttpStatus.OK).body(price);
     }
 
@@ -139,6 +153,7 @@ public class PriceController {
             priceListDTO.setMinDays(price.getDiscounts().get(0).getMinDays());
             priceListDTO.setPrice(price.getPrice());
             priceListDTO.setPriceKm(price.getPriceKm());
+            priceListDTO.setId(price.getId());
             return ResponseEntity.status(200).body(priceListDTO);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
