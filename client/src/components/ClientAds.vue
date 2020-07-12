@@ -165,6 +165,15 @@
                                             locale="en"
                                         ></b-form-datepicker>
                                     </div>
+
+                                      <div class="form-group col-md-12">
+                                        <label>Select Pricelist</label>
+                                        <b-form-select
+                                            v-model="pricelistIdFE"
+                                            :options="pricelist"
+                                            class="form-control"
+                                        />
+                                    </div>
                                 </div>
 
                            
@@ -241,6 +250,19 @@
                                   
                                 </div>
 
+                                  <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label>Select Pricelist</label>
+                                        <b-form-select
+                                            v-model="pricelistIdF"
+                                            :options="pricelist"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                  
+                                </div>
+
+
                                
                             </div>
                         </b-form>
@@ -284,7 +306,11 @@ export default {
             carF:"",
             startDateF:"",
             endDateF:"",
-            placeF:""
+            placeF:"",
+            pricelist:[],
+            pricelistIdF:'',
+            pricelistIdFE:'',
+            priceListovi:[]
         };
     },
    
@@ -303,6 +329,18 @@ export default {
                 for(let resp of response.data){
                     var select = {value:resp.carId,text:resp.brand+" "+resp.model+" "+resp.carClass}
                     this.cars.push(select);
+                }
+            });
+        },
+
+        getClientPricelist() {
+            axios.get("/cars-ads/pricelist").then(response => {
+                // pokupi sve clientove aute
+                this.pricelist = []
+                this.priceListovi = response.data;
+                for(let resp of response.data){
+                    var select = {value:resp.id,text:resp.name}
+                    this.pricelist.push(select);
                 }
             });
         },
@@ -359,10 +397,12 @@ export default {
 
         editAd(ad) {
             this.getClientCars();
+            this.getClientPricelist();
             this.placeEditF = ad.place;
             this.startDateEditF = ad.startDate;
             this.endDateEditF = ad.endDate;
             this.editID = ad.adId;
+            this.pricelistIdFE = this.getPriceListSelect(ad.pricelist);
           
         },
 
@@ -371,6 +411,7 @@ export default {
             this.endDateEditF = "";
             this.placeEditF = "";
             this.editID = "";
+            this.pricelistIdFE = "";
 
         },
         editAdFinal(){
@@ -392,6 +433,7 @@ export default {
                    startDate:this.startDateEditF,
                    endDate:this.endDateEditF,
                    place:this.placeEditF,
+                   priceListId:this.pricelistIdFE
                 })
                 .then(response => {
                     this.resetEditForm();
@@ -419,6 +461,7 @@ export default {
             this.startDateF = "";
             this.endDateF = "";
             this.placeF = "";
+            this.pricelistIdF="";
 
         },
         createNewAd(){
@@ -428,7 +471,8 @@ export default {
                    startDate:this.startDateF+ " 00:00:00",
                    endDate:this.endDateF+ " 00:00:00",
                    place:this.placeF,
-                   carId:this.carF
+                   carId:this.carF,
+                   priceListId:this.pricelistIdF,
                 })
                 .then(response => {
                     this.resetForm();
@@ -453,11 +497,23 @@ export default {
                         });
                     }
                 });
-        }
+        },
+
+        getPriceListSelect(pricelistId){
+            console.log(pricelistId)
+            for(let pr of this.pricelist){
+                 console.log(pr.value)
+                if(pricelistId == pr.value){
+                    console.log("usao")
+                    return pr.value;
+                }
+            }
+        },
     },
     created() {
         this.getClientAds();
         this.getClientCars();
+        this.getClientPricelist();
     }
 };
 </script>

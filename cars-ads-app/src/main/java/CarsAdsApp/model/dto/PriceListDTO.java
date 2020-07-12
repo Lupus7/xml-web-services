@@ -9,6 +9,7 @@ public class PriceListDTO {
     private Double priceKm;
     private Double discountPercentage;
     private Integer minDays;
+    private Long id;
     public PriceListDTO(){
 
     }
@@ -59,5 +60,13 @@ public class PriceListDTO {
 
     public void setMinDays(Integer minDays) {
         this.minDays = minDays;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

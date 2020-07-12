@@ -2,6 +2,7 @@ package CarsAdsApp.model;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,6 +14,8 @@ public class PriceList {
     protected long id;
 
     protected String name;
+    
+    protected String owner;
 
     @ManyToMany
     @JoinTable(
@@ -29,6 +32,12 @@ public class PriceList {
         this.id = id;
         this.name = name;
         this.prices = prices;
+    }
+
+    public PriceList(String name, String email){
+        this.name = name;
+        this.owner = email;
+        this.prices = new ArrayList<>();
     }
 
     public long getId() {
@@ -53,5 +62,13 @@ public class PriceList {
 
     public void setPrices(List<Price> prices) {
         this.prices = prices;
+    }
+    
+    public void setOwner(String owner){
+    	this.owner = owner;
+    }
+    
+    public String getOwner(){
+    	return this.owner;
     }
 }

@@ -64,6 +64,31 @@ const router = new Router({
             beforeEnter: authetication
 
         },
+
+        {
+            path: "/pricelists",
+            name: "Pricelists",
+            component: () => import("./components/Pricelists"),
+            beforeEnter: authetication
+
+        },
+
+        {
+            path: "/pricelist",
+            name: "Pricelist",
+            props:true,
+            component: () => import("./components/Pricelist"),
+            beforeEnter: authetication
+
+        },
+        {
+            path: "/price",
+            name: "Price",
+            props:true,
+            component: () => import("./components/Price"),
+            beforeEnter: authetication
+
+        },
     ],
 });
 
