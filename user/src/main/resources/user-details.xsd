@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cr="http://car-rent.com/agent-api"
+    targetNamespace="http://car-rent.com/agent-api" elementFormDefault="qualified">
+
+    <xs:element name="getAllUsersRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="email" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getAllUsersResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="userDetails" type="cr:UserDetails" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="UserDetails">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="email" type="xs:string"/>
+            <xs:element name="firstName" type="xs:string"/>
+            <xs:element name="lastName" type="xs:string"/>
+            <xs:element name="companyName" type="xs:string"/>
+            <xs:element name="buisinessNumber" type="xs:string"/>
+            <xs:element name="address" type="xs:string"/>
+            <xs:element name="password" type="xs:string"/>
+            <xs:element name="role" type="xs:string"/>
+            <xs:element name="approved" type="xs:boolean"/>
+            <xs:element name="blocked" type="xs:boolean"/>
+            <xs:element name="cart" type="xs:long"/>
+            <xs:element maxOccurs="unbounded" name="bookings" type="xs:long"/>
+            <xs:element maxOccurs="unbounded" name="cars" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

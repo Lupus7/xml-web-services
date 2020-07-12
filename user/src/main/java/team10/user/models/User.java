@@ -1,5 +1,8 @@
 package team10.user.models;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.List;
@@ -47,11 +50,13 @@ public class User {
     private Long cart;
 
     @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
     @CollectionTable(name = "user_bookings", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "booking_id")
     private List<Long> bookings;
 
     @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
     @CollectionTable(name = "user_cars", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "car_id")
     private List<Long> cars;
