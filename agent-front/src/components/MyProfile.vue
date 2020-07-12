@@ -31,6 +31,16 @@
                 </b-navbar-nav>
 
                 <b-navbar-nav style="margin-right:0.9rem">
+
+                        
+                    <b-nav-item @click="showPrices()" right>
+                        <b-icon
+                            icon="wallet2"
+                            aria-hidden="true"
+                            variant="dark"
+                        ></b-icon>
+                        My Prices
+                    </b-nav-item>
                     
                     <b-nav-item @click="showRates()" right>
                         <b-icon
@@ -119,6 +129,10 @@ export default {
             this.boolbook = false;
             this.boolrep = true;
         },
+        showPrices(){
+            this.$router.push("/pricelists");
+        },
+
         showRates(){
             this.$router.push("/rates");
         },

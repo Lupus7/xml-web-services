@@ -3,25 +3,25 @@
     <div class="container" style=" width:90%">
         <br />
 
-         <table class="table table-hover" style="background:#efefef; border: 3px solid #4c4c4c">
+        <table class="table table-hover" style="background:#efefef; border: 3px solid #4c4c4c">
             <thead>
                 <tr>
-                <th colspan="2" style="color:#4c4c4c">
-                    <h4>My Ads</h4>
-                </th>
-                <th style="width:30%" colspan="1">
-                    <center>
-                    <b-button
-                        class="btn btn-primary"
-                        variant="primary"
-                        href="#"
-                        data-toggle="modal"
-                        data-target="#newad"
-                    >
-                        <b-icon icon="plus-circle" aria-hidden="true" /> New Ad
-                    </b-button>
-                    </center>
-                </th>
+                    <th colspan="2" style="color:#4c4c4c">
+                        <h4>My Ads</h4>
+                    </th>
+                    <th style="width:30%" colspan="1">
+                        <center>
+                            <b-button
+                                class="btn btn-primary"
+                                variant="primary"
+                                href="#"
+                                data-toggle="modal"
+                                data-target="#newad"
+                            >
+                                <b-icon icon="plus-circle" aria-hidden="true" />New Ad
+                            </b-button>
+                        </center>
+                    </th>
                 </tr>
             </thead>
         </table>
@@ -45,7 +45,6 @@
                         img-width="580"
                         img-height="480"
                         style="text-shadow: 1px 1px 2px #333;"
-                        
                     >
                         <template>
                             <span v-if="ad.images && ad.images.length > 0">
@@ -64,11 +63,10 @@
                                 img-alt="No images"
                                 img-width="580"
                                 img-height="480"
-                            >
-                            </b-carousel-slide>
+                            ></b-carousel-slide>
                         </template>
                     </b-carousel>
-                     
+
                     <hr />
                     <b-card-sub-title class="mb-3">
                         <b-icon icon="geo-alt" aria-hidden="true" variant="dark"></b-icon>
@@ -106,7 +104,7 @@
                                     class="btn btn-dark"
                                     style="width:120%"
                                 >
-                                    <b-icon icon="wrench" aria-hidden="true"></b-icon> Deactive
+                                    <b-icon icon="wrench" aria-hidden="true"></b-icon>Deactive
                                 </b-button>
                                 <b-button
                                     @click="activateAd(ad)"
@@ -115,7 +113,7 @@
                                     class="btn btn-dark"
                                     style="width:120%"
                                 >
-                                    <b-icon icon="wrench" aria-hidden="true"></b-icon> Active
+                                    <b-icon icon="wrench" aria-hidden="true"></b-icon>Active
                                 </b-button>
                             </div>
                             <div class="col">
@@ -127,7 +125,7 @@
                                     class="btn btn-secondary"
                                     style="width:120%"
                                 >
-                                    <b-icon icon="wrench" aria-hidden="true"></b-icon> Edit
+                                    <b-icon icon="wrench" aria-hidden="true"></b-icon>Edit
                                 </b-button>
                             </div>
                         </div>
@@ -138,17 +136,21 @@
             </div>
         </b-card-group>
 
-
-
         <!-- EDIT FORM -->
 
-           <div class="modal fade" id="editad" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal fade" id="editad" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">
                 role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Edit Ad</h5>
-                        <button type="button" class="close" @click="resetEditForm()" data-dismiss="modal" aria-label="Close">
+                        <button
+                            type="button"
+                            class="close"
+                            @click="resetEditForm()"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -177,16 +179,27 @@
                                             locale="en"
                                         ></b-form-datepicker>
                                     </div>
-                                </div>
 
-                           
-                               
+                                    <div class="form-group col-md-12">
+                                        <label>Select Pricelist</label>
+                                        <b-form-select
+                                            v-model="pricelistIdFE"
+                                            :options="pricelist"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </b-form>
                     </div>
 
                     <div class="modal-footer">
-                        <button @click="editAdFinal()" type="button" class="btn btn-success" data-dismiss="modal">
+                        <button
+                            @click="editAdFinal()"
+                            type="button"
+                            class="btn btn-success"
+                            data-dismiss="modal"
+                        >
                             <b-icon icon="check-circle" aria-hidden="true"></b-icon>Edit Ad
                         </button>
                         <button
@@ -202,15 +215,20 @@
             </div>
         </div>
 
-
-    <!-- NEW AD FORM -->
+        <!-- NEW AD FORM -->
         <div class="modal fade" id="newad" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">
                 role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">New Ad</h5>
-                        <button type="button" class="close" @click="resetForm()" data-dismiss="modal" aria-label="Close">
+                        <button
+                            type="button"
+                            class="close"
+                            @click="resetForm()"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -250,16 +268,29 @@
                                             class="form-control"
                                         />
                                     </div>
-                                  
                                 </div>
 
-                               
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <label>Select Pricelist</label>
+                                        <b-form-select
+                                            v-model="pricelistIdF"
+                                            :options="pricelist"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </b-form>
                     </div>
 
                     <div class="modal-footer">
-                        <button @click="createNewAd()" type="button" class="btn btn-success" data-dismiss="modal">
+                        <button
+                            @click="createNewAd()"
+                            type="button"
+                            class="btn btn-success"
+                            data-dismiss="modal"
+                        >
                             <b-icon icon="check-circle" aria-hidden="true"></b-icon>Create Ad
                         </button>
                         <button
@@ -274,8 +305,6 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 </template>
 
@@ -287,21 +316,24 @@ export default {
             // showing ads
             ads: [],
             // edit
-            startDateEditF:"",
-            endDateEditF:"",
-            placeEditF:"",
-            editID:"",
+            startDateEditF: "",
+            endDateEditF: "",
+            placeEditF: "",
+            editID: "",
             // create
             cars: [],
-            carF:"",
-            startDateF:"",
-            endDateF:"",
-            placeF:""
+            carF: "",
+            startDateF: "",
+            endDateF: "",
+            placeF: "",
+            pricelist: [],
+            pricelistIdF: "",
+            pricelistIdFE: "",
+            priceListovi: []
         };
     },
-   
-    methods: {
 
+    methods: {
         // GETTERS
         getClientAds() {
             axios.get("/api/ad/client").then(response => {
@@ -311,10 +343,26 @@ export default {
         getClientCars() {
             axios.get("/cars/client").then(response => {
                 // pokupi sve clientove aute
-                this.cars = []
-                for(let resp of response.data){
-                    var select = {value:resp.carId,text:resp.brand+" "+resp.model+" "+resp.carClass}
+                this.cars = [];
+                for (let resp of response.data) {
+                    var select = {
+                        value: resp.carId,
+                        text:
+                            resp.brand + " " + resp.model + " " + resp.carClass
+                    };
                     this.cars.push(select);
+                }
+            });
+        },
+
+        getClientPricelist() {
+            axios.get("/pricelist").then(response => {
+                // pokupi sve clientove aute
+                this.pricelist = [];
+                this.priceListovi = response.data;
+                for (let resp of response.data) {
+                    var select = { value: resp.id, text: resp.name };
+                    this.pricelist.push(select);
                 }
             });
         },
@@ -322,24 +370,22 @@ export default {
         // ACTIVATE & DEACTIVATE
         deactivateAd(ad) {
             event.preventDefault();
-            axios
-                .delete("/api/ad/deactivate/" + ad.adId)
-                .then(response => {
-                    if (response.status === 200) {
-                        this.$bvToast.toast(response.data, {
-                            title: "Ad Deactivation",
-                            variant: "success",
-                            solid: true
-                        });
-                        this.getClientAds();
-                    } else {
-                        this.$bvToast.toast(response.data, {
-                            title: "Ad Deactivation",
-                            variant: "warning",
-                            solid: true
-                        });
-                    }
-                });
+            axios.delete("/api/ad/deactivate/" + ad.adId).then(response => {
+                if (response.status === 200) {
+                    this.$bvToast.toast(response.data, {
+                        title: "Ad Deactivation",
+                        variant: "success",
+                        solid: true
+                    });
+                    this.getClientAds();
+                } else {
+                    this.$bvToast.toast(response.data, {
+                        title: "Ad Deactivation",
+                        variant: "warning",
+                        solid: true
+                    });
+                }
+            });
         },
         activateAd(ad) {
             event.preventDefault();
@@ -371,11 +417,12 @@ export default {
 
         editAd(ad) {
             this.getClientCars();
+            this.getClientPricelist();
             this.placeEditF = ad.place;
             this.startDateEditF = ad.startDate;
             this.endDateEditF = ad.endDate;
             this.editID = ad.adId;
-          
+            this.pricelistIdFE = this.getPriceListSelect(ad.pricelist);
         },
 
         resetEditForm() {
@@ -383,27 +430,25 @@ export default {
             this.endDateEditF = "";
             this.placeEditF = "";
             this.editID = "";
-
+            this.pricelistIdFE = "";
         },
-        editAdFinal(){
+        editAdFinal() {
             event.preventDefault();
-            console.log(this.startDateEditF)
-            if(this.startDateEditF.includes('T'))
-                this.startDateEditF = this.startDateEditF.replace('T'," ");
-            else
-                this.startDateEditF += " 00:00:00";
-            
+            console.log(this.startDateEditF);
+            if (this.startDateEditF.includes("T"))
+                this.startDateEditF = this.startDateEditF.replace("T", " ");
+            else this.startDateEditF += " 00:00:00";
 
-            if(this.endDateEditF.includes('T'))
-                this.endDateEditF = this.endDateEditF.replace('T'," ");
-            else
-                this.endDateEditF += " 00:00:00";
+            if (this.endDateEditF.includes("T"))
+                this.endDateEditF = this.endDateEditF.replace("T", " ");
+            else this.endDateEditF += " 00:00:00";
 
             axios
-                .put("/api/ad/"+this.editID, {
-                   startDate:this.startDateEditF,
-                   endDate:this.endDateEditF,
-                   place:this.placeEditF,
+                .put("/api/ad/" + this.editID, {
+                    startDate: this.startDateEditF,
+                    endDate: this.endDateEditF,
+                    place: this.placeEditF,
+                    pricelist: this.pricelistIdFE
                 })
                 .then(response => {
                     this.resetEditForm();
@@ -431,16 +476,17 @@ export default {
             this.startDateF = "";
             this.endDateF = "";
             this.placeF = "";
-
+            this.pricelistIdF = "";
         },
-        createNewAd(){
+        createNewAd() {
             event.preventDefault();
             axios
                 .post("/api/ad", {
-                   startDate:this.startDateF+ " 00:00:00",
-                   endDate:this.endDateF+ " 00:00:00",
-                   place:this.placeF,
-                   carId:this.carF
+                    startDate: this.startDateF + " 00:00:00",
+                    endDate: this.endDateF + " 00:00:00",
+                    place: this.placeF,
+                    carId: this.carF,
+                    pricelist: this.pricelistIdF
                 })
                 .then(response => {
                     this.resetForm();
@@ -451,13 +497,13 @@ export default {
                             solid: true
                         });
                         this.getClientAds();
-                    } else if(response.status === 402) {
+                    } else if (response.status === 402) {
                         this.$bvToast.toast(response.data, {
                             title: "New Car",
                             variant: "danger",
                             solid: true
                         });
-                    }else {
+                    } else {
                         this.$bvToast.toast(response.data, {
                             title: "New Car",
                             variant: "warning",
@@ -465,11 +511,23 @@ export default {
                         });
                     }
                 });
+        },
+
+        getPriceListSelect(pricelistId) {
+            console.log(pricelistId);
+            for (let pr of this.pricelist) {
+                console.log(pr.value);
+                if (pricelistId == pr.value) {
+                    console.log("usao");
+                    return pr.value;
+                }
+            }
         }
     },
     created() {
         this.getClientAds();
         this.getClientCars();
+        this.getClientPricelist();
     }
 };
 </script>

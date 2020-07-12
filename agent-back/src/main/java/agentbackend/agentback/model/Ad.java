@@ -38,6 +38,9 @@ public class Ad {
     @Column()
     private Long serviceId;
 
+    @Column()
+    private Long pricelist;
+
     public Ad() {
 
     }
@@ -134,6 +137,14 @@ public class Ad {
 
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    public Long getPricelist() {
+        return pricelist;
+    }
+
+    public void setPricelist(Long pricelist) {
+        this.pricelist = pricelist;
     }
 }
 

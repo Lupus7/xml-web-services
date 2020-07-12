@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-card v-if="this.bookings.length === 0 && this.bundles.length === 0" class="text-center" style="background:#DCDCDC">
+        <b-card v-if="bookings.length == 0 && bundles.length == 0" class="text-center" style="background:#DCDCDC">
             <div>
                 <h4 style="color:#696969">You have no bookings!</h4>
             </div>
@@ -189,7 +189,7 @@ export default {
             });
         },
         getBundles() {
-            axios.get("/api/bundle/request").then(response => {
+            axios.get("/api/bundle").then(response => {
             this.bundles.splice(0, this.bundles.length);
                 response.data.forEach(bun => {
                     bun.bookings.forEach(b => {

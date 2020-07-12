@@ -10,6 +10,9 @@ public class AdDTO {
 
     private Long carId;
 
+    private Long pricelist;
+
+
     public AdDTO() {
     }
 
@@ -50,5 +53,13 @@ public class AdDTO {
 
     public void setCarId(Long car) {
         this.carId = car;
+    }
+
+    public Long getPricelist() {
+        return pricelist;
+    }
+
+    public void setPricelist(Long pricelist) {
+        this.pricelist = pricelist;
     }
 }

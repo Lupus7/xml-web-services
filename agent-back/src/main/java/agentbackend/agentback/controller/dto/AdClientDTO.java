@@ -30,6 +30,7 @@ public class AdClientDTO {
     private List<String> images;
     private boolean active;
     private String advertiser;
+    private Long pricelist;
 
     public AdClientDTO() {
     }
@@ -42,6 +43,7 @@ public class AdClientDTO {
     public AdClientDTO(Ad ad, Car car, List<Image> images) {
         this(ad, car);
         this.images = images.stream().map(Image::getEncoded64Image).collect(Collectors.toList());
+        this.pricelist = ad.getPricelist();
     }
 
     public AdClientDTO(Ad ad, Car car) {
@@ -210,5 +212,13 @@ public class AdClientDTO {
 
     public void setAdvertiser(String advertiser) {
         this.advertiser = advertiser;
+    }
+
+    public Long getPricelist() {
+        return pricelist;
+    }
+
+    public void setPricelist(Long pricelist) {
+        this.pricelist = pricelist;
     }
 }

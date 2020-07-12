@@ -43,6 +43,9 @@ public class AdService {
     @Autowired
     BookingRepository bookingRepository;
 
+    @Autowired
+    PriceListRepository priceListRepository;
+
     public int createAd(AdDTO adDTO, String email) {
         User user = userRepository.findByEmail(email);
         if (user == null)
@@ -65,6 +68,11 @@ public class AdService {
         CreateAdResponse response = adSoapClient.createAd(adDTO, email);
         Ad ad = new Ad(LocalDateTime.parse(adDTO.getStartDate(), formatter), LocalDateTime.parse(adDTO.getEndDate(), formatter), adDTO.getPlace(), car.get(), user.getEmail());
         ad.setServiceId(response.getId());
+        if(adDTO.getPricelist() != null){
+            Optional<PriceList> priceList = priceListRepository.findById(adDTO.getPricelist());
+            if(priceList.isPresent())
+                ad.setPricelist(priceList.get().getId());
+        }
         adRepo.save(ad);
 
         return 200;
@@ -170,6 +178,12 @@ public class AdService {
 
         if (adDTO.getPlace() != null)
             ad.get().setPlace(adDTO.getPlace());
+
+        if(adDTO.getPricelist() != null){
+            Optional<PriceList> priceList = priceListRepository.findById(adDTO.getPricelist());
+            if(priceList.isPresent())
+                ad.get().setPricelist(priceList.get().getId());
+        }
 
         adRepo.save(ad.get());
 
